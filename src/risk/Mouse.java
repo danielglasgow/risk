@@ -43,12 +43,46 @@ public class Mouse implements MouseListener {
 						JOptionPane.showMessageDialog(null, "You must place armies on territories you control");
 					}
 				} else {
-					JOptionPane.showMessageDialog(null,
-							"Make sure to click on the army indicator in order to add armies");
+					JOptionPane.showMessageDialog(null,"Make sure to click on the army indicator in order to add armies");
 				}
 				
 			}
+		} 
+		
+		if (game.phase.equals("attack")) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point point = new Point(a.getLocation());
+			SwingUtilities.convertPointFromScreen(point, e.getComponent());
+			int x = (int) point.getX();
+			int y = (int) point.getY();
+			Territory territory = findMatch(x, y);
+			if (!territory.name.equals("NoMatch")) {
+				boolean canAttack = false;
+				String failMsg = "You cannot attack " + territory.name + " because you do not control an adjacent territory";
+				for (Territory t : territory.adjacents) {
+					if (t.player.equals(game.activePlayer)) {
+						canAttack = true;
+						if(t.armies == 1) {
+							canAttack = false;
+							failMsg = "You cannot attack " + territory.name + " because none of the adjacent territories you control have atleast two armies";
+						}
+					}
+				}
+				if (territory.player.equals(game.activePlayer)) {
+					canAttack = false;
+					failMsg = "You cannot attack a territory you control";
+				}
+				if (canAttack) {
+					JOptionPane.showMessageDialog(null, "Attacking " + territory.name);
+				} else {
+					JOptionPane.showMessageDialog(null, failMsg);
+				}
+			} else {
+				JOptionPane.showMessageDialog(null,"Make sure to click on the army indicator in order select a territory to attack");
+			}
+			
 		}
+				
 		
 		board.updateBackground();
 		
@@ -81,7 +115,7 @@ public class Mouse implements MouseListener {
 	private Territory findMatch(int x, int y) {
 		ArrayList<Territory> territories = board.getTerritories();
 		for (Territory t : territories) {
-			if((Math.abs(t.locX - x) < 20) && (Math.abs(t.locY - y) < 20)) {
+			if((Math.abs(t.locX - x) < 30) && (Math.abs(t.locY - y) < 30)) {
 				return t;
 			}
 		}

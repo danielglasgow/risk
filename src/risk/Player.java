@@ -8,6 +8,7 @@ public class Player {
 	public String name;
 	public MainGame game;
 	public int armiesToPlace = 0;
+	public Territory territroyToAttack;
 	
 	public Player(String name, String color, MainGame game) {
 		this.game = game;

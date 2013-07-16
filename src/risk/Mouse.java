@@ -49,7 +49,7 @@ public class Mouse implements MouseListener {
 			}
 		} 
 		
-		if (game.phase.equals("attack")) {
+		if (game.phase.equals("attackTo")) {
 			PointerInfo a = MouseInfo.getPointerInfo();
 			Point point = new Point(a.getLocation());
 			SwingUtilities.convertPointFromScreen(point, e.getComponent());
@@ -60,6 +60,9 @@ public class Mouse implements MouseListener {
 				boolean canAttack = false;
 				String failMsg = "You cannot attack " + territory.name + " because you do not control an adjacent territory";
 				for (Territory t : territory.adjacents) {
+					if (canAttack) {
+						break;
+					}
 					if (t.player.equals(game.activePlayer)) {
 						canAttack = true;
 						if(t.armies == 1) {
@@ -74,6 +77,11 @@ public class Mouse implements MouseListener {
 				}
 				if (canAttack) {
 					JOptionPane.showMessageDialog(null, "Attacking " + territory.name);
+					game.activePlayer.territroyToAttack = territory;
+					synchronized (game.lock) {
+						game.phase = "attackFrom";
+						game.lock.notifyAll();
+					}
 				} else {
 					JOptionPane.showMessageDialog(null, failMsg);
 				}

@@ -12,7 +12,7 @@ Brazil: Venezuela Argentina North-Africa
 Argentina: Venezuela Brazil
 North-Africa: Brazil Egypt Congo Western-Europe Southern-Europe
 South-Africa: Congo Madagascar East-Africa
-Egypt: North-Africa Southern-Europe Middle-East
+Egypt: North-Africa Southern-Europe Middle-East East-Africa
 Congo: North-Africa East-Africa South-Africa
 East-Africa: Egypt Congo South-Africa Madagascar
 Madagascar: East-Africa South-Africa

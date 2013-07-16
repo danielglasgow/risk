@@ -50,7 +50,7 @@ public class MainGame {
 			armies = 3;
 		}
 		player.armiesToPlace = armies;
-		this.phase = "placeArmies";
+		phase = "placeArmies";
 		JOptionPane.showMessageDialog(null, "Place " + armies + " armies on your territories by clicking on the territory's army indicator");
 		synchronized (lock) {
 			while(player.armiesToPlace > 0) {
@@ -70,10 +70,23 @@ public class MainGame {
 	}
 	
 	private void attack(Player player) {
-		this.phase = "attack";
-		int choice = JOptionPane.showConfirmDialog(null, "If you would like to attack, click yes, then click on the territory you would like to attack");
-		if (choice == JOptionPane.YES_OPTION) {
-			
+		phase = "attackTo";
+		int choice = JOptionPane.showConfirmDialog(null, "If you would like to attack, click yes. Then click the territory you would like to attack");
+		if (choice != JOptionPane.YES_OPTION) {
+		} else {
+			synchronized (lock) {
+				while(phase.equals("attackTo")) {
+					try {	
+						lock.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			int choice2 = JOptionPane.showConfirmDialog(null, "If you would like to attack " + activePlayer.territroyToAttack.name + " click yes. Then click the territory you would like to attack from");
+			if (choice2 != JOptionPane.YES_OPTION) {
+				attack(player);
+			}
 		}
 	}
 	

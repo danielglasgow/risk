@@ -11,7 +11,7 @@ public class InitTerritories {
 	
 	public InitTerritories(MainGame game) {
 		this.game = game;
-		readTerritories(new File("/Users/danielglasgow/Desktop/territories.txt"));
+		readTerritories(new File("TerritoryInfo/territories.txt"));
 		divideTerritories();
 	}
 
@@ -28,7 +28,7 @@ public class InitTerritories {
 		} catch (Exception e) {
 			System.out.println("Error in Recommender.readMovies: "+e);
 		}
-		addAdjacentTerritories(new File("/Users/danielglasgow/Desktop/Adjacentterritories.txt"));
+		addAdjacentTerritories(new File("TerritoryInfo/Adjacentterritories.txt"));
 	}
 	
 	private void addAdjacentTerritories(File file) {

@@ -23,6 +23,7 @@ public class Mouse implements MouseListener {
 	
 
 	public void mouseClicked(MouseEvent e) {
+		game.board.instructionPanel.placeHolder.setText("									");
 		if (game.phase.equals("placeArmies")) {
 			Player player = game.activePlayer;
 			if (player.armiesToPlace > 0) {

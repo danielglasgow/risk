@@ -19,6 +19,7 @@ public class Board { //make board a JPanel not frame...
 	private BufferedImage background;
 	private TextOverlay currentBackground;
 	private ArrayList<Territory> territories;
+	public InstructionPanel instructionPanel;
 	public MainGame game;
 	
 	
@@ -38,7 +39,7 @@ public class Board { //make board a JPanel not frame...
 		currentBackground = new TextOverlay(background);
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(currentBackground, BorderLayout.CENTER);
-		InstructionPanel instructionPanel = new InstructionPanel();
+		instructionPanel = new InstructionPanel(game);
 		mainFrame.add(instructionPanel.mainPanel, BorderLayout.SOUTH);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.pack();

@@ -18,6 +18,7 @@ public class MainGame {
 	public Object lock = new Object();
 	
 	
+	
 	public MainGame()  {
 		new StartMenu(this);
 		this.territories = new InitTerritories(this).territories;
@@ -51,7 +52,10 @@ public class MainGame {
 		}
 		player.armiesToPlace = armies;
 		phase = "placeArmies";
-		JOptionPane.showMessageDialog(null, "Place " + armies + " armies on your territories by clicking on the territory's army indicator");
+		board.instructionPanel.placeHolder.setText("			NEW			");
+		board.instructionPanel.textArea.setText("Place " + armies + " armies on your territories by clicking on the territory's army indicator");
+		board.instructionPanel.buttonNO.setText("restart");
+		board.instructionPanel.buttonYES.setText("continue");
 		synchronized (lock) {
 			while(player.armiesToPlace > 0) {
 				try {

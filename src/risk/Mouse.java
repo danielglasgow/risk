@@ -77,10 +77,10 @@ public class Mouse implements MouseListener {
 					failMsg = "You cannot attack a territory you control";
 				}
 				if (canAttack) {
-					JOptionPane.showMessageDialog(null, "Attacking " + territory.name);
+					//JOptionPane.showMessageDialog(null, "Attacking " + territory.name);
 					game.activePlayer.territroyToAttack = territory;
 					synchronized (game.lock) {
-						game.phase = "attackFrom";
+						//game.phase = "attackFrom";
 						game.lock.notifyAll();
 					}
 				} else {

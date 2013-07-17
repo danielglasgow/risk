@@ -19,6 +19,8 @@ public class MainGame {
 	public InstructionPanel instructionPanel;
 	public ArrayList<Integer> boardArmies = new ArrayList<Integer>();
 	public boolean restartPlaceArmies = false;
+	public boolean nextPhase = false;
+	//public boolean toAttack = false;
 	
 	
 	
@@ -57,7 +59,7 @@ public class MainGame {
 		activePlayer.armiesToPlace = armies;
 		phase = "placeArmies";
 		instructionPanel.setText(instructionPanel.newVisible,
-				"Distribute " + armies + " armies between your territories by clicking on the territory's army indicator. To start over, click RESTART",
+				"Distribute " + armies + " armies between your territories by clicking on the territory's army indicator. To start over, click Restart",
 				"Continue",
 				"Restart");
 		synchronized (lock) {
@@ -73,32 +75,42 @@ public class MainGame {
 			placeArmies(true); 
 		} else {
 			instructionPanel.setText(instructionPanel.newVisible,
-					"You have placed all of your armies. If you would like to replace armies again click PLACE AGAIN, otherwise click CONTINUE",
+					"You have placed all of your armies. If you would like to replace armies again click Place Again, otherwise click Continue",
 					"Continue",
 					"Place Again");
 		}
-			
-		
-		
+		synchronized (lock) {
+			while(!nextPhase && !restartPlaceArmies) {
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if(restartPlaceArmies) {
+			placeArmies(true);
+		}	
 	}
 	
 	private void attack(Player player) {
+		nextPhase = false;
 		phase = "attackTo";
-		int choice = JOptionPane.showConfirmDialog(null, "If you would like to attack, click yes. Then click the territory you would like to attack");
-		if (choice != JOptionPane.YES_OPTION) {
-		} else {
-			synchronized (lock) {
-				while(phase.equals("attackTo")) {
-					try {	
-						lock.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+		instructionPanel.setText(instructionPanel.newVisible,
+				"Select the territory you would like to attack.",
+				"Continue Without Attacking",
+				"Back");
+		synchronized (lock) {
+			while(phase.equals("attackTo") && !nextPhase) {
+				try {	
+					lock.wait();
+					instructionPanel.setText(instructionPanel.newInvisible,
+							"If you would like to attack " + activePlayer.territroyToAttack.name.toUpperCase() + " click Continue, otherwise select a different territory.",
+							"Continue",
+							"Back");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-			}
-			int choice2 = JOptionPane.showConfirmDialog(null, "If you would like to attack " + activePlayer.territroyToAttack.name + " click yes. Then click the territory you would like to attack from");
-			if (choice2 != JOptionPane.YES_OPTION) {
-				attack(player);
 			}
 		}
 	}

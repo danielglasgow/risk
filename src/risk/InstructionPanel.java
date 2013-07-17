@@ -30,6 +30,7 @@ public class InstructionPanel {
 		buttonYES = new JButton();
 		
 		buttonNO.addActionListener(new ButtonNoListener(game));
+		buttonYES.addActionListener(new ButtonYesListener(game));
 		
 		
 		JPanel buttonArea = new JPanel(new GridLayout(1,2));

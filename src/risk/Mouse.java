@@ -80,7 +80,7 @@ public class Mouse implements MouseListener {
 				}
 				if (canAttack) {
 					//JOptionPane.showMessageDialog(null, "Attacking " + territory.name);
-					turn.player.territroyToAttack = territory;
+					turn.player.territoryToAttack = territory;
 					synchronized (game.lock) {
 						//game.phase = "attackFrom";
 						game.lock.notifyAll();

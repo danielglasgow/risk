@@ -7,7 +7,6 @@ import java.util.ArrayList;
 public class MainGame {
 	
 	public ArrayList<Territory> territories =  new ArrayList<Territory>();
-	public boolean condition = true;
 	public ArrayList<Player> players =  new ArrayList<Player>();
 	public Board board;
 	public Object lock = new Object();

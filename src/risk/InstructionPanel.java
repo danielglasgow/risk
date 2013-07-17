@@ -14,8 +14,8 @@ public class InstructionPanel {
 	public JPanel mainPanel;
 	public JLabel instruction;
 	public JLabel newIndicator;
-	public JButton buttonNO;
-	public JButton buttonYES;
+	public JButton buttonRight;
+	public JButton buttonLeft;
 	public MainGame game;
 	
 	public final String newVisible = "			NEW			";
@@ -26,16 +26,16 @@ public class InstructionPanel {
 		mainPanel = new JPanel();
 		instruction = new JLabel();
 		newIndicator = new JLabel();
-		buttonNO = new JButton();
-		buttonYES = new JButton();
+		buttonRight = new JButton();
+		buttonLeft = new JButton();
 		
-		buttonNO.addActionListener(new ButtonNoListener(game));
-		buttonYES.addActionListener(new ButtonYesListener(game));
+		buttonRight.addActionListener(new ButtonRightListener(game));
+		buttonLeft.addActionListener(new ButtonLeftListener(game));
 		
 		
 		JPanel buttonArea = new JPanel(new GridLayout(1,2));
-		buttonArea.add(buttonYES);
-		buttonArea.add(buttonNO);
+		buttonArea.add(buttonLeft);
+		buttonArea.add(buttonRight);
 		
 		Font instructionFont = new Font("size14", Font.PLAIN, 14);
 		
@@ -56,8 +56,8 @@ public class InstructionPanel {
 	public void setText(String newIndicator, String instruction, String buttonYES, String buttonNO) {
 		this.newIndicator.setText(newIndicator);
 		this.instruction.setText(instruction);
-		this.buttonYES.setText(buttonYES);
-		this.buttonNO.setText(buttonNO);
+		this.buttonLeft.setText(buttonYES);
+		this.buttonRight.setText(buttonNO);
 		
 		
 	}

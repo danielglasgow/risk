@@ -10,7 +10,7 @@ public class Turn {
 	public Player player;
 	public String phase;
 	public InstructionPanel instructionPanel; 
-	public boolean nextPhase = false;
+	
 	
 	
 	public Turn(MainGame game) {
@@ -31,9 +31,11 @@ public class Turn {
 			if(phase.equals("placeArmies")) {
 				placeArmies();
 			}
-			System.out.println("moving to attack");
 			if(phase.equals("attackTo")) {
-				attack();
+				attackTo();
+			}
+			if(phase.equals("attackFrom")) {
+				attackFrom();
 			}
 		}
 	}
@@ -75,33 +77,52 @@ public class Turn {
 		synchronized (game.lock) {
 			while(phase.equals("placeArmies") && !restartPlaceArmies) {
 				try {
-					System.out.println("Frozen");
 					game.lock.wait();
-					System.out.println("Unfrozen");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		System.out.println("out of loop");
 	}
 	
-	private void attack() {
-		nextPhase = false;
-		phase = "attackTo";
+	private void attackTo() {
 		instructionPanel.setText(instructionPanel.newVisible,
 				"Select the territory you would like to attack.",
 				"Continue Without Attacking",
-				"Back");
+				"Place Armies Again");
 		synchronized (game.lock) {
 			while(phase.equals("attackTo")) {
 				try {	
 					game.lock.wait();
-					if(player.territroyToAttack != null) {
+					System.out.println(phase);
+					if(player.territoryToAttack != null) {
 						instructionPanel.setText(instructionPanel.newInvisible,
-								"If you would like to attack " + player.territroyToAttack.name.toUpperCase() + " click Continue, otherwise select a different territory.",
+								"If you would like to attack " + player.territoryToAttack.name.toUpperCase() + " click Continue, otherwise select a different territory.",
 								"Continue",
-								"Back");
+								"Place Armies Again");
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private void attackFrom() {
+		instructionPanel.setText(instructionPanel.newVisible,
+				"Select the territory from which you would like to attack ",
+				"Continue Without Attacking",
+				"Rechoose the Territory You Want to Attack");
+		synchronized (game.lock) {
+			while(phase.equals("attackTo")) {
+				try {	
+					game.lock.wait();
+					System.out.println(phase);
+					if(player.territoryToAttack != null) {
+						instructionPanel.setText(instructionPanel.newInvisible,
+								"If you would like to attack from " + player.territoryToAttack.name.toUpperCase() + " click Continue, otherwise select a different territory.",
+								"Continue",
+								"Place Armies Again");
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();

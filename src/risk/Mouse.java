@@ -14,18 +14,20 @@ public class Mouse implements MouseListener {
 	
 	private Board board;
 	private MainGame game;
+	private Turn turn;
 	
 	public Mouse(Board board) {
 		this.board = board;
 		this.game = board.game;
+		this.turn = game.turn;
 	}
 
 	
 
 	public void mouseClicked(MouseEvent e) {
-		game.instructionPanel.newIndicator.setText(game.instructionPanel.newInvisible);
-		if (game.phase.equals("placeArmies")) {
-			Player player = game.activePlayer;
+		game.instructionPanel.newIndicator.setText(turn.instructionPanel.newInvisible);
+		if (turn.phase.equals("placeArmies")) {
+			Player player = turn.player;
 			if (player.armiesToPlace > 0) {
 				PointerInfo a = MouseInfo.getPointerInfo();
 				Point point = new Point(a.getLocation());
@@ -50,7 +52,7 @@ public class Mouse implements MouseListener {
 			}
 		} 
 		
-		if (game.phase.equals("attackTo")) {
+		if (turn.phase.equals("attackTo")) {
 			PointerInfo a = MouseInfo.getPointerInfo();
 			Point point = new Point(a.getLocation());
 			SwingUtilities.convertPointFromScreen(point, e.getComponent());
@@ -64,7 +66,7 @@ public class Mouse implements MouseListener {
 					if (canAttack) {
 						break;
 					}
-					if (t.player.equals(game.activePlayer)) {
+					if (t.player.equals(turn.player)) {
 						canAttack = true;
 						if(t.armies == 1) {
 							canAttack = false;
@@ -72,13 +74,13 @@ public class Mouse implements MouseListener {
 						}
 					}
 				}
-				if (territory.player.equals(game.activePlayer)) {
+				if (territory.player.equals(turn.player)) {
 					canAttack = false;
 					failMsg = "You cannot attack a territory you control";
 				}
 				if (canAttack) {
 					//JOptionPane.showMessageDialog(null, "Attacking " + territory.name);
-					game.activePlayer.territroyToAttack = territory;
+					turn.player.territroyToAttack = territory;
 					synchronized (game.lock) {
 						//game.phase = "attackFrom";
 						game.lock.notifyAll();

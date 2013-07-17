@@ -6,23 +6,25 @@ import java.awt.event.ActionListener;
 public class ButtonYesListener implements ActionListener {
 	
 	public MainGame game;
+	private Turn turn;
 	
 	public ButtonYesListener(MainGame game) {
 		this.game = game;
+		this.turn = game.turn;
 	}
 
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (game.phase.equals("placeArmies")) {
+		if (turn.phase.equals("placeArmies") && turn.player.armiesToPlace == 0) {
 			synchronized (game.lock) {
-				game.nextPhase = true;
+				turn.phase = "attackTo";
 				game.lock.notifyAll();
 			}
 		}
-		if (game.phase.equals("attackTo")) {
+		if (turn.phase.equals("attackTo")) {
 			synchronized (game.lock) {
-				game.nextPhase = true;
+				turn.nextPhase = true;
 				game.lock.notifyAll();
 			}
 		}

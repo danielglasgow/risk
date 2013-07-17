@@ -12,20 +12,24 @@ import javax.swing.JPanel;
 public class InstructionPanel {
 	
 	public JPanel mainPanel;
-	public JLabel textArea;
-	public JLabel placeHolder;
+	public JLabel instruction;
+	public JLabel newIndicator;
 	public JButton buttonNO;
 	public JButton buttonYES;
-	
 	public MainGame game;
+	
+	public final String newVisible = "			NEW			";
+	public final String newInvisible = "									";
 				
 
 	public InstructionPanel(MainGame game) {
 		mainPanel = new JPanel();
-		textArea = new JLabel();
-		placeHolder = new JLabel();
+		instruction = new JLabel();
+		newIndicator = new JLabel();
 		buttonNO = new JButton();
 		buttonYES = new JButton();
+		
+		buttonNO.addActionListener(new ButtonNoListener(game));
 		
 		
 		JPanel buttonArea = new JPanel(new GridLayout(1,2));
@@ -33,19 +37,33 @@ public class InstructionPanel {
 		buttonArea.add(buttonNO);
 		
 		Font instructionFont = new Font("size14", Font.PLAIN, 14);
-		//Font redFont = new Font("red", Font.BOLD, 14);
 		
 		
-		textArea.setFont(instructionFont);
+		
+		instruction.setFont(instructionFont);
 		mainPanel.setLayout(new BorderLayout());
 	
 		
-		placeHolder.setForeground(Color.red);
+		newIndicator.setForeground(Color.red);
 	
-		mainPanel.add(placeHolder, BorderLayout.WEST);
+		mainPanel.add(newIndicator, BorderLayout.WEST);
 		
 		mainPanel.add(buttonArea, BorderLayout.EAST);
-		mainPanel.add(textArea, BorderLayout.CENTER);
+		mainPanel.add(instruction, BorderLayout.CENTER);
+	}
+	
+	public void setText(String newIndicator, String instruction, String buttonYES, String buttonNO) {
+		this.newIndicator.setText(newIndicator);
+		this.instruction.setText(instruction);
+		this.buttonYES.setText(buttonYES);
+		this.buttonNO.setText(buttonNO);
+		
+		
+	}
+	
+	public void setText(String instruction) {
+		this.instruction.setText(instruction);
+		this.newIndicator.setText(newVisible);
 	}
 
 }

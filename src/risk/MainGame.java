@@ -16,11 +16,15 @@ public class MainGame {
 	public Player activePlayer;
 	public Board board;
 	public Object lock = new Object();
+	public InstructionPanel instructionPanel;
+	public ArrayList<Integer> boardArmies = new ArrayList<Integer>();
+	public boolean restartPlaceArmies = false;
 	
 	
 	
 	public MainGame()  {
 		new StartMenu(this);
+		this.instructionPanel = new InstructionPanel(this);
 		this.territories = new InitTerritories(this).territories;
 		this.board = new Board(this);
 		board.updateBackground();
@@ -29,35 +33,35 @@ public class MainGame {
 	
 
 	public void takeTurn(Player player) {
-		ArrayList<Integer> boardArmies = new ArrayList<Integer>();
 		for (Territory t : territories) {
 			boardArmies.add(t.armies);
 		}
-		placeArmies(player, boardArmies, false);
+		placeArmies(false);
 		attack(player);
 	}
 	
-	private void placeArmies(Player player, ArrayList<Integer> boardArmies, Boolean redo) {
+	private void placeArmies(Boolean redo) {
 		if(redo) {
+			restartPlaceArmies = false;
 			int count = 0;
-			for (Territory t: territories) {
+			for (Territory t : territories) {
 				t.armies = boardArmies.get(count);
 				count++;
 			}
 			board.updateBackground();
 		}
-		int armies = player.getTerritories().size()/ 3;
+		int armies = activePlayer.getTerritories().size()/ 3;
 		if (armies < 3) {
 			armies = 3;
 		}
-		player.armiesToPlace = armies;
+		activePlayer.armiesToPlace = armies;
 		phase = "placeArmies";
-		board.instructionPanel.placeHolder.setText("			NEW			");
-		board.instructionPanel.textArea.setText("Place " + armies + " armies on your territories by clicking on the territory's army indicator");
-		board.instructionPanel.buttonNO.setText("restart");
-		board.instructionPanel.buttonYES.setText("continue");
+		instructionPanel.setText(instructionPanel.newVisible,
+				"Distribute " + armies + " armies between your territories by clicking on the territory's army indicator. To start over, click RESTART",
+				"Continue",
+				"Restart");
 		synchronized (lock) {
-			while(player.armiesToPlace > 0) {
+			while(activePlayer.armiesToPlace > 0 && !restartPlaceArmies) {
 				try {
 					lock.wait();
 				} catch (InterruptedException e) {
@@ -65,11 +69,16 @@ public class MainGame {
 				}
 			}
 		}
-		int choice = JOptionPane.showConfirmDialog(null, 
-				"You have placed all your armies. \nYES to continue. NO place your armies again.");
-		if (choice != JOptionPane.YES_OPTION) {
-			placeArmies(player, boardArmies, true);
+		if(restartPlaceArmies) {
+			placeArmies(true); 
+		} else {
+			instructionPanel.setText(instructionPanel.newVisible,
+					"You have placed all of your armies. If you would like to replace armies again click PLACE AGAIN, otherwise click CONTINUE",
+					"Continue",
+					"Place Again");
 		}
+			
+		
 		
 	}
 	

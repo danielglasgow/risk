@@ -2,13 +2,16 @@ package risk;
 
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 public class Board { //make board a JPanel not frame...
@@ -35,12 +38,12 @@ public class Board { //make board a JPanel not frame...
 		currentBackground = new TextOverlay(background);
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(currentBackground, BorderLayout.CENTER);
-		JLabel label = new JLabel();
-		label.setText("bottom");
-		mainFrame.add(label, BorderLayout.SOUTH);
+		InstructionPanel instructionPanel = new InstructionPanel();
+		mainFrame.add(instructionPanel.mainPanel, BorderLayout.SOUTH);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.pack();
 		mainFrame.setVisible(true);
+		mainFrame.setResizable(false);
 		Mouse mouse = new Mouse(this);
 		mainFrame.addMouseListener(mouse);
 		

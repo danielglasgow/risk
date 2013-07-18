@@ -66,7 +66,6 @@ public class Mouse implements MouseListener {
 	}
 	
 	private void attackTo() {
-		System.out.println("msue");
 		if (!game.turn.player.territoryAttackFrom.adjacents.contains(territory)) {
 			JOptionPane.showMessageDialog(null, "You must attack a territory adjacent to " + game.turn.player.territoryAttackFrom.name);
 		} else if (territory.player.equals(game.turn.player)) {
@@ -74,6 +73,10 @@ public class Mouse implements MouseListener {
 		} else {
 			game.turn.player.territoryToAttack = territory;
 			game.turn.phase = "attack";
+			synchronized (game.lock) {
+				game.lock.notifyAll();
+			}
+			
 		}
 	}
 	

@@ -10,7 +10,7 @@ public class Turn {
 	public Player player;
 	public String phase;
 	public InstructionPanel instructionPanel; 
-	public Boolean firstPulse = true;
+	
 	
 	
 	
@@ -29,8 +29,7 @@ public class Turn {
 		phase = "placeArmies";
 
 		while(true) {
-			firstPulse = true;
-			System.out.println("first pulse turn: " + firstPulse);
+			synchronized (game.lock) {
 			if(phase.equals("placeArmies")) {
 				placeArmies();
 			} else if(phase.equals("attackTo")) {
@@ -39,7 +38,7 @@ public class Turn {
 				attackFrom();
 			} else if(phase.equals("attack")) {
 				attack();
-				break;
+			}
 			}
 		}
 	}

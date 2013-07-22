@@ -18,22 +18,22 @@ public class ButtonRightListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (turn.phase.equals("placeArmies")) {
-			synchronized (game.lock) {
+			synchronized (turn.lock) {
 				turn.restartPlaceArmies = true;
-				game.lock.notifyAll();
+				turn.lock.notifyAll();
 			}
 		}
 		if(turn.phase.equals("attackFrom")) {
-			synchronized (game.lock) {
+			synchronized (turn.lock) {
 				turn.phase = "placeArmies";
 				turn.restartPlaceArmies = true;
-				game.lock.notifyAll();
+				turn.lock.notifyAll();
 			}
 		}
 		if (turn.phase.equals("attackTo")) {
-			synchronized (game.lock) {
+			synchronized (turn.lock) {
 				turn.phase = "attackFrom";
-				game.lock.notifyAll();
+				turn.lock.notifyAll();
 			}
 		}
 	}

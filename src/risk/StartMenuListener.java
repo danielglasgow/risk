@@ -7,10 +7,12 @@ public class StartMenuListener implements ActionListener {
 	
 	public MainGame game;
 	private int numPlayers;
+	private StartMenu startMenu;
 	
-	public StartMenuListener(int numPlayers, MainGame game) {
+	public StartMenuListener(int numPlayers, MainGame game, StartMenu startMenu) {
 		this.game = game;
 		this.numPlayers = numPlayers;
+		this.startMenu = startMenu;
 	}
 	
 	public void actionPerformed(ActionEvent event) {
@@ -19,8 +21,11 @@ public class StartMenuListener implements ActionListener {
 			Player player = new Player("Player" + i, colors[i-1], game);
 			game.players.add(player);
 		}
-		synchronized (game.lock) {
-			game.lock.notifyAll();
+		
+		startMenu.startMenuFrame.dispose();
+		game.wait = false;
+		synchronized (game.startMenuLock) {
+			game.startMenuLock.notifyAll();
 		}
 		
 		

@@ -28,6 +28,7 @@ public class Mouse implements MouseListener {
 	
 
 	public void mouseClicked(MouseEvent e) {
+		System.out.println("CLICKED");
 		game.instructionPanel.newIndicator.setText(turn.instructionPanel.newInvisible);
 		PointerInfo a = MouseInfo.getPointerInfo();
 		Point point = new Point(a.getLocation());
@@ -35,6 +36,7 @@ public class Mouse implements MouseListener {
 		x = (int) point.getX();
 		y = (int) point.getY();
 		territory = findMatch(x, y);
+		System.out.println(territory.name);
 		if (!territory.name.equals("NoMatch")) {
 			if (turn.phase.equals("placeArmies")) {
 			placeArmies();
@@ -54,10 +56,10 @@ public class Mouse implements MouseListener {
 		Player player = turn.player;
 		if (player.armiesToPlace > 0) {
 			if(territory.player.name.equals(player.name)) {
-				synchronized (game.lock) {
+				synchronized (turn.lock) {
 					territory.armies++;
 					player.armiesToPlace--;
-					game.lock.notifyAll();
+					turn.lock.notifyAll();
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "You must place armies on territories you control");
@@ -73,8 +75,8 @@ public class Mouse implements MouseListener {
 		} else {
 			game.turn.player.territoryToAttack = territory;
 			game.turn.phase = "attack";
-			synchronized (game.lock) {
-				game.lock.notifyAll();
+			synchronized (turn.lock) {
+				turn.lock.notifyAll();
 			}
 			
 		}
@@ -93,8 +95,8 @@ public class Mouse implements MouseListener {
 		}
 		if (canAttackFrom) {
 			turn.player.territoryAttackFrom = territory;
-			synchronized (game.lock) {
-				game.lock.notifyAll();
+			synchronized (turn.lock) {
+				turn.lock.notifyAll();
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, failMsg);

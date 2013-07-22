@@ -9,7 +9,7 @@ public class ButtonLeftListener implements ActionListener {
 	
 	public MainGame game;
 	private Turn turn;
-	private int count;
+
 	
 
 
@@ -22,35 +22,32 @@ public class ButtonLeftListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		count++;
 		if (turn.phase.equals("placeArmies")) {
 			if (turn.player.armiesToPlace != 0) {
 				JOptionPane.showMessageDialog(null, "You still have " + game.turn.player.armiesToPlace + " armies to place.");
 			} else {
-				synchronized (game.lock) {
+				synchronized (turn.lock) {
 					turn.phase = "attackFrom";
-					game.lock.notifyAll();
+					turn.lock.notifyAll();
 				}
 			}
 		} else if (turn.phase.equals("attackFrom")) {
 			if(game.turn.instructionPanel.buttonLeft.getText().length() < 10 && turn.player.territoryAttackFrom != null) { //continue vs continue without attacking
-				synchronized (game.lock) {
+				synchronized (turn.lock) {
 					turn.phase = "attackTo";
-					game.lock.notifyAll();
+					turn.lock.notifyAll();
 				}
 			} else {
-				synchronized (game.lock) {
+				synchronized (turn.lock) {
 					turn.phase = "attack";
-					game.lock.notifyAll();
+					turn.lock.notifyAll();
 				}
 			}
 		} else if (turn.phase.equals("attackTo")) {
-			synchronized (game.lock) {
+			synchronized (turn.lock) {
 				turn.phase = "attack";
-				game.lock.notifyAll();
+				turn.lock.notifyAll();
 			}
 		}
-	
-	System.out.println(count + turn.phase); 
 	}
 }

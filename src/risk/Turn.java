@@ -10,7 +10,8 @@ public class Turn {
 	public Player player;
 	public String phase;
 	public InstructionPanel instructionPanel; 
-	
+	public Object phaseLock = new Object();
+	public Object lock = new Object();
 	
 	
 	
@@ -29,19 +30,17 @@ public class Turn {
 		phase = "placeArmies";
 
 		while(true) {
-			synchronized (game.lock) {
-			if(phase.equals("placeArmies")) {
-				placeArmies();
-			} else if(phase.equals("attackTo")) {
-				attackTo();
-			} else if(phase.equals("attackFrom")) {
-				attackFrom();
-			} else if(phase.equals("attack")) {
-				attack();
-			}
+				if(phase.equals("placeArmies")) {
+					placeArmies();
+				} else if(phase.equals("attackTo")) {
+					attackTo();
+				} else if(phase.equals("attackFrom")) {
+					attackFrom();
+				} else if(phase.equals("attack")) {
+					attack();
+				}
 			}
 		}
-	}
 	
 	private void placeArmies() {
 		if(restartPlaceArmies) {
@@ -62,10 +61,10 @@ public class Turn {
 				"Distribute " + armies + " armies between your territories by clicking on the territory's army indicator. To start over, click Restart",
 				"Continue",
 				"Restart");
-		synchronized (game.lock) {
+		synchronized (lock) {
 			while(player.armiesToPlace > 0 && !restartPlaceArmies) {
 				try {
-					game.lock.wait();
+					lock.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -77,10 +76,10 @@ public class Turn {
 					"Continue",
 					"Place Again");
 		}
-		synchronized (game.lock) {
+		synchronized (lock) {
 			while(phase.equals("placeArmies") && !restartPlaceArmies) {
 				try {
-					game.lock.wait();
+					lock.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -93,10 +92,10 @@ public class Turn {
 				"Select the territory you would like to attack.",
 				"Continue Without Attacking",
 				"Choose a Different Territory to Attack From");
-		synchronized (game.lock) {
+		synchronized (lock) {
 			while(phase.equals("attackTo")) {
 				try {	
-					game.lock.wait();
+					lock.wait();
 					if(player.territoryToAttack != null) {
 						instructionPanel.setText(instructionPanel.newVisible,
 								"If you would like to attack " + player.territoryToAttack.name.toUpperCase() + " click Continue, otherwise select a different territory to attack.",
@@ -115,10 +114,10 @@ public class Turn {
 				"Select the territory you would like to attack from",
 				"Continue Without Attacking",
 				"Place Armies Again");
-		synchronized (game.lock) {
+		synchronized (lock) {
 			while(phase.equals("attackFrom")) {
 				try {	
-					game.lock.wait();
+					lock.wait();
 					if(player.territoryAttackFrom != null) {
 						instructionPanel.setText(instructionPanel.newInvisible,
 								"If you would like to attack from " + player.territoryAttackFrom.name.toUpperCase() + " click Continue, otherwise select a different territory.",

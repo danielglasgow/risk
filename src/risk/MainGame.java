@@ -9,12 +9,23 @@ public class MainGame {
 	public ArrayList<Territory> territories =  new ArrayList<Territory>();
 	public ArrayList<Player> players =  new ArrayList<Player>();
 	public Board board;
-	public Object lock = new Object();
+	public Object startMenuLock = new Object();
 	public InstructionPanel instructionPanel;
 	public Turn turn;
+	public boolean wait = true;
 
 	public MainGame()  {
 		new StartMenu(this);
+		while(wait) {
+			synchronized (startMenuLock) {
+				try {
+					startMenuLock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		this.turn = new Turn(this);
 		this.instructionPanel = new InstructionPanel(this);
 		

@@ -8,10 +8,12 @@ import javax.swing.JLabel;
 public class StartMenu {
 	
 	public MainGame game;
+	public JFrame startMenuFrame;
 	
 	public StartMenu(MainGame game) {
 		this.game = game;
-		chooseNumberPlayers();
+		startMenuFrame = new JFrame();
+		startMenu(startMenuFrame);
 	}
 
 	private void startMenu(JFrame startMenu) {
@@ -22,27 +24,15 @@ public class StartMenu {
 		startMenu.add(prompt);
 		for (int i = 2; i <=6; i++) {
 			JButton button = new JButton();
-			button.addActionListener(new StartMenuListener(i, game));
+			button.addActionListener(new StartMenuListener(i, game, this));
 			button.setText("" + i);
 			startMenu.add(button);
 		}
 		startMenu.pack();
-		startMenu.setVisible(true);	
+		startMenu.setVisible(true);
+		
 	}
 	
-	private void chooseNumberPlayers() {
-		JFrame startMenuFrame = new JFrame();
-		startMenu(startMenuFrame);
-		synchronized (game.lock) {
-			while(game.players.size() == 0) {
-				try {
-					game.lock.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		startMenuFrame.dispose();
-	}
+	
 
 }

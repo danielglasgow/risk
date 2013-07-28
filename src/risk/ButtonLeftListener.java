@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 public class ButtonLeftListener implements ActionListener {
 	
 	public MainGame game;
-	private Turn turn;
+	private PlayerTurn turn;
 
 	
 
@@ -16,7 +16,7 @@ public class ButtonLeftListener implements ActionListener {
 	
 	public ButtonLeftListener(MainGame game) {
 		this.game = game;
-		this.turn = game.turn;
+		this.turn = game.playerTurn;
 	}
 
 
@@ -24,7 +24,7 @@ public class ButtonLeftListener implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		if (turn.phase.equals("placeArmies")) {
 			if (turn.player.armiesToPlace != 0) {
-				JOptionPane.showMessageDialog(null, "You still have " + game.turn.player.armiesToPlace + " armies to place.");
+				JOptionPane.showMessageDialog(null, "You still have " + game.playerTurn.player.armiesToPlace + " armies to place.");
 			} else {
 				synchronized (turn.lock) {
 					turn.phase = "attackFrom";
@@ -32,21 +32,42 @@ public class ButtonLeftListener implements ActionListener {
 				}
 			}
 		} else if (turn.phase.equals("attackFrom")) {
-			if(game.turn.instructionPanel.buttonLeft.getText().length() < 10 && turn.player.territoryAttackFrom != null) { //continue vs continue without attacking
 				synchronized (turn.lock) {
-					turn.phase = "attackTo";
+					if (turn.player.territoryAttackFrom != null) {
+						turn.phase = "attackTo";
+					} else {
+						turn.phase = "fortifySelection";
+					}
 					turn.lock.notifyAll();
-				}
-			} else {
-				synchronized (turn.lock) {
-					turn.phase = "attack";
-					turn.lock.notifyAll();
-				}
 			}
-		} else if (turn.phase.equals("attackTo")) {
+		} else if (turn.phase.equals("attack")) {
 			synchronized (turn.lock) {
-				turn.phase = "attack";
+				if (turn.attackWon) {
+					if (turn.player.territoryAttackFrom.armies > 1) {
+						turn.phase = "wonTerritory";
+					} else {
+						turn.phase = "attackFrom";
+					}
+				}
 				turn.lock.notifyAll();
+			}
+		} else if(turn.phase.equals("wonTerritory")) {
+			synchronized (turn.lock) {
+				int armies = --turn.player.territoryAttackFrom.armies;
+				turn.player.territoryAttackTo.armies += armies;
+				turn.player.territoryAttackFrom.armies = 1;
+				turn.phase = "attackFrom";
+				game.board.updateBackground();
+				turn.lock.notifyAll();
+			}
+		} else if (turn.phase.equals("fortifySelection")) {
+			synchronized (turn.lock) {
+				if (turn.player.fortify1 != null && turn.player.fortify2 != null) {
+					turn.phase = "fortify";
+					turn.lock.notifyAll();
+				} else {
+					JOptionPane.showMessageDialog(null, "You must select two territories to fortify from first");
+				}
 			}
 		}
 	}

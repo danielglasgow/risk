@@ -6,12 +6,12 @@ import java.awt.event.ActionListener;
 public class ButtonRightListener implements ActionListener {
 	
 	public MainGame game;
-	private Turn turn;
+	private PlayerTurn turn;
 	
 	
 	public ButtonRightListener(MainGame game) {
 		this.game = game;
-		this.turn = game.turn;
+		this.turn = game.playerTurn;
 	}
 
 
@@ -22,17 +22,19 @@ public class ButtonRightListener implements ActionListener {
 				turn.restartPlaceArmies = true;
 				turn.lock.notifyAll();
 			}
-		}
-		if(turn.phase.equals("attackFrom")) {
-			synchronized (turn.lock) {
-				turn.phase = "placeArmies";
-				turn.restartPlaceArmies = true;
-				turn.lock.notifyAll();
-			}
-		}
-		if (turn.phase.equals("attackTo")) {
+		} else if (turn.phase.equals("attackTo") || (turn.phase.equals("attack") && !turn.attackWon)) {
 			synchronized (turn.lock) {
 				turn.phase = "attackFrom";
+				turn.lock.notifyAll();
+			}
+		} else if (turn.phase.equals("wonTerritory")) {
+			synchronized (turn.lock) {
+				turn.phase = "attackFrom";
+				turn.lock.notifyAll();
+			}
+		} else if (turn.phase.equals("fortifySelection") || turn.phase.equals("fortify")) {
+			synchronized (turn.lock) {
+				turn.phase = "endTurn";
 				turn.lock.notifyAll();
 			}
 		}

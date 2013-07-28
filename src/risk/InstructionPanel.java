@@ -17,6 +17,8 @@ public class InstructionPanel {
 	public JButton buttonRight;
 	public JButton buttonLeft;
 	public MainGame game;
+	public JPanel buttonArea2;
+	public JPanel buttonArea1;
 	
 	public final String newVisible = "			NEW			";
 	public final String newInvisible = "									";
@@ -32,10 +34,13 @@ public class InstructionPanel {
 		buttonRight.addActionListener(new ButtonRightListener(game));
 		buttonLeft.addActionListener(new ButtonLeftListener(game));
 		
+		//failed two vs one button interface...
+		buttonArea2 = new JPanel(new GridLayout(1,2));
+		buttonArea2.add(this.buttonLeft);
+		buttonArea2.add(this.buttonRight);
 		
-		JPanel buttonArea = new JPanel(new GridLayout(1,2));
-		buttonArea.add(buttonLeft);
-		buttonArea.add(buttonRight);
+		buttonArea1 = new JPanel(new GridLayout(1,1));
+
 		
 		Font instructionFont = new Font("size14", Font.PLAIN, 14);
 		
@@ -49,22 +54,29 @@ public class InstructionPanel {
 	
 		mainPanel.add(newIndicator, BorderLayout.WEST);
 		
-		mainPanel.add(buttonArea, BorderLayout.EAST);
+		mainPanel.add(buttonArea2, BorderLayout.EAST);
 		mainPanel.add(instruction, BorderLayout.CENTER);
 	}
 	
-	public void setText(String newIndicator, String instruction, String buttonYES, String buttonNO) {
+	public void setText(String newIndicator, String instruction, String buttonLeft, String buttonRight) {
+		//buttonArea2.add(this.buttonLeft);
+		//buttonArea2.add(this.buttonRight);
+		//mainPanel.add(buttonArea2, BorderLayout.EAST);
 		this.newIndicator.setText(newIndicator);
 		this.instruction.setText(instruction);
-		this.buttonLeft.setText(buttonYES);
-		this.buttonRight.setText(buttonNO);
+		this.buttonLeft.setText(buttonLeft);
+		this.buttonRight.setText(buttonRight);
 		
 		
 	}
 	
-	public void setText(String instruction) {
+	public void setText(String newIndicator, String instruction, String buttonLeft) {
+		//buttonArea1.add(this.buttonLeft);
+		//mainPanel.add(buttonArea1, BorderLayout.EAST);
+		this.newIndicator.setText(newIndicator);
 		this.instruction.setText(instruction);
-		this.newIndicator.setText(newVisible);
+		this.buttonLeft.setText(buttonLeft);
+		
 	}
 
 }

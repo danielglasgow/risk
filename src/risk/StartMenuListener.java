@@ -19,7 +19,7 @@ public class StartMenuListener implements ActionListener {
 		String[] colors = {"red", "blue", "green", "black", "yellow", "orange"};
 		for (int i = 1; i <= numPlayers; i++) {
 			Player player = new Player("Player" + i, colors[i-1], game);
-			game.players.add(player);
+			MainGame.players.add(player);
 		}
 		
 		startMenu.startMenuFrame.dispose();

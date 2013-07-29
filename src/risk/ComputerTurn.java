@@ -2,6 +2,8 @@ package risk;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class ComputerTurn {
@@ -9,6 +11,7 @@ public class ComputerTurn {
 	public Player player; 
 	private ArrayList<Continent> continentRatios = new ArrayList<Continent>();
 	private Continent goalContinent;
+	private ArrayList<Territory> path = new ArrayList<Territory>();
 	private int armiesToPlace;
 	
 	
@@ -19,14 +22,12 @@ public class ComputerTurn {
 	
 	public void takeTurn(Player player) {
 		this.player = player;
-		armiesToPlace = player.getTerritories().size() / 3;
-		if (armiesToPlace < 3) {
-			armiesToPlace = 3;
-		}
-		armiesToPlace += checkContinents();
+		setArmiesToPlace();
 		setGoalContinent();
 		System.out.println(goalContinent.name);
-		printTerritories(goalContinent.boarders);
+		for (Territory t : goalContinent.getTerritories(player, false)) {
+		//	System.out.println(t.name + ": " + hasPath)
+		}
 		
 	}
 	
@@ -36,6 +37,14 @@ public class ComputerTurn {
 			territoryNames.add(t.name);
 		}
 		System.out.println(territoryNames);
+	}
+	
+	private void setArmiesToPlace() {
+		armiesToPlace = player.getTerritories().size() / 3;
+		if (armiesToPlace < 3) {
+			armiesToPlace = 3;
+		}
+		armiesToPlace += checkContinents();
 	}
 	
 	private void setGoalContinent() {
@@ -73,8 +82,43 @@ public class ComputerTurn {
 			}
 				
 		}
-		//controlledArmies + 
+		if (controlledArmies + armiesToPlace > 2 * enemyArmies) {
+			return true;
+		}
 	return false;
+	}
+	
+	
+	
+	private void hasPath(ArrayList<Territory> territories) {
+		for (Territory t : territories) {
+			hasPath(t.adjacents);
+		}
+		
+		
+	}
+	
+	private void buildPath(ArrayList<Territory> used) {
+		
+	}
+	
+	
+	private Set<Territory> qualifyingAdjacentTerritories(Territory territory, Set<Territory> territories) {
+		Set<Territory> adjacentControlled = new HashSet<Territory>();
+		for (Territory t : territory.adjacents) {
+			if(!t.player.equals(player) && territories.contains(t)) {
+				adjacentControlled.add(t);
+			}
+		}
+		return adjacentControlled;
+	}
+	
+	private void placeArmies() {
+		if (captureGoalContinent()) {
+			//lots of code
+		} else {
+			
+		}
 	}
 	
 	private boolean hasContinent(Continent continent) {

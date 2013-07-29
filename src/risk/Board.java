@@ -35,7 +35,7 @@ public class Board { //make board a JPanel not frame...
 		currentBackground = new TextOverlay(background);
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(currentBackground, BorderLayout.CENTER);
-		mainFrame.add(game.instructionPanel.mainPanel, BorderLayout.SOUTH);
+		mainFrame.add(game.instructionPanel.getMainPanel(), BorderLayout.SOUTH);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.pack();
 		mainFrame.setVisible(true);

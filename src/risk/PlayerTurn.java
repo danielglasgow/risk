@@ -6,26 +6,21 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-
-
 public class PlayerTurn {
 	
-	public MainGame game;
-	private ArrayList<Integer> boardArmies = new ArrayList<Integer>();
+	private final MainGame game;
+	private final ArrayList<Integer> boardArmies = new ArrayList<Integer>();
 	public boolean restartPlaceArmies = false;
 	public Player player;
-	public String phase;
+	public Phase phase;
 	public InstructionPanel instructionPanel; 
 	public Object phaseLock = new Object();
 	public Object lock = new Object();
 	public boolean attackWon;
-	
-	
-	
+		
 	public PlayerTurn(MainGame game) {
 		this.game = game;
 	}
-	
 	
 	public void takeTurn(Player player) {
 		for (Territory t : game.territories) {
@@ -34,25 +29,25 @@ public class PlayerTurn {
 		this.instructionPanel = game.instructionPanel;
 		this.player = player;
 		
-		phase = "placeArmies";
+		phase = Phase.PLACE_ARMIES;
 		
 		boolean endTurn = false;
-		while(!endTurn) {
-				if(phase.equals("placeArmies")) {
+		while (!endTurn) {
+				if (phase == Phase.PLACE_ARMIES) {
 					placeArmies();
-				} else if(phase.equals("attackTo")) {
+				} else if (phase == Phase.ATTACK_TO) {
 					attackTo();
-				} else if(phase.equals("attackFrom")) {
+				} else if (phase == Phase.ATTACK_FROM) {
 					attackFrom();
-				} else if(phase.equals("attack")) {
+				} else if (phase == Phase.ATTACK) {
 					attack();
-				} else if(phase.equals("wonTerritory")) {
+				} else if (phase == Phase.WON_TERRITORY) {
 					wonTerritory();
-				} else if (phase.equals("fortifySelection")) {
+				} else if (phase == Phase.FORTIFY_SELECTION) {
 					fortifySelection();
-				} else if (phase.equals("fortify")) {
+				} else if (phase == Phase.FORTIFY) {
 					fortify();
-				} else if (phase.equals("endTurn")) {
+				} else if (phase == Phase.END_TURN) {
 					endTurn = true;
 				}
 			}
@@ -156,7 +151,7 @@ public class PlayerTurn {
 					attackSimulator();
 					boolean attackLost = false;
 					if (player.territoryAttackFrom.armies < 2 && !attackWon) {
-						phase = "attackFrom";
+						phase = Phase.ATTACK_FROM;
 						attackLost = true;
 						JOptionPane.showMessageDialog(null, "You can no longer attack from " + player.territoryAttackFrom.name + " because it only has one army");
 					} 

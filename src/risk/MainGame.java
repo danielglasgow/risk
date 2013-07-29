@@ -1,12 +1,8 @@
 package risk;
 
-
 import java.util.ArrayList;
 
-
-
 public class MainGame {
-	
 	public ArrayList<Territory> territories =  new ArrayList<Territory>();
 	public static ArrayList<Player> players =  new ArrayList<Player>();
 	public ArrayList<Continent> continents = new ArrayList<Continent>();
@@ -17,9 +13,13 @@ public class MainGame {
 	public ComputerTurn compTurn;
 	public boolean wait = true;
 
-	public MainGame()  {	
+	public MainGame()  {
+		this.playerTurn = new PlayerTurn(this);	
+	}
+	
+	public void startGame() {
 		new StartMenu(this);
-		while(wait) {
+		while (wait) {
 			synchronized (startMenuLock) {
 				try {
 					startMenuLock.wait();
@@ -29,13 +29,21 @@ public class MainGame {
 			}
 		}
 		
-		this.playerTurn = new PlayerTurn(this);
-		this.compTurn = new ComputerTurn(this);
+
+		/* this.compTurn = new ComputerTurn(this); */
 		this.instructionPanel = new InstructionPanel(this);
 		
 		this.territories = new InitTerritories(this).territories;
 		this.board = new Board(this);
 		board.updateBackground();
+	}
+
+	public void play() {
+		int count = 0;
+		while (true) {
+			playerTurn.takeTurn(MainGame.players.get(count % players.size()));
+			count++;
+		}
 	}
 	
 	public Territory getTerritory(String name) {
@@ -50,11 +58,8 @@ public class MainGame {
 	
 	public static void main(String[] args) {
 		MainGame game = new MainGame();
-		int count = 0;
-		//while (true) {
-			game.compTurn.takeTurn(MainGame.players.get(count % players.size()));
-			count++;
-		//}
+		game.startGame();
+		game.play();
 	}
 
 }

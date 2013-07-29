@@ -9,61 +9,56 @@ public class ButtonLeftListener implements ActionListener {
 	
 	public MainGame game;
 	private PlayerTurn turn;
-
-	
-
-
 	
 	public ButtonLeftListener(MainGame game) {
 		this.game = game;
 		this.turn = game.playerTurn;
 	}
 
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (turn.phase.equals("placeArmies")) {
+		if (turn.phase == Phase.PLACE_ARMIES) {
 			if (turn.player.armiesToPlace != 0) {
 				JOptionPane.showMessageDialog(null, "You still have " + game.playerTurn.player.armiesToPlace + " armies to place.");
 			} else {
 				synchronized (turn.lock) {
-					turn.phase = "attackFrom";
+					turn.phase = Phase.ATTACK_FROM;
 					turn.lock.notifyAll();
 				}
 			}
-		} else if (turn.phase.equals("attackFrom")) {
+		} else if (turn.phase == Phase.ATTACK_FROM) {
 				synchronized (turn.lock) {
 					if (turn.player.territoryAttackFrom != null) {
-						turn.phase = "attackTo";
+						turn.phase = Phase.ATTACK_TO;
 					} else {
-						turn.phase = "fortifySelection";
+						turn.phase = Phase.FORTIFY_SELECTION;
 					}
 					turn.lock.notifyAll();
 			}
-		} else if (turn.phase.equals("attack")) {
+		} else if (turn.phase == Phase.ATTACK) {
 			synchronized (turn.lock) {
 				if (turn.attackWon) {
 					if (turn.player.territoryAttackFrom.armies > 1) {
-						turn.phase = "wonTerritory";
+						turn.phase = Phase.WON_TERRITORY;
 					} else {
-						turn.phase = "attackFrom";
+						turn.phase = Phase.ATTACK_FROM;
 					}
 				}
 				turn.lock.notifyAll();
 			}
-		} else if(turn.phase.equals("wonTerritory")) {
+		} else if(turn.phase == Phase.WON_TERRITORY) {
 			synchronized (turn.lock) {
 				int armies = --turn.player.territoryAttackFrom.armies;
 				turn.player.territoryAttackTo.armies += armies;
 				turn.player.territoryAttackFrom.armies = 1;
-				turn.phase = "attackFrom";
+				turn.phase = Phase.ATTACK_FROM;
 				game.board.updateBackground();
 				turn.lock.notifyAll();
 			}
-		} else if (turn.phase.equals("fortifySelection")) {
+		} else if (turn.phase == Phase.FORTIFY_SELECTION) {
 			synchronized (turn.lock) {
 				if (turn.player.fortify1 != null && turn.player.fortify2 != null) {
-					turn.phase = "fortify";
+					turn.phase = Phase.FORTIFY;
 					turn.lock.notifyAll();
 				} else {
 					JOptionPane.showMessageDialog(null, "You must select two territories to fortify from first");

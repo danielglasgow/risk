@@ -32,7 +32,7 @@ public class Mouse implements MouseListener {
 	
 
 	public void mouseClicked(MouseEvent e) {
-		game.instructionPanel.newIndicator.setText(turn.instructionPanel.newInvisible);
+		game.instructionPanel.newIndicator.setText(InstructionPanel.newInvisible);
 		PointerInfo a = MouseInfo.getPointerInfo();
 		Point point = new Point(a.getLocation());
 		SwingUtilities.convertPointFromScreen(point, e.getComponent());
@@ -40,17 +40,17 @@ public class Mouse implements MouseListener {
 		y = (int) point.getY();
 		territory = findMatch(x, y);
 		if (!territory.name.equals("NoMatch")) {
-			if (turn.phase.equals("placeArmies")) {
+			if (turn.phase == Phase.PLACE_ARMIES) {
 			placeArmies();
-			} else if (turn.phase.equals("attackFrom")) {
+			} else if (turn.phase == Phase.ATTACK_FROM) {
 			attackFrom();
-			} else if (turn.phase.equals("attackTo")) {
+			} else if (turn.phase == Phase.ATTACK_TO) {
 				attackTo();
-			} else if (turn.phase.equals("wonTerritory")) {
+			} else if (turn.phase == Phase.WON_TERRITORY) {
 				wonTerritory();
-			} else if (turn.phase.equals("fortifySelection")) {
+			} else if (turn.phase == Phase.FORTIFY_SELECTION) {
 				fortifySelection();
-			} else if (turn.phase.equals("fortify")) {
+			} else if (turn.phase == Phase.FORTIFY) {
 				fortify();
 			}
 		} else {
@@ -140,7 +140,7 @@ public class Mouse implements MouseListener {
 			JOptionPane.showMessageDialog(null, "You cannot attack a territory you control");
 		} else {
 			game.playerTurn.player.territoryAttackTo = territory;
-			game.playerTurn.phase = "attack";
+			game.playerTurn.phase = Phase.ATTACK;
 			synchronized (turn.lock) {
 				turn.lock.notifyAll();
 			}
@@ -201,7 +201,7 @@ public class Mouse implements MouseListener {
 		}
 		if (canAttackFrom) {
 			turn.player.territoryAttackFrom = territory;
-			turn.phase = "attackTo";
+			turn.phase = Phase.ATTACK_TO;
 			synchronized (turn.lock) {
 				turn.lock.notifyAll();
 			}

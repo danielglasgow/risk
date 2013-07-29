@@ -17,24 +17,24 @@ public class ButtonRightListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (turn.phase.equals("placeArmies")) {
+		if (turn.phase == Phase.PLACE_ARMIES) {
 			synchronized (turn.lock) {
 				turn.restartPlaceArmies = true;
 				turn.lock.notifyAll();
 			}
-		} else if (turn.phase.equals("attackTo") || (turn.phase.equals("attack") && !turn.attackWon)) {
+		} else if (turn.phase == Phase.ATTACK_TO || (turn.phase == Phase.ATTACK && !turn.attackWon)) {
 			synchronized (turn.lock) {
-				turn.phase = "attackFrom";
+				turn.phase = Phase.ATTACK_FROM;
 				turn.lock.notifyAll();
 			}
-		} else if (turn.phase.equals("wonTerritory")) {
+		} else if (turn.phase == Phase.WON_TERRITORY) {
 			synchronized (turn.lock) {
-				turn.phase = "attackFrom";
+				turn.phase = Phase.ATTACK_FROM;
 				turn.lock.notifyAll();
 			}
-		} else if (turn.phase.equals("fortifySelection") || turn.phase.equals("fortify")) {
+		} else if (turn.phase == Phase.FORTIFY_SELECTION || turn.phase == Phase.FORTIFY) {
 			synchronized (turn.lock) {
-				turn.phase = "endTurn";
+				turn.phase = Phase.END_TURN;
 				turn.lock.notifyAll();
 			}
 		}

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Continent implements Comparable<Continent> {
 
-	public ArrayList<Territory> territories = new ArrayList<Territory>();
-	public ArrayList<Territory> boarders = new ArrayList<Territory>();
-	public String name;
+	public final ArrayList<Territory> territories = new ArrayList<Territory>();
+	public final ArrayList<Territory> borders = new ArrayList<Territory>();
+	public final String name;
 	public int bonusArmies;
 	public double ratio;
 	
@@ -50,15 +50,15 @@ public class Continent implements Comparable<Continent> {
 		return 0;
 	}
 	
-	public void addBoarders() {
+	public void addBorders() {
 		for (Territory t : territories) {
-			if (isBoarder(t)) {
-				boarders.add(t);
+			if (isBorder(t)) {
+				borders.add(t);
 			}
 		}
 	}
 	
-	private boolean isBoarder(Territory territory) {
+	private boolean isBorder(Territory territory) {
 		for (Territory t : territory.adjacents) {
 			if (!territories.contains(t)) {
 				return true;
@@ -66,8 +66,4 @@ public class Continent implements Comparable<Continent> {
 		}
 		return false;
 	}
-
-	
-
-	
 }

@@ -27,8 +27,6 @@ public class StartMenuListener implements ActionListener {
 		synchronized (game.startMenuLock) {
 			game.startMenuLock.notifyAll();
 		}
-		
-		
 	}
 
 }

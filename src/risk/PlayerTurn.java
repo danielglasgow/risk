@@ -76,7 +76,7 @@ public class PlayerTurn {
 		armies += checkContinents();
 		
 		player.armiesToPlace = armies;
-		instructionPanel.setText(instructionPanel.newVisible,
+		instructionPanel.setText(InstructionPanel.newVisible,
 				player.color.toUpperCase() +  "'s turn! Distribute " + armies + " armies between your territories by clicking on the territory's army indicator.",
 				"Continue",
 				"Restart Army Placement");
@@ -84,7 +84,7 @@ public class PlayerTurn {
 			while(player.armiesToPlace > 0 && !restartPlaceArmies) {
 				try {
 					lock.wait();
-					instructionPanel.setText(instructionPanel.newVisible,
+					instructionPanel.setText(InstructionPanel.newVisible,
 							player.color.toUpperCase() +  "'s turn! Distribute " + player.armiesToPlace + " armies between your territories by clicking on the territory's army indicator.",
 							"Continue",
 							"Restart Army Placement");
@@ -93,14 +93,14 @@ public class PlayerTurn {
 				}
 			}
 		}
-		if(!restartPlaceArmies) {
-			instructionPanel.setText(instructionPanel.newVisible,
+		if (!restartPlaceArmies) {
+			instructionPanel.setText(InstructionPanel.newVisible,
 					"You have placed all of your armies. If you would like to replace armies again click Place Again, otherwise click Continue",
 					"Continue",
 					"Place Again");
 		}
 		synchronized (lock) {
-			while(phase.equals("placeArmies") && !restartPlaceArmies) {
+			while (phase == Phase.PLACE_ARMIES && !restartPlaceArmies) {
 				try {
 					lock.wait();
 				} catch (InterruptedException e) {
@@ -111,12 +111,12 @@ public class PlayerTurn {
 	}
 	
 	private void attackTo() {
-		instructionPanel.setText(instructionPanel.newVisible,
+		instructionPanel.setText(InstructionPanel.newVisible,
 				"Attacking from " + player.territoryAttackFrom.name + ".  Select the territory you would like to attack.",
 				"---",
 				"Choose a Different Territory to Attack From");
 		synchronized (lock) {
-			while(phase.equals("attackTo")) {
+			while (phase == Phase.ATTACK_TO) {
 				try {	
 					lock.wait();
 				} catch (InterruptedException e) {
@@ -128,12 +128,12 @@ public class PlayerTurn {
 	
 	private void attackFrom() {
 		player.territoryAttackFrom = null;
-		instructionPanel.setText(instructionPanel.newVisible,
+		instructionPanel.setText(InstructionPanel.newVisible,
 				"Select the territory you would like to attack from",
 				"End Attack Phase",
 				"---");
 		synchronized (lock) {
-			while(phase.equals("attackFrom")) {
+			while (phase == Phase.ATTACK_FROM) {
 				try {	
 					lock.wait();
 				} catch (InterruptedException e) {
@@ -147,7 +147,7 @@ public class PlayerTurn {
 		attackWon = false;
 		if (player.territoryAttackFrom != null && player.territoryAttackTo != null) {
 			synchronized (lock) {
-				while(phase.equals("attack")) {
+				while (phase == Phase.ATTACK_FROM) {
 					attackSimulator();
 					boolean attackLost = false;
 					if (player.territoryAttackFrom.armies < 2 && !attackWon) {
@@ -168,12 +168,12 @@ public class PlayerTurn {
 	}
 	
 	private void fortifySelection() {
-		instructionPanel.setText(instructionPanel.newVisible,
+		instructionPanel.setText(InstructionPanel.newVisible,
 				"Click on two territories to fortify",
 				"Continue",
 				"End Turn");
 		synchronized (lock) {
-			while(phase.equals("fortifySelection")) {
+			while(phase == Phase.FORTIFY_SELECTION) {
 				try {
 					lock.wait();
 				} catch (InterruptedException e) {
@@ -184,12 +184,12 @@ public class PlayerTurn {
 					fort2 = player.fortify2.name + " (click continue or select territories again)";
 				} 
 				if (player.fortify1 == null) {
-					instructionPanel.setText(instructionPanel.newInvisible, 
+					instructionPanel.setText(InstructionPanel.newInvisible, 
 							"Click on two territories to fortify",
 							"Continue",
 							"End Turn");
 				} else {
-					instructionPanel.setText(instructionPanel.newInvisible, 
+					instructionPanel.setText(InstructionPanel.newInvisible, 
 							"Fortify from " + player.fortify1.name +" to " + fort2,
 							"Continue",
 							"End Turn");
@@ -247,12 +247,12 @@ public class PlayerTurn {
 		player.territoryAttackTo.armies -= defenseLosses;
 		
 		String winMsg = "";
-		String newVisibility = instructionPanel.newInvisible;
+		String newVisibility = InstructionPanel.newInvisible;
 		String buttonLeft = "Continue Attacking";
 		String buttonRight = "Stop Attacking";
 		if (player.territoryAttackTo.armies < 1) {
 			winMsg = "You have defeated " + player.territoryAttackTo.name + "!";
-			newVisibility = instructionPanel.newVisible;
+			newVisibility = InstructionPanel.newVisible;
 			buttonLeft = "Continue";
 			buttonRight = "---";
 			player.territoryAttackFrom.armies--;
@@ -276,13 +276,13 @@ public class PlayerTurn {
 	}
 	
 	private void wonTerritory() {
-		instructionPanel.setText(instructionPanel.newVisible,
+		instructionPanel.setText(InstructionPanel.newVisible,
 				"Click on " + player.territoryAttackTo.name + " to move armies from " + player.territoryAttackFrom.name + ". Click on " + player.territoryAttackFrom.name + " to move armies from " + player.territoryAttackTo.name ,
 				"Move All",
 				"Continue");
 		
 		synchronized (lock) {
-			while(phase.equals("wonTerritory")) {
+			while (phase == Phase.WON_TERRITORY) {
 				try {
 					lock.wait();
 				} catch (InterruptedException e) {
@@ -293,12 +293,12 @@ public class PlayerTurn {
 	}
 	
 	private void fortify() {
-		instructionPanel.setText(instructionPanel.newVisible,
+		instructionPanel.setText(InstructionPanel.newVisible,
 				"Click on " + player.fortify1.name + " to move armies from " + player.fortify2.name + ". Click on " + player.fortify2.name + " to move armies from " + player.fortify1.name ,
 				"---",
 				"End Turn");
 		synchronized (lock) {
-			while(phase.equals("wonTerritory")) {
+			while (phase == Phase.WON_TERRITORY) {
 				try {
 					lock.wait();
 				} catch (InterruptedException e) {

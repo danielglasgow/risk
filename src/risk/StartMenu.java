@@ -7,8 +7,8 @@ import javax.swing.JLabel;
 
 public class StartMenu {
 	
-	public MainGame game;
-	public JFrame startMenuFrame;
+	public final MainGame game;
+	public final JFrame startMenuFrame;
 	
 	public StartMenu(MainGame game) {
 		this.game = game;
@@ -22,17 +22,13 @@ public class StartMenu {
 		JLabel prompt = new JLabel();
 		prompt.setText("Choose number of players:");
 		startMenu.add(prompt);
-		for (int i = 2; i <=6; i++) {
+		for (int i = 2; i <= 6; i++) {
 			JButton button = new JButton();
 			button.addActionListener(new StartMenuListener(i, game, this));
 			button.setText("" + i);
 			startMenu.add(button);
 		}
 		startMenu.pack();
-		startMenu.setVisible(true);
-		
+		startMenu.setVisible(true);	
 	}
-	
-	
-
 }

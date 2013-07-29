@@ -29,7 +29,6 @@ public class MainGame {
 			}
 		}
 		
-
 		/* this.compTurn = new ComputerTurn(this); */
 		this.instructionPanel = new InstructionPanel(this);
 		

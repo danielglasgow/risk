@@ -22,14 +22,11 @@ public class Mouse implements MouseListener {
 	private int y;
 	private Territory territory;
 	
-	
 	public Mouse(Board board) {
 		this.board = board;
 		this.game = board.game;
 		this.turn = game.playerTurn;
 	}
-
-	
 
 	public void mouseClicked(MouseEvent e) {
 		game.instructionPanel.newIndicator.setText(InstructionPanel.newInvisible);
@@ -115,8 +112,6 @@ public class Mouse implements MouseListener {
 		}
 		return adjacentControlled;
 	}
-
-
 
 	private void placeArmies() {
 		Player player = turn.player;

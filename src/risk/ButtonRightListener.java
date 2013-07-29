@@ -14,7 +14,6 @@ public class ButtonRightListener implements ActionListener {
 		this.turn = game.playerTurn;
 	}
 
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (turn.phase == Phase.PLACE_ARMIES) {

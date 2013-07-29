@@ -18,8 +18,6 @@ public class Board { //make board a JPanel not frame...
 	private ArrayList<Territory> territories;
 	public MainGame game;
 	
-	
-	
 	public Board(MainGame game) {
 		mainFrame = new JFrame("risk");
 		try {
@@ -31,7 +29,6 @@ public class Board { //make board a JPanel not frame...
 		this.territories = game.territories;
 		this.game = game;
 		
-
 		currentBackground = new TextOverlay(background);
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(currentBackground, BorderLayout.CENTER);
@@ -42,10 +39,6 @@ public class Board { //make board a JPanel not frame...
 		mainFrame.setResizable(false);
 		Mouse mouse = new Mouse(this);
 		mainFrame.addMouseListener(mouse);
-		
-		
-	
-		
 	}
 	
 	public void updateBackground() {
@@ -57,13 +50,9 @@ public class Board { //make board a JPanel not frame...
 		currentBackground = newBG;
 		mainFrame.add(currentBackground);
 		mainFrame.pack();
-		
 	}
 	
 	public ArrayList<Territory> getTerritories() {
 		return territories;
 	}
-	
-	
-
 }

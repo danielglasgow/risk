@@ -30,7 +30,6 @@ public class InstructionPanel {
 		buttonRight.addActionListener(new ButtonRightListener(game));
 		buttonLeft.addActionListener(new ButtonLeftListener(game));
 		
-		//failed two vs one button interface...
 		buttonArea = new JPanel(new GridLayout(1,2));
 		buttonArea.add(this.buttonLeft);
 		buttonArea.add(this.buttonRight);
@@ -48,22 +47,13 @@ public class InstructionPanel {
 	}
 	
 	public void setText(String newIndicator, String instruction, String buttonLeft, String buttonRight) {
-		//buttonArea2.add(this.buttonLeft);
-		//buttonArea2.add(this.buttonRight);
-		//mainPanel.add(buttonArea2, BorderLayout.EAST);
 		this.newIndicator.setText(newIndicator);
 		this.instruction.setText(instruction);
 		this.buttonLeft.setText(buttonLeft);
 		this.buttonRight.setText(buttonRight);	
 	}
 	
-	public void setText(String newIndicator, String instruction, String buttonLeft) {
-		//buttonArea1.add(this.buttonLeft);
-		//mainPanel.add(buttonArea1, BorderLayout.EAST);
-		this.newIndicator.setText(newIndicator);
-		this.instruction.setText(instruction);
-		this.buttonLeft.setText(buttonLeft);	
-	}
+	
 	
 	/**
 	 * Returns the main panel of the instructions.

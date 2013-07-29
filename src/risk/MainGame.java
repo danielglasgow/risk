@@ -12,6 +12,9 @@ public class MainGame {
 	public PlayerTurn playerTurn;
 	public ComputerTurn compTurn;
 	public boolean wait = true;
+	
+	private static final String TERRITORY_FILENAME = "TerritoryInfo/territories.txt";
+	private static final String ADJACENCY_FILENAME = "TerritoryInfo/Adjacentterritories.txt";
 
 	public MainGame()  {
 		this.playerTurn = new PlayerTurn(this);	
@@ -32,7 +35,10 @@ public class MainGame {
 		/* this.compTurn = new ComputerTurn(this); */
 		this.instructionPanel = new InstructionPanel(this);
 		
-		this.territories = new InitTerritories(this).territories;
+		TerritoriesBuilder territoriesBuilder = new TerritoriesBuilder(TERRITORY_FILENAME, ADJACENCY_FILENAME);
+		territoriesBuilder.build();
+		this.territories = territoriesBuilder.getTerritories();
+		this.continents = territoriesBuilder.getContinents();
 		this.board = new Board(this);
 		board.updateBackground();
 	}

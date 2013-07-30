@@ -1,3 +1,4 @@
+[NorthAmerica]
 Alaska 78 92
 Northwest-Territory 146 121
 Alberta 162 207
@@ -7,15 +8,18 @@ Eastern-United-States 267 318
 Ontario 221 243
 Quebec 279 241
 Greenland 373 138
+[SouthAmerica]
 Venezuela 323 490
 Brazil 443 565
 Argentina 372 664
+[Africa]
 North-Africa 590 408
 South-Africa 723 616
 Egypt 751 409
 Congo 706 527
 East-Africa 761 496
 Madagascar 826 578
+[Asia]
 Japan 1140 275
 Kamchatka 1158 63
 Yakutsk 1070 80
@@ -28,6 +32,7 @@ Middle-East 794 336
 Afghanistan 845 236
 Ukraine-East 881 142
 Siberia 961 182
+[Europe]
 Iceland 527 165
 Great-Britain 606 201
 Western-Europe 617 265
@@ -35,6 +40,7 @@ Northern-Europe 693 248
 Southern-Europe 702 295
 Scandinavia 688 142
 Ukraine-West 745 252
+[Australia]
 Indonesia 1070 459
 New-Guinea 1183 497
 Western-Australia 1117 560

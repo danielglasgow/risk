@@ -147,7 +147,7 @@ public class PlayerTurn {
 		attackWon = false;
 		if (player.territoryAttackFrom != null && player.territoryAttackTo != null) {
 			synchronized (lock) {
-				while (phase == Phase.ATTACK_FROM) {
+				while (phase == Phase.ATTACK) {
 					attackSimulator();
 					boolean attackLost = false;
 					if (player.territoryAttackFrom.armies < 2 && !attackWon) {

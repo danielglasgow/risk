@@ -18,5 +18,9 @@ public class Territory {
 		this.armies = 1;
 	}
 	
+	public String toString() {
+		return name;
+	}
+	
 
 }

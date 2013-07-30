@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 public class Continent implements Comparable<Continent> {
 
+	// TODO(dani): Type should be List<Territory> the abstract type.  You can
+	// assign and ArrayList<Territory> to a List<Territory>
 	public final ArrayList<Territory> territories = new ArrayList<Territory>();
 	public final ArrayList<Territory> borders = new ArrayList<Territory>();
 	public final String name;
+	// TODO(dani): Can bonusArmies be final?  Prefer to make as many variables final as possible.
 	public int bonusArmies;
 	public double ratio;
 	

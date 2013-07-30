@@ -2,8 +2,6 @@ package risk;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 
 public class ComputerTurn {
@@ -11,7 +9,8 @@ public class ComputerTurn {
 	public Player player; 
 	private ArrayList<Continent> continentRatios = new ArrayList<Continent>();
 	private Continent goalContinent;
-	private ArrayList<Territory> path = new ArrayList<Territory>();
+	private ArrayList<AttackRoute> routes = new ArrayList<AttackRoute>();
+
 	private int armiesToPlace;
 	
 	
@@ -23,21 +22,17 @@ public class ComputerTurn {
 	public void takeTurn(Player player) {
 		this.player = player;
 		setArmiesToPlace();
-		setGoalContinent();
+		goalContinent = game.continents.get(5);
+		//setGoalContinent();
 		System.out.println(goalContinent.name);
-		for (Territory t : goalContinent.getTerritories(player, false)) {
-		//	System.out.println(t.name + ": " + hasPath)
-		}
+		ArrayList<TerritoryCluster> territoryClusters = UniqueClusters();
+		System.out.println(territoryClusters);
+		Collections.sort(territoryClusters);
+		System.out.println(territoryClusters);
+		territoryClusters.get(0).makeRoutes();
 		
 	}
 	
-	private void printTerritories(ArrayList<Territory> territories) {
-		ArrayList<String> territoryNames = new ArrayList<String>();
-		for (Territory t : territories) {
-			territoryNames.add(t.name);
-		}
-		System.out.println(territoryNames);
-	}
 	
 	private void setArmiesToPlace() {
 		armiesToPlace = player.getTerritories().size() / 3;
@@ -87,38 +82,51 @@ public class ComputerTurn {
 		}
 	return false;
 	}
-	
-	
-	
-	private void hasPath(ArrayList<Territory> territories) {
-		for (Territory t : territories) {
-			hasPath(t.adjacents);
-		}
-		
-		
-	}
-	
-	private void buildPath(ArrayList<Territory> used) {
-		
-	}
-	
-	
-	private Set<Territory> qualifyingAdjacentTerritories(Territory territory, Set<Territory> territories) {
-		Set<Territory> adjacentControlled = new HashSet<Territory>();
-		for (Territory t : territory.adjacents) {
-			if(!t.player.equals(player) && territories.contains(t)) {
-				adjacentControlled.add(t);
-			}
-		}
-		return adjacentControlled;
-	}
-	
+
 	private void placeArmies() {
 		if (captureGoalContinent()) {
 			//lots of code
 		} else {
-			
+			ArrayList<TerritoryCluster> territoryClusters = UniqueClusters();
+			Collections.sort(territoryClusters);
 		}
+	}
+	
+	private ArrayList<AttackRoute> findPath(Territory territory, TerritoryCluster territoryCluster) {
+		ArrayList<AttackRoute> routes = new ArrayList<AttackRoute>();
+		AttackRoute firstRoute = new AttackRoute();
+		firstRoute.add(territory);
+		routes.add(firstRoute);
+		AttackRoute lastRoute = new AttackRoute(firstRoute);
+		for (Territory t : territory.adjacents) {
+			if (territoryCluster.cluster.contains(t)) {
+				lastRoute.add(t);
+				routes.add(new AttackRoute());
+			}
+		}
+		return routes;
+	}
+	
+	
+	private ArrayList<TerritoryCluster> UniqueClusters() {
+		ArrayList<TerritoryCluster> territoryClusters = new ArrayList<TerritoryCluster>();
+		for (Territory t : goalContinent.getTerritories(player, false)) {
+			territoryClusters.add(new TerritoryCluster(t, goalContinent, player));
+		}
+		ArrayList<TerritoryCluster> uniqueClusters = new ArrayList<TerritoryCluster>();
+		uniqueClusters.add(territoryClusters.get(0));
+		for (TerritoryCluster cluster1 : territoryClusters) {
+			boolean newCluster = true;
+			for (TerritoryCluster cluster2 : uniqueClusters) {
+				if (TerritoryCluster.compareClusters(cluster1, cluster2)) {
+					newCluster = false;
+				}
+			}
+			if (newCluster) {
+				uniqueClusters.add(cluster1);
+			}
+		}
+		return uniqueClusters;
 	}
 	
 	private boolean hasContinent(Continent continent) {

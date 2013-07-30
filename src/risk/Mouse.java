@@ -38,9 +38,9 @@ public class Mouse implements MouseListener {
 		territory = findMatch(x, y);
 		if (!territory.name.equals("NoMatch")) {
 			if (turn.phase == Phase.PLACE_ARMIES) {
-			placeArmies();
+				placeArmies();
 			} else if (turn.phase == Phase.ATTACK_FROM) {
-			attackFrom();
+				attackFrom();
 			} else if (turn.phase == Phase.ATTACK_TO) {
 				attackTo();
 			} else if (turn.phase == Phase.WON_TERRITORY) {

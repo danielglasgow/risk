@@ -1,6 +1,7 @@
 package risk;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -12,8 +13,8 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 	public boolean containsBorder;
 	private Continent continent;
 	private Player player;
-	private ArrayList<Territory> playerTerritories;
-	private ArrayList<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
+	private final ArrayList<Territory> playerTerritories;
+	private final ArrayList<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
 	
 	public TerritoryCluster (Territory territory, Continent continent, Player player) {
 		this.continent = continent;
@@ -23,20 +24,25 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		this.playerTerritories = playerTerritories();
 	}
 	
+
+	
 	public void makeRoutes() {
 		for (Territory t : playerTerritories) {
 			ArrayList<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
-			AttackRoute firstRoute = new AttackRoute();
+			AttackRoute firstRoute = new AttackRoute(continent);
 			firstRoute.add(t);
 			attackRoutes.add(firstRoute);
+			int count = 0;
 			while (extendRoute(cluster, attackRoutes)) {
-				ArrayList<AttackRoute> placeHolderRoutes = new ArrayList<AttackRoute>(attackRoutes);
-				attackRoutes.clear();
-				attackRoutes.addAll(placeHolderRoutes);
+				//ArrayList<AttackRoute> placeHolderRoutes = new ArrayList<AttackRoute>(attackRoutes);
+				//attackRoutes.clear();
+				//attackRoutes.addAll(placeHolderRoutes);
+				//System.out.println(count++);
 			}
 			this.attackRoutes.addAll(attackRoutes);
 		}
 		System.out.println("Attack Routes:");
+		Collections.sort(attackRoutes);
 		for (AttackRoute ar : attackRoutes) {
 			System.out.println(ar);
 		}
@@ -48,7 +54,7 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		ArrayList<AttackRoute> newRoutes = new ArrayList<AttackRoute>();
 		for (AttackRoute route : attackRoutes) {
 			Territory territory = route.get(route.size() - 1);
-			AttackRoute firstRoute = new AttackRoute();
+			AttackRoute firstRoute = new AttackRoute(continent);
 			for (Territory t : territory.adjacents) {
 				if (!route.contains(t) && cluster.contains(t)) {
 					stillWorking = true;
@@ -56,7 +62,7 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 						firstRoute.addAll(route);
 						route.add(t);
 					} else {
-						AttackRoute newRoute = new AttackRoute(firstRoute);
+						AttackRoute newRoute = new AttackRoute(continent, firstRoute);
 						newRoute.add(t);
 						newRoutes.add(newRoute);
 					}
@@ -116,7 +122,7 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		return adjacents;
 	}
 	
-	public static boolean compareClusters(TerritoryCluster territoryCluster1,TerritoryCluster territoryCluster2) {
+	public static boolean compareClusters(TerritoryCluster territoryCluster1, TerritoryCluster territoryCluster2) {
 		for (Territory t : territoryCluster1.cluster) {
 			if (!territoryCluster2.cluster.contains(t)) {
 				return false;

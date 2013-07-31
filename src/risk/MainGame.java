@@ -47,7 +47,7 @@ public class MainGame {
 
 	public void play() {
 		int count = 0;
-	//	while (true) {
+	//while (true) {
 			compTurn.takeTurn(MainGame.players.get(count % players.size()));
 			count++;
 		//}

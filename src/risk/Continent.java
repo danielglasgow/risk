@@ -1,16 +1,18 @@
 package risk;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Continent implements Comparable<Continent> {
 
 	// TODO(dani): Type should be List<Territory> the abstract type.  You can
-	// assign and ArrayList<Territory> to a List<Territory>
-	public final ArrayList<Territory> territories = new ArrayList<Territory>();
-	public final ArrayList<Territory> borders = new ArrayList<Territory>();
+	// assign and ArrayList<Territory> to a List<Territory> ...but the leads to lots of casting..
+	public final List<Territory> territories = new ArrayList<Territory>();
+	public final List<Territory> borders = new ArrayList<Territory>();
+	private final List<TerritoryCluster> clusters = new ArrayList<TerritoryCluster>();
 	public final String name;
 	// TODO(dani): Can bonusArmies be final?  Prefer to make as many variables final as possible.
-	public int bonusArmies;
+	public final int bonusArmies;
 	public double ratio;
 	
 	public Continent(String name, int bonusArmies) {
@@ -68,5 +70,14 @@ public class Continent implements Comparable<Continent> {
 			}
 		}
 		return false;
+	}
+	
+	public void setTerritoryCluster(ArrayList<TerritoryCluster> clusters) {
+		this.clusters.clear();
+		this.clusters.addAll(clusters);
+	}
+	
+	public List<TerritoryCluster> getClusters() {
+		return clusters;
 	}
 }

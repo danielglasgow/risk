@@ -57,10 +57,9 @@ public class PlayerTurn {
 		if(!restartPlaceArmies) {
 			boardArmies.clear();
 			for (Territory t : game.territories) {
-			boardArmies.add(t.armies);
+				boardArmies.add(t.armies);
 			}
-		}
-		if(restartPlaceArmies) {
+		} else if(restartPlaceArmies) {
 			restartPlaceArmies = false;
 			int count = 0;
 			for (Territory t : game.territories) {
@@ -69,15 +68,17 @@ public class PlayerTurn {
 			}
 			game.board.updateBackground();
 		}
-		int armies = player.getTerritories().size() / 3;
+		/*int armies = player.getTerritories().size() / 3;
 		if (armies < 3) {
 			armies = 3;
 		}
 		armies += checkContinents();
 		
-		player.armiesToPlace = armies;
+		player.armiesToPlace = armies; */
+		player.calculateArmiesToPlace();
+		
 		instructionPanel.setText(InstructionPanel.newVisible,
-				player.color.toUpperCase() +  "'s turn! Distribute " + armies + " armies between your territories by clicking on the territory's army indicator.",
+				player.color.toUpperCase() +  "'s turn! Distribute " + player.armiesToPlace + " armies between your territories by clicking on the territory's army indicator.",
 				"Continue",
 				"Restart Army Placement");
 		synchronized (lock) {
@@ -307,26 +308,4 @@ public class PlayerTurn {
 			}
 		}
 	}
-	
-	private boolean hasContinent(Continent continent) {
-		boolean hasContinent = true;
-		for (Territory t : continent.territories) {
-			if (!player.getTerritories().contains(t)) {
-				hasContinent = false;
-			}
-		}
-		return hasContinent;
-	}
-	
-	private int checkContinents() {
-		int extraArmies = 0;
-		for (Continent c : game.continents) {
-			if (hasContinent(c)) {
-				extraArmies += c.bonusArmies;
-				JOptionPane.showMessageDialog(null, "You have been awarded " + c.bonusArmies + " extra armies for controling " + c.name);
-			}
-		}
-		return extraArmies;
-	}
-
 }

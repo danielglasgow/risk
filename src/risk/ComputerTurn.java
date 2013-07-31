@@ -9,8 +9,6 @@ public class ComputerTurn {
 	public Player player; 
 	private ArrayList<Continent> continentRatios = new ArrayList<Continent>();
 	private Continent goalContinent;
-	private ArrayList<AttackRoute> routes = new ArrayList<AttackRoute>();
-
 	private int armiesToPlace;
 	
 	
@@ -22,24 +20,20 @@ public class ComputerTurn {
 	public void takeTurn(Player player) {
 		this.player = player;
 		setArmiesToPlace();
-		goalContinent = game.continents.get(5);
-		//setGoalContinent();
+		setGoalContinent();
 		System.out.println(goalContinent.name);
-		ArrayList<TerritoryCluster> territoryClusters = UniqueClusters();
-		System.out.println(territoryClusters);
-		Collections.sort(territoryClusters);
-		System.out.println(territoryClusters);
-		territoryClusters.get(0).makeRoutes();
+		goalContinent.setTerritoryCluster(UniqueClusters());
+		for (TerritoryCluster tc : goalContinent.getClusters()) {
+			System.out.println("Making routes");
+			tc.makeRoutes();
+		}
 		
 	}
 	
 	
 	private void setArmiesToPlace() {
-		armiesToPlace = player.getTerritories().size() / 3;
-		if (armiesToPlace < 3) {
-			armiesToPlace = 3;
-		}
-		armiesToPlace += checkContinents();
+		player.calculateArmiesToPlace();
+		armiesToPlace = player.armiesToPlace;
 	}
 	
 	private void setGoalContinent() {
@@ -92,21 +86,6 @@ public class ComputerTurn {
 		}
 	}
 	
-	private ArrayList<AttackRoute> findPath(Territory territory, TerritoryCluster territoryCluster) {
-		ArrayList<AttackRoute> routes = new ArrayList<AttackRoute>();
-		AttackRoute firstRoute = new AttackRoute();
-		firstRoute.add(territory);
-		routes.add(firstRoute);
-		AttackRoute lastRoute = new AttackRoute(firstRoute);
-		for (Territory t : territory.adjacents) {
-			if (territoryCluster.cluster.contains(t)) {
-				lastRoute.add(t);
-				routes.add(new AttackRoute());
-			}
-		}
-		return routes;
-	}
-	
 	
 	private ArrayList<TerritoryCluster> UniqueClusters() {
 		ArrayList<TerritoryCluster> territoryClusters = new ArrayList<TerritoryCluster>();
@@ -127,26 +106,6 @@ public class ComputerTurn {
 			}
 		}
 		return uniqueClusters;
-	}
-	
-	private boolean hasContinent(Continent continent) {
-		boolean hasContinent = true;
-		for (Territory t : continent.territories) {
-			if (!player.getTerritories().contains(t)) {
-				hasContinent = false;
-			}
-		}
-		return hasContinent;
-	}
-	
-	private int checkContinents() {
-		int extraArmies = 0;
-		for (Continent c : game.continents) {
-			if (hasContinent(c)) {
-				extraArmies += c.bonusArmies;
-			}
-		}
-		return extraArmies;
 	}
 	
 }

@@ -125,7 +125,6 @@ public class TerritoriesBuilder {
 			counter = (counter + 1) % numPlayers;
 			Player currentPlayer = MainGame.players.get(counter);
 			t.player = currentPlayer;
-			counter++;
 		}
 	}
 	

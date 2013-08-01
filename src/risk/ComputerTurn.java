@@ -77,14 +77,14 @@ public class ComputerTurn {
 	return false;
 	}
 
-	private void placeArmies() {
+	/*private void placeArmies() {
 		if (captureGoalContinent()) {
 			//lots of code
 		} else {
 			ArrayList<TerritoryCluster> territoryClusters = UniqueClusters();
 			Collections.sort(territoryClusters);
 		}
-	}
+	} */
 	
 	
 	private ArrayList<TerritoryCluster> UniqueClusters() {

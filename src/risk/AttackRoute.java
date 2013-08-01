@@ -18,7 +18,7 @@ public class AttackRoute implements Comparable<AttackRoute> {
 		this.route.addAll(attackRoute.route);
 	}
 	
-	private int routeEfficiency() {
+	public double routeEfficiency() {
 		Territory baseTerritory = route.get(0);
 		int friendlyArmies = baseTerritory.armies + baseTerritory.player.armiesToPlace - 4;
 		int enemyArmies = 0;
@@ -92,30 +92,7 @@ public class AttackRoute implements Comparable<AttackRoute> {
 
 	@Override
 	public int compareTo(AttackRoute route) {
-		if (this.route.size() < route.size()) {
-			return 1;
-		} else if (this.route.size() > route.size()){
-			return -1;
-		} else {
-			Territory routeLast = route.get(route.size() - 1);
-			Territory thisLast = this.route.get(this.route.size() - 1);
-			Boolean routeHasBorder = false;
-			Boolean thisHasBorder = false;
-			for (Territory t : continent.borders) {
-				if (routeLast.equals(t)) {
-					routeHasBorder = true;
-				} 
-				if (thisLast.equals(t)) {
-					thisHasBorder = true;
-				}
-			}
-			if (routeHasBorder && !thisHasBorder) {
-				return 1;
-			} else if (!routeHasBorder && thisHasBorder) {
-				return -1;
-			}
-		}
-		return 0;
+		return Double.compare(this.routeEfficiency(),  route.routeEfficiency());
 	}
 
 }

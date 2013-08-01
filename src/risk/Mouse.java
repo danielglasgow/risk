@@ -1,11 +1,11 @@
 package risk;
 
+import java.util.List;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -207,7 +207,7 @@ public class Mouse implements MouseListener {
 	
 	
 	private Territory findMatch(int x, int y) {
-		ArrayList<Territory> territories = board.getTerritories();
+		List<Territory> territories = board.getTerritories();
 		for (Territory t : territories) {
 			if((Math.abs(t.locX - x) < 30) && (Math.abs(t.locY - y) < 30)) {
 				return t;

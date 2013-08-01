@@ -32,19 +32,16 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 			AttackRoute firstRoute = new AttackRoute(continent);
 			firstRoute.add(t);
 			attackRoutes.add(firstRoute);
-			int count = 0;
 			while (extendRoute(cluster, attackRoutes)) {
-				//ArrayList<AttackRoute> placeHolderRoutes = new ArrayList<AttackRoute>(attackRoutes);
-				//attackRoutes.clear();
-				//attackRoutes.addAll(placeHolderRoutes);
-				//System.out.println(count++);
 			}
 			this.attackRoutes.addAll(attackRoutes);
 		}
 		System.out.println("Attack Routes:");
 		Collections.sort(attackRoutes);
 		for (AttackRoute ar : attackRoutes) {
+			System.out.print(" " + ar.routeEfficiency());
 			System.out.println(ar);
+			
 		}
 		
 	}
@@ -60,6 +57,9 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 					stillWorking = true;
 					if (firstRoute.isEmpty()) {
 						firstRoute.addAll(route);
+						if (firstRoute.size() > 1) {
+							this.attackRoutes.add(firstRoute);
+						}
 						route.add(t);
 					} else {
 						AttackRoute newRoute = new AttackRoute(continent, firstRoute);

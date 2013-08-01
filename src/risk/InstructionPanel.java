@@ -12,49 +12,48 @@ import javax.swing.JPanel;
 public class InstructionPanel {
 	private final JPanel mainPanel;
 	private final JLabel instruction;
-	public final JLabel newIndicator;  // Note should not be public!
+	public final JLabel newIndicator; // Note should not be public!
 	private final JButton buttonRight;
 	private final JButton buttonLeft;
 	private final JPanel buttonArea;
-	
+
 	public static final String newVisible = "			NEW			";
 	public static final String newInvisible = "									";
-				
+
 	public InstructionPanel(MainGame game) {
 		mainPanel = new JPanel();
 		instruction = new JLabel();
 		newIndicator = new JLabel();
 		buttonRight = new JButton();
 		buttonLeft = new JButton();
-		
+
 		buttonRight.addActionListener(new ButtonRightListener(game));
 		buttonLeft.addActionListener(new ButtonLeftListener(game));
-		
-		buttonArea = new JPanel(new GridLayout(1,2));
+
+		buttonArea = new JPanel(new GridLayout(1, 2));
 		buttonArea.add(this.buttonLeft);
 		buttonArea.add(this.buttonRight);
-		
+
 		Font instructionFont = new Font("size14", Font.PLAIN, 14);
-		
+
 		instruction.setFont(instructionFont);
 		mainPanel.setLayout(new BorderLayout());
-	
+
 		newIndicator.setForeground(Color.red);
-	
+
 		mainPanel.add(newIndicator, BorderLayout.WEST);
 		mainPanel.add(buttonArea, BorderLayout.EAST);
 		mainPanel.add(instruction, BorderLayout.CENTER);
 	}
-	
-	public void setText(String newIndicator, String instruction, String buttonLeft, String buttonRight) {
+
+	public void setText(String newIndicator, String instruction,
+			String buttonLeft, String buttonRight) {
 		this.newIndicator.setText(newIndicator);
 		this.instruction.setText(instruction);
 		this.buttonLeft.setText(buttonLeft);
-		this.buttonRight.setText(buttonRight);	
+		this.buttonRight.setText(buttonRight);
 	}
-	
-	
-	
+
 	/**
 	 * Returns the main panel of the instructions.
 	 */

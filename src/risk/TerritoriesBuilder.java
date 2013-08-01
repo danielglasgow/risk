@@ -40,6 +40,7 @@ public class TerritoriesBuilder {
 			java.util.Scanner scanner = new java.util.Scanner(file);
 			while (scanner.hasNext()) {
 				String name = scanner.next();
+				// TODO(dani): is there a better name than value? bonusArmies?
 				int value = scanner.nextInt();
 				continents.put(name, new Continent(name, value));
 			}
@@ -47,6 +48,11 @@ public class TerritoriesBuilder {
 			System.out.println("Error: " + e);
 		}
 
+		// TODO(dani): eliminate?????
+		// This looks similar to the buildBorders() function, but I'm not sure
+		// it can be
+		// done yet. In anycase, using continent.values() is better than using
+		// the keySet().
 		for (String name : continents.keySet()) {
 			continents.get(name).addBorders();
 		}
@@ -69,6 +75,11 @@ public class TerritoriesBuilder {
 				int y = scanner.nextInt();
 				Territory t = new Territory(name, x, y);
 				territories.put(name, t);
+				// TODO(dani): Do not access a public member.
+				// At least call addTerritory(t) which is a new function
+				// you will write on the continent object.
+				// Better still would be to construct the continent with the
+				// list of territories from the very start.
 				continents.get(continentName).territories.add(t);
 			}
 		} catch (Exception e) {
@@ -88,6 +99,8 @@ public class TerritoriesBuilder {
 				if (name.contains(":")) {
 					currentTerritory = name.substring(0, name.length() - 1);
 				} else {
+					// TODO(dani): Add a method to territory called
+					// addAdjacent(Territory territory);
 					territories.get(currentTerritory).adjacents.add(territories
 							.get(name));
 				}

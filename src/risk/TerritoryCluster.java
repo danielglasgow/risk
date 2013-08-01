@@ -2,10 +2,10 @@ package risk;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 
-
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 
 public class TerritoryCluster implements Comparable<TerritoryCluster> {
 
@@ -15,17 +15,16 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 	private Player player;
 	private final ArrayList<Territory> playerTerritories;
 	private final ArrayList<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
-	
-	public TerritoryCluster (Territory territory, Continent continent, Player player) {
+
+	public TerritoryCluster(Territory territory, Continent continent,
+			Player player) {
 		this.continent = continent;
 		this.player = player;
 		this.cluster = findCluster(territory);
 		this.containsBorder = containsBorder();
 		this.playerTerritories = playerTerritories();
 	}
-	
 
-	
 	public void makeRoutes() {
 		for (Territory t : playerTerritories) {
 			ArrayList<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
@@ -41,12 +40,11 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		for (AttackRoute ar : attackRoutes) {
 			System.out.print(" " + ar.routeEfficiency());
 			System.out.println(ar);
-			
 		}
-		
 	}
-	
-	private boolean extendRoute(ArrayList<Territory> cluster, ArrayList<AttackRoute> attackRoutes) {
+
+	private boolean extendRoute(ArrayList<Territory> cluster,
+			ArrayList<AttackRoute> attackRoutes) {
 		boolean stillWorking = false;
 		ArrayList<AttackRoute> newRoutes = new ArrayList<AttackRoute>();
 		for (AttackRoute route : attackRoutes) {
@@ -62,7 +60,8 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 						}
 						route.add(t);
 					} else {
-						AttackRoute newRoute = new AttackRoute(continent, firstRoute);
+						AttackRoute newRoute = new AttackRoute(continent,
+								firstRoute);
 						newRoute.add(t);
 						newRoutes.add(newRoute);
 					}
@@ -72,20 +71,20 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		attackRoutes.addAll(newRoutes);
 		return stillWorking;
 	}
-	
-	
+
 	private ArrayList<Territory> playerTerritories() {
 		HashSet<Territory> playerTerritories = new HashSet<Territory>();
 		for (Territory t1 : cluster) {
 			for (Territory t2 : t1.adjacents) {
-				if (continent.territories.contains(t2) && t2.player.equals(player)) {
+				if (continent.territories.contains(t2)
+						&& t2.player.equals(player)) {
 					playerTerritories.add(t2);
 				}
 			}
 		}
 		return new ArrayList<Territory>(playerTerritories);
 	}
-	
+
 	private boolean containsBorder() {
 		boolean containsBorder = false;
 		for (Territory t : continent.borders) {
@@ -95,7 +94,7 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		}
 		return containsBorder;
 	}
-	
+
 	private ArrayList<Territory> findCluster(Territory territory) {
 		ArrayList<Territory> cluster = new ArrayList<Territory>();
 		ArrayList<Territory> next = new ArrayList<Territory>();
@@ -105,24 +104,27 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 			cluster.addAll(next);
 			placeHolder.addAll(next);
 			next.clear();
-			for (Territory t : placeHolder) { 
+			for (Territory t : placeHolder) {
 				next.addAll(qualifyingAdjacentTerritories(t, cluster));
 			}
 		}
 		return cluster;
 	}
-		
-	private ArrayList<Territory> qualifyingAdjacentTerritories(Territory territory, ArrayList<Territory> cluster) {
+
+	private ArrayList<Territory> qualifyingAdjacentTerritories(
+			Territory territory, ArrayList<Territory> cluster) {
 		ArrayList<Territory> adjacents = new ArrayList<Territory>();
 		for (Territory t : territory.adjacents) {
-			if(!t.player.equals(player) && !cluster.contains(t) && continent.territories.contains(t)) {
+			if (!t.player.equals(player) && !cluster.contains(t)
+					&& continent.territories.contains(t)) {
 				adjacents.add(t);
 			}
 		}
 		return adjacents;
 	}
-	
-	public static boolean compareClusters(TerritoryCluster territoryCluster1, TerritoryCluster territoryCluster2) {
+
+	public static boolean compareClusters(TerritoryCluster territoryCluster1,
+			TerritoryCluster territoryCluster2) {
 		for (Territory t : territoryCluster1.cluster) {
 			if (!territoryCluster2.cluster.contains(t)) {
 				return false;
@@ -130,27 +132,24 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		}
 		return true;
 	}
-	
+
 	private Player worstEnemy() {
-		HashMap<Player, Integer> players = new HashMap<Player, Integer>();
-		for (Player p : MainGame.players) {
-			players.put(p, 0);
-		}
+		Multiset<Player> players = HashMultiset.create();
 		for (Territory t : continent.territories) {
 			if (!t.player.equals(player)) {
-				int threat = 1 + t.armies;
-				players.put(t.player, threat);
+				players.add(t.player);
 			}
 		}
-		Player worstEnemy = (Player) players.keySet().toArray()[0];
-		for (Player p : players.keySet()) {
-			if (players.get(worstEnemy) < players.get(p)) {
-				worstEnemy = p;
+		int maxAppearance = 0;
+		Player maxAppearancePlayer = null;
+		for (Player p : players) {
+			if (players.count(p) > maxAppearance) {
+				maxAppearancePlayer = p;
+				maxAppearance = players.count(p);
 			}
 		}
-		return worstEnemy;	
+		return maxAppearancePlayer;
 	}
-	
 
 	@Override
 	public int compareTo(TerritoryCluster cluster) {
@@ -180,11 +179,10 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		}
 		return 0;
 	}
-	
+
 	public String toString() {
 		return cluster.toString();
-		
+
 	}
 
-	
 }

@@ -4,23 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Continent implements Comparable<Continent> {
-
-	// TODO(dani): Type should be List<Territory> the abstract type.  You can
-	// assign and ArrayList<Territory> to a List<Territory> ...but the leads to lots of casting..
 	public final List<Territory> territories = new ArrayList<Territory>();
 	public final List<Territory> borders = new ArrayList<Territory>();
 	private final List<TerritoryCluster> clusters = new ArrayList<TerritoryCluster>();
 	public final String name;
-	// TODO(dani): Can bonusArmies be final?  Prefer to make as many variables final as possible.
+	// TODO(dani): Can bonusArmies be final? Prefer to make as many variables
+	// final as possible.
 	public final int bonusArmies;
 	public double ratio;
-	
+
 	public Continent(String name, int bonusArmies) {
 		this.name = name;
 		this.bonusArmies = bonusArmies;
 	}
-	
-	public ArrayList<Territory> getTerritories(Player player, Boolean controlledByPlayer) {
+
+	public ArrayList<Territory> getTerritories(Player player,
+			Boolean controlledByPlayer) {
 		ArrayList<Territory> playerTerritories = new ArrayList<Territory>();
 		ArrayList<Territory> otherTerritories = new ArrayList<Territory>();
 		for (Territory t : territories) {
@@ -36,12 +35,12 @@ public class Continent implements Comparable<Continent> {
 			return otherTerritories;
 		}
 	}
-	
+
 	public String toString() {
 		String continent = name + ": ";
-		//for (Territory t : territories) {
-			//continent = continent + " " + t.name;
-		//}
+		// for (Territory t : territories) {
+		// continent = continent + " " + t.name;
+		// }
 		return continent;
 	}
 
@@ -54,7 +53,7 @@ public class Continent implements Comparable<Continent> {
 		}
 		return 0;
 	}
-	
+
 	public void addBorders() {
 		for (Territory t : territories) {
 			if (isBorder(t)) {
@@ -62,7 +61,7 @@ public class Continent implements Comparable<Continent> {
 			}
 		}
 	}
-	
+
 	private boolean isBorder(Territory territory) {
 		for (Territory t : territory.adjacents) {
 			if (!territories.contains(t)) {
@@ -71,12 +70,12 @@ public class Continent implements Comparable<Continent> {
 		}
 		return false;
 	}
-	
+
 	public void setTerritoryCluster(ArrayList<TerritoryCluster> clusters) {
 		this.clusters.clear();
 		this.clusters.addAll(clusters);
 	}
-	
+
 	public List<TerritoryCluster> getClusters() {
 		return clusters;
 	}

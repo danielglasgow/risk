@@ -7,8 +7,7 @@ import java.util.List;
 public class MainGame {
 	public List<Territory> territories;
 	public List<Continent> continents;
-	// TODO(Dani): Make this not static
-	public static ArrayList<Player> players = new ArrayList<Player>();
+	public final ArrayList<Player> players = new ArrayList<Player>();
 	public Board board;
 	public Object startMenuLock = new Object();
 	public InstructionPanel instructionPanel;
@@ -61,7 +60,7 @@ public class MainGame {
 	public void play() {
 		int count = 0;
 		while (true) {
-			playerTurn.takeTurn(MainGame.players.get(count % players.size()));
+			playerTurn.takeTurn(players.get(count % players.size()));
 			count++;
 		}
 	}

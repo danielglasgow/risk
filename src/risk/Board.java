@@ -10,10 +10,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Board { // make board a JPanel not frame...
-	private JFrame mainFrame;
+	private final JFrame mainFrame;
 	private BufferedImage background;
 	private TextOverlay currentBackground;
-	private List<Territory> territories;
+	private final List<Territory> territories;
 	public MainGame game;
 
 	public Board(MainGame game) {
@@ -42,8 +42,8 @@ public class Board { // make board a JPanel not frame...
 
 	public void updateBackground() {
 		TextOverlay newBG = new TextOverlay(background);
-		for (Territory t : territories) {
-			newBG = new TextOverlay(newBG.getImage(), t);
+		for (Territory territory : territories) {
+			newBG = new TextOverlay(newBG.getImage(), territory);
 		}
 		mainFrame.remove(currentBackground);
 		currentBackground = newBG;

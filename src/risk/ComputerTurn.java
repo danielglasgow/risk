@@ -3,20 +3,17 @@ package risk;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
 public class ComputerTurn {
 	public MainGame game;
-	public Player player; 
+	public Player player;
 	private ArrayList<Continent> continentRatios = new ArrayList<Continent>();
 	private Continent goalContinent;
 	private int armiesToPlace;
-	
-	
-	
+
 	public ComputerTurn(MainGame game) {
 		this.game = game;
 	}
-	
+
 	public void takeTurn(Player player) {
 		this.player = player;
 		setArmiesToPlace();
@@ -27,17 +24,16 @@ public class ComputerTurn {
 			System.out.println("Making routes");
 			tc.makeRoutes();
 		}
-		
+
 	}
-	
-	
+
 	private void setArmiesToPlace() {
 		player.calculateArmiesToPlace();
 		armiesToPlace = player.armiesToPlace;
 	}
-	
+
 	private void setGoalContinent() {
-		for (int i = 0; i < 6; i++){
+		for (int i = 0; i < 6; i++) {
 			double numTerritories = 0;
 			double numTerritoriesControlled = 0;
 			for (Territory t : game.continents.get(i).territories) {
@@ -57,7 +53,7 @@ public class ComputerTurn {
 			goalContinent = continentRatios.get(1);
 		}
 	}
-	
+
 	private boolean captureGoalContinent() {
 		ArrayList<Territory> territoriesControlled = new ArrayList<Territory>();
 		int controlledArmies = 0;
@@ -69,28 +65,25 @@ public class ComputerTurn {
 			} else {
 				enemyArmies += t.armies;
 			}
-				
+
 		}
 		if (controlledArmies + armiesToPlace > 2 * enemyArmies) {
 			return true;
 		}
-	return false;
+		return false;
 	}
 
-	/*private void placeArmies() {
-		if (captureGoalContinent()) {
-			//lots of code
-		} else {
-			ArrayList<TerritoryCluster> territoryClusters = UniqueClusters();
-			Collections.sort(territoryClusters);
-		}
-	} */
-	
-	
+	/*
+	 * private void placeArmies() { if (captureGoalContinent()) { //lots of code
+	 * } else { ArrayList<TerritoryCluster> territoryClusters =
+	 * UniqueClusters(); Collections.sort(territoryClusters); } }
+	 */
+
 	private ArrayList<TerritoryCluster> UniqueClusters() {
 		ArrayList<TerritoryCluster> territoryClusters = new ArrayList<TerritoryCluster>();
 		for (Territory t : goalContinent.getTerritories(player, false)) {
-			territoryClusters.add(new TerritoryCluster(t, goalContinent, player));
+			territoryClusters
+					.add(new TerritoryCluster(t, goalContinent, player));
 		}
 		ArrayList<TerritoryCluster> uniqueClusters = new ArrayList<TerritoryCluster>();
 		uniqueClusters.add(territoryClusters.get(0));
@@ -107,5 +100,5 @@ public class ComputerTurn {
 		}
 		return uniqueClusters;
 	}
-	
+
 }

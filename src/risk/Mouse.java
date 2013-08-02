@@ -15,12 +15,19 @@ public class Mouse implements MouseListener {
 
 	private final Board board;
 	private final MainGame game;
-	private final PlayerTurn turn;
+	private final HumanStrategy turn;
+
+	// YUCK... FIX THIS LATER!
+	private ArmyPlacer armyPlacer = null;
 
 	public Mouse(Board board) {
 		this.board = board;
 		this.game = board.game;
-		this.turn = game.playerTurn;
+		this.turn = null; // game.playerTurn;
+	}
+
+	public void setArmyPlacer(ArmyPlacer armyPlacer) {
+		this.armyPlacer = armyPlacer;
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -33,7 +40,7 @@ public class Mouse implements MouseListener {
 		int y = (int) point.getY();
 		Territory territory = findMatch(x, y);
 		if (!territory.name.equals("NoMatch")) {
-			if (turn.phase == Phase.PLACE_ARMIES) {
+			if (turn == null || turn.phase == Phase.PLACE_ARMIES) {
 				placeArmies(territory);
 			} else if (turn.phase == Phase.ATTACK_FROM) {
 				attackFrom(territory);
@@ -118,18 +125,8 @@ public class Mouse implements MouseListener {
 	}
 
 	private void placeArmies(Territory territory) {
-		Player player = turn.player;
-		if (player.armiesToPlace > 0) {
-			if (territory.player.name.equals(player.name)) {
-				synchronized (turn.lock) {
-					territory.armies++;
-					player.armiesToPlace--;
-					turn.lock.notifyAll();
-				}
-			} else {
-				JOptionPane.showMessageDialog(null,
-						"You must place armies on territories you control");
-			}
+		if (armyPlacer != null) {
+			armyPlacer.placeArmies(territory);
 		}
 	}
 

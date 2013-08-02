@@ -5,23 +5,19 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainGame {
-	public List<Territory> territories;
-	public List<Continent> continents;
-	public final ArrayList<Player> players = new ArrayList<Player>();
-	public Board board;
-	public Object startMenuLock = new Object();
-	public InstructionPanel instructionPanel;
-	public PlayerTurn playerTurn;
-	public ComputerTurn compTurn;
-	public boolean wait = true;
-
 	private static final String TERRITORY_FILENAME = "TerritoryInfo/territories.txt";
 	private static final String ADJACENCY_FILENAME = "TerritoryInfo/Adjacentterritories.txt";
 	private static final String Continents_FILENAME = "TerritoryInfo/Continents.txt";
 
+	public final List<Territory> territories;
+	public final List<Continent> continents;
+	public final ArrayList<Player> players = new ArrayList<Player>();
+	public final Object startMenuLock = new Object();
+
+	public Board board;
+	public InstructionPanel instructionPanel;
+
 	public MainGame() {
-		this.playerTurn = new PlayerTurn(this);
-		this.compTurn = new ComputerTurn(this);
 		TerritoriesBuilder territoriesBuilder = new TerritoriesBuilder(
 				TERRITORY_FILENAME, ADJACENCY_FILENAME, Continents_FILENAME);
 		BoardModel boardModel = territoriesBuilder.build();
@@ -40,17 +36,22 @@ public class MainGame {
 	}
 
 	private void addPlayers(int numPlayers) {
+		HumanStrategy humanStrategy = new HumanStrategy(this);
+		ComputerStrategy computerStrategy = new ComputerStrategy(this);
 		String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
 		for (int i = 1; i <= numPlayers; i++) {
-			Player player = new Player("Player" + i, colors[i - 1], this);
+			Player player = new Player("Player" + i, colors[i - 1], this,
+					i == -1 ? computerStrategy : humanStrategy);
 			players.add(player);
 		}
 	}
 
 	private void divideTerritories(int numPlayers) {
-		Collections.shuffle(territories);
+		List<Territory> mutableTerritories = new ArrayList<Territory>(
+				territories);
+		Collections.shuffle(mutableTerritories);
 		int counter = 0;
-		for (Territory t : territories) {
+		for (Territory t : mutableTerritories) {
 			counter = (counter + 1) % numPlayers;
 			Player currentPlayer = players.get(counter);
 			t.player = currentPlayer;
@@ -58,21 +59,22 @@ public class MainGame {
 	}
 
 	public void play() {
-		int count = 0;
 		while (true) {
-			playerTurn.takeTurn(players.get(count % players.size()));
-			count++;
-		}
-	}
-
-	public Territory getTerritory(String name) {
-		Territory territory = new Territory("Blank", 0, 0);
-		for (Territory t : territories) {
-			if (t.name.equals(name)) {
-				territory = t;
+			for (Player player : players) {
+				if (player.hasTerritories()) {
+					player.takeTurn();
+				}
+			}
+			int count = 0;
+			for (Player player : players) {
+				if (player.hasTerritories()) {
+					count++;
+				}
+			}
+			if (count == 1) {
+				break;
 			}
 		}
-		return territory;
 	}
 
 	public static void main(String[] args) throws InterruptedException {

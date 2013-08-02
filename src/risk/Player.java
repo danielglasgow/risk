@@ -1,28 +1,29 @@
 package risk;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 public class Player {
 
-	public String color;
-	public String name;
+	public final String color;
+	public final String name;
 	private final MainGame game;
-	//private final boolean isComputer;
-	public int armiesToPlace = 0;
+	private final Strategy strategy;
 	public Territory territoryAttackTo;
 	public Territory territoryAttackFrom;
 	public Territory fortify1;
 	public Territory fortify2;
-	
-	public Player(String name, String color, MainGame game) {
+
+	public Player(String name, String color, MainGame game, Strategy strategy) {
 		this.game = game;
 		this.name = name;
 		this.color = color;
+		this.strategy = strategy;
 	}
 
-	private ArrayList<Territory> getTerritories() {
+	private List<Territory> getTerritories() {
 		ArrayList<Territory> territories = new ArrayList<Territory>();
 		for (Territory t : game.territories) {
 			if (t.player.equals(this)) {
@@ -31,15 +32,20 @@ public class Player {
 		}
 		return territories;
 	}
-	
-	public void calculateArmiesToPlace() {
-		armiesToPlace = getTerritories().size() / 3;
+
+	public boolean hasTerritories() {
+		return (getTerritories().size() > 1);
+	}
+
+	public int getArmiesToPlace() {
+		int armiesToPlace = getTerritories().size() / 3;
 		if (armiesToPlace < 3) {
 			armiesToPlace = 3;
 		}
 		armiesToPlace += checkContinents();
+		return armiesToPlace;
 	}
-	
+
 	private boolean hasContinent(Continent continent) {
 		boolean hasContinent = true;
 		for (Territory t : continent.territories) {
@@ -49,15 +55,26 @@ public class Player {
 		}
 		return hasContinent;
 	}
-	
+
 	private int checkContinents() {
 		int extraArmies = 0;
 		for (Continent c : game.continents) {
 			if (hasContinent(c)) {
 				extraArmies += c.bonusArmies;
-				JOptionPane.showMessageDialog(null, "You have been awarded " + c.bonusArmies + " extra armies for controling " + c.name);
+				JOptionPane.showMessageDialog(null, "You have been awarded "
+						+ c.bonusArmies + " extra armies for controling "
+						+ c.name);
 			}
 		}
 		return extraArmies;
+	}
+
+	public void takeTurn() {
+		strategy.takeTurn(this);
+	}
+
+	public List<Territory> getTerritories(Continent continent) {
+
+		return null;
 	}
 }

@@ -6,34 +6,25 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 public class ButtonLeftListener implements ActionListener {
-	
+
 	public MainGame game;
-	private PlayerTurn turn;
-	
+	private HumanStrategy turn;
+
 	public ButtonLeftListener(MainGame game) {
 		this.game = game;
-		this.turn = game.playerTurn;
+		this.turn = null;// game.playerTurn;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (turn.phase == Phase.PLACE_ARMIES) {
-			if (turn.player.armiesToPlace != 0) {
-				JOptionPane.showMessageDialog(null, "You still have " + game.playerTurn.player.armiesToPlace + " armies to place.");
-			} else {
-				synchronized (turn.lock) {
-					turn.phase = Phase.ATTACK_FROM;
-					turn.lock.notifyAll();
+		if (turn.phase == Phase.ATTACK_FROM) {
+			synchronized (turn.lock) {
+				if (turn.player.territoryAttackFrom != null) {
+					turn.phase = Phase.ATTACK_TO;
+				} else {
+					turn.phase = Phase.FORTIFY_SELECTION;
 				}
-			}
-		} else if (turn.phase == Phase.ATTACK_FROM) {
-				synchronized (turn.lock) {
-					if (turn.player.territoryAttackFrom != null) {
-						turn.phase = Phase.ATTACK_TO;
-					} else {
-						turn.phase = Phase.FORTIFY_SELECTION;
-					}
-					turn.lock.notifyAll();
+				turn.lock.notifyAll();
 			}
 		} else if (turn.phase == Phase.ATTACK) {
 			synchronized (turn.lock) {
@@ -46,7 +37,7 @@ public class ButtonLeftListener implements ActionListener {
 				}
 				turn.lock.notifyAll();
 			}
-		} else if(turn.phase == Phase.WON_TERRITORY) {
+		} else if (turn.phase == Phase.WON_TERRITORY) {
 			synchronized (turn.lock) {
 				int armies = --turn.player.territoryAttackFrom.armies;
 				turn.player.territoryAttackTo.armies += armies;
@@ -57,11 +48,14 @@ public class ButtonLeftListener implements ActionListener {
 			}
 		} else if (turn.phase == Phase.FORTIFY_SELECTION) {
 			synchronized (turn.lock) {
-				if (turn.player.fortify1 != null && turn.player.fortify2 != null) {
+				if (turn.player.fortify1 != null
+						&& turn.player.fortify2 != null) {
 					turn.phase = Phase.FORTIFY;
 					turn.lock.notifyAll();
 				} else {
-					JOptionPane.showMessageDialog(null, "You must select two territories to fortify from first");
+					JOptionPane
+							.showMessageDialog(null,
+									"You must select two territories to fortify from first");
 				}
 			}
 		}

@@ -3,17 +3,18 @@ package risk;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ComputerTurn {
+public class ComputerStrategy implements Strategy {
 	public MainGame game;
 	public Player player;
 	private ArrayList<Continent> continentRatios = new ArrayList<Continent>();
 	private Continent goalContinent;
 	private int armiesToPlace;
 
-	public ComputerTurn(MainGame game) {
+	public ComputerStrategy(MainGame game) {
 		this.game = game;
 	}
 
+	@Override
 	public void takeTurn(Player player) {
 		this.player = player;
 		setArmiesToPlace();
@@ -28,8 +29,7 @@ public class ComputerTurn {
 	}
 
 	private void setArmiesToPlace() {
-		player.calculateArmiesToPlace();
-		armiesToPlace = player.armiesToPlace;
+		armiesToPlace = player.getArmiesToPlace();
 	}
 
 	private void setGoalContinent() {

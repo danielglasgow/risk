@@ -19,7 +19,7 @@ public class AttackRoute implements Comparable<AttackRoute> {
 	public double routeEfficiency() {
 		Territory baseTerritory = route.get(0);
 		int friendlyArmies = baseTerritory.armies
-				+ baseTerritory.player.armiesToPlace - 4;
+				+ baseTerritory.player.getArmiesToPlace() - 4;
 		int enemyArmies = 0;
 		for (Territory t : route.subList(1, route.size() - 1)) {
 			enemyArmies += t.armies;
@@ -39,8 +39,8 @@ public class AttackRoute implements Comparable<AttackRoute> {
 		ArrayList<TerritoryCluster> clusters = (ArrayList<TerritoryCluster>) continent
 				.getClusters();
 		boolean completesCluster = true;
-		for (TerritoryCluster tc : clusters) {
-			for (Territory t : tc.cluster) {
+		for (TerritoryCluster cluster : clusters) {
+			for (Territory t : cluster) {
 				if (!route.contains(t)) {
 					completesCluster = false;
 				}

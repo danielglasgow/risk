@@ -3,35 +3,48 @@ package risk;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
-public class TerritoryCluster implements Comparable<TerritoryCluster> {
+/**
+ * A TerritoryCluster is an object which represents a group of contiguous
+ * territories not controlled by a given player within a continent.
+ * 
+ * @author danielglasgow
+ */
+public class TerritoryCluster implements Comparable<TerritoryCluster>,
+		Iterable<Territory> {
 
-	public ArrayList<Territory> cluster = new ArrayList<Territory>();
-	public boolean containsBorder;
-	private Continent continent;
-	private Player player;
-	private final ArrayList<Territory> playerTerritories;
-	private final ArrayList<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
+	private final List<Territory> territories;
+	public final boolean containsBorder;
+	private final Continent continent;
+	private final Player player;
+	private final Set<Territory> playerTerritories;
+
+	// This is computed later if needed.
+	private final List<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
 
 	public TerritoryCluster(Territory territory, Continent continent,
 			Player player) {
 		this.continent = continent;
 		this.player = player;
-		this.cluster = findCluster(territory);
+		this.territories = buildCluster(territory);
 		this.containsBorder = containsBorder();
-		this.playerTerritories = playerTerritories();
+		this.playerTerritories = getAdjacentPlayerTerritories();
 	}
 
+	// TODO (Dani) Javadoc.. and get rid of ArrayList declarations
 	public void makeRoutes() {
 		for (Territory t : playerTerritories) {
 			ArrayList<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
 			AttackRoute firstRoute = new AttackRoute(continent);
 			firstRoute.add(t);
 			attackRoutes.add(firstRoute);
-			while (extendRoute(cluster, attackRoutes)) {
+			while (extendRoute(territories, attackRoutes)) {
 			}
 			this.attackRoutes.addAll(attackRoutes);
 		}
@@ -43,7 +56,7 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		}
 	}
 
-	private boolean extendRoute(ArrayList<Territory> cluster,
+	private boolean extendRoute(List<Territory> cluster,
 			ArrayList<AttackRoute> attackRoutes) {
 		boolean stillWorking = false;
 		ArrayList<AttackRoute> newRoutes = new ArrayList<AttackRoute>();
@@ -72,47 +85,57 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 		return stillWorking;
 	}
 
-	private ArrayList<Territory> playerTerritories() {
-		HashSet<Territory> playerTerritories = new HashSet<Territory>();
-		for (Territory t1 : cluster) {
-			for (Territory t2 : t1.adjacents) {
-				if (continent.territories.contains(t2)
-						&& t2.player.equals(player)) {
-					playerTerritories.add(t2);
+	/**
+	 * Returns a list of all the territories in the continent (which by
+	 * definition are the player's territories) that border the cluster's
+	 * territories.
+	 */
+	private Set<Territory> getAdjacentPlayerTerritories() {
+		Set<Territory> playerTerritories = new HashSet<Territory>();
+		for (Territory clusterTerritory : territories) {
+			for (Territory borderTerritory : clusterTerritory.adjacents) {
+				if (continent.territories.contains(borderTerritory)
+						&& borderTerritory.player.equals(player)) {
+					playerTerritories.add(borderTerritory);
 				}
 			}
 		}
-		return new ArrayList<Territory>(playerTerritories);
+		return playerTerritories;
 	}
 
 	private boolean containsBorder() {
 		boolean containsBorder = false;
 		for (Territory t : continent.borders) {
-			if (cluster.contains(t)) {
+			if (territories.contains(t)) {
 				containsBorder = true;
 			}
 		}
 		return containsBorder;
 	}
 
-	private ArrayList<Territory> findCluster(Territory territory) {
-		ArrayList<Territory> cluster = new ArrayList<Territory>();
-		ArrayList<Territory> next = new ArrayList<Territory>();
-		ArrayList<Territory> placeHolder = new ArrayList<Territory>();
-		next.add(territory);
-		while (!next.isEmpty()) {
-			cluster.addAll(next);
-			placeHolder.addAll(next);
-			next.clear();
-			for (Territory t : placeHolder) {
-				next.addAll(qualifyingAdjacentTerritories(t, cluster));
+	/**
+	 * Starting from a given enemy territory, builds the list of contiguous
+	 * enemy territories within this continent.
+	 */
+	private List<Territory> buildCluster(Territory territory) {
+		// TODO(Dani + Abba) use sets and better algorithm.
+		List<Territory> cluster = new ArrayList<Territory>();
+		List<Territory> newNeighbors = new ArrayList<Territory>();
+		List<Territory> neighbors = new ArrayList<Territory>();
+		newNeighbors.add(territory);
+		while (!newNeighbors.isEmpty()) {
+			cluster.addAll(newNeighbors);
+			neighbors.addAll(newNeighbors);
+			newNeighbors.clear();
+			for (Territory t : neighbors) {
+				newNeighbors.addAll(qualifyingNeighbors(t, cluster));
 			}
 		}
 		return cluster;
 	}
 
-	private ArrayList<Territory> qualifyingAdjacentTerritories(
-			Territory territory, ArrayList<Territory> cluster) {
+	private ArrayList<Territory> qualifyingNeighbors(Territory territory,
+			List<Territory> cluster) {
 		ArrayList<Territory> adjacents = new ArrayList<Territory>();
 		for (Territory t : territory.adjacents) {
 			if (!t.player.equals(player) && !cluster.contains(t)
@@ -125,8 +148,8 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 
 	public static boolean compareClusters(TerritoryCluster territoryCluster1,
 			TerritoryCluster territoryCluster2) {
-		for (Territory t : territoryCluster1.cluster) {
-			if (!territoryCluster2.cluster.contains(t)) {
+		for (Territory t : territoryCluster1.territories) {
+			if (!territoryCluster2.territories.contains(t)) {
 				return false;
 			}
 		}
@@ -161,12 +184,12 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 			Player worstEnemy = worstEnemy();
 			int threat1 = 0;
 			int threat2 = 0;
-			for (Territory t : this.cluster) {
+			for (Territory t : this.territories) {
 				if (t.player.equals(worstEnemy)) {
 					threat1++;
 				}
 			}
-			for (Territory t : cluster.cluster) {
+			for (Territory t : cluster.territories) {
 				if (t.player.equals(worstEnemy)) {
 					threat2++;
 				}
@@ -181,8 +204,12 @@ public class TerritoryCluster implements Comparable<TerritoryCluster> {
 	}
 
 	public String toString() {
-		return cluster.toString();
+		return territories.toString();
+	}
 
+	@Override
+	public Iterator<Territory> iterator() {
+		return territories.iterator();
 	}
 
 }

@@ -16,6 +16,9 @@ public class Board { // make board a JPanel not frame...
 	private final List<Territory> territories;
 	public MainGame game;
 
+	// YUCK
+	public final Mouse mouse;
+
 	public Board(MainGame game) {
 		mainFrame = new JFrame("risk");
 		try {
@@ -36,7 +39,7 @@ public class Board { // make board a JPanel not frame...
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 		mainFrame.setResizable(false);
-		Mouse mouse = new Mouse(this);
+		mouse = new Mouse(this);
 		mainFrame.addMouseListener(mouse);
 	}
 

@@ -31,27 +31,46 @@ public class InstructionPanel {
 		buttonLeft.addActionListener(new ButtonLeftListener(game));
 
 		buttonArea = new JPanel(new GridLayout(1, 2));
-		buttonArea.add(this.buttonLeft);
-		buttonArea.add(this.buttonRight);
+		buttonArea.add(buttonLeft);
+		buttonArea.add(buttonRight);
 
 		Font instructionFont = new Font("size14", Font.PLAIN, 14);
-
 		instruction.setFont(instructionFont);
+		instruction.setText("test");
 		mainPanel.setLayout(new BorderLayout());
 
 		newIndicator.setForeground(Color.red);
-
 		mainPanel.add(newIndicator, BorderLayout.WEST);
 		mainPanel.add(buttonArea, BorderLayout.EAST);
 		mainPanel.add(instruction, BorderLayout.CENTER);
 	}
 
+	private void addStandardButtons() {
+		buttonArea.add(buttonLeft);
+		buttonArea.add(buttonRight);
+	}
+
+	public void removeButtons() {
+		buttonArea.removeAll();
+	}
+
 	public void setText(String newIndicator, String instruction,
 			String buttonLeft, String buttonRight) {
+		removeButtons();
 		this.newIndicator.setText(newIndicator);
 		this.instruction.setText(instruction);
 		this.buttonLeft.setText(buttonLeft);
 		this.buttonRight.setText(buttonRight);
+		addStandardButtons();
+	}
+
+	public void addCustomButtons(String newIndicator, String instruction,
+			JButton leftButton, JButton rightButton) {
+		removeButtons();
+		buttonArea.add(leftButton);
+		buttonArea.add(rightButton);
+		this.newIndicator.setText(newIndicator);
+		this.instruction.setText(instruction);
 	}
 
 	/**
@@ -59,5 +78,13 @@ public class InstructionPanel {
 	 */
 	public JPanel getMainPanel() {
 		return mainPanel;
+	}
+
+	public void addCustomButtons(String newIndicator, String instruction,
+			JButton button) {
+		removeButtons();
+		buttonArea.add(button);
+		this.newIndicator.setText(newIndicator);
+		this.instruction.setText(instruction);
 	}
 }

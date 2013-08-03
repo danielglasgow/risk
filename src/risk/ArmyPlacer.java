@@ -3,23 +3,22 @@ package risk;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import com.google.common.collect.Maps;
 
-public class ArmyPlacer {
+public class ArmyPlacer extends PhaseHandler {
 	private final MainGame game;
 	private final Player player;
 	private final InstructionPanel instructionPanel;
 	private final int armiesToPlace;
-	private final CountDownLatch latch = new CountDownLatch(1);
 	private final Map<Territory, Integer> initialArmiesPerTerritory = Maps
 			.newHashMap();
 
 	private int armiesPlaced = 0;
+	private boolean confirmingPlacement = false;
 
 	public ArmyPlacer(MainGame game, Player player,
 			InstructionPanel instructionPanel, int armiesToPlace) {
@@ -32,18 +31,17 @@ public class ArmyPlacer {
 		this.armiesToPlace = armiesToPlace;
 	}
 
-	public void placeArmies(Territory territory) {
-		if (armiesPlaced < armiesToPlace) {
-			if (territory.player == player) {
-				territory.armies++;
-				armiesPlaced++;
-				if (armiesPlaced == armiesToPlace) {
-					confirmPlacement();
-				}
-			} else {
-				JOptionPane.showMessageDialog(null,
-						"You must place armies on territories you control");
+	private void placeArmies(Territory territory) {
+		if (territory.player == player) {
+			territory.armies++;
+			armiesPlaced++;
+			setInterface();
+			if (armiesPlaced == armiesToPlace) {
+				confirmPlacement();
 			}
+		} else {
+			JOptionPane.showMessageDialog(null,
+					"You must place armies on territories you control");
 		}
 	}
 
@@ -56,13 +54,16 @@ public class ArmyPlacer {
 		}
 		game.board.updateBackground();
 		armiesPlaced = 0;
-		run();
+		confirmingPlacement = false;
+		setInterface();
 	}
 
-	public void run() {
+	/**
+	 * Sets instruction panel interface
+	 */
+	public void setInterface() {
 		JButton button = new JButton();
 		button.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				restart();
@@ -74,7 +75,7 @@ public class ArmyPlacer {
 						InstructionPanel.newVisible,
 						player.color.toUpperCase()
 								+ "'s turn! Distribute "
-								+ armiesToPlace
+								+ (armiesToPlace - armiesPlaced)
 								+ " armies between your territories by clicking on the territory's army indicator.",
 						button);
 	}
@@ -83,12 +84,13 @@ public class ArmyPlacer {
 	 * Prompt user to confirm completion of army placement.
 	 */
 	private void confirmPlacement() {
+		confirmingPlacement = true;
 		JButton leftButton = new JButton();
 		leftButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				instructionPanel.removeButtons();
+				nextPhase = Phase.ATTACK_FROM;
 				latch.countDown();
 			}
 		});
@@ -107,19 +109,14 @@ public class ArmyPlacer {
 		instructionPanel
 				.addCustomButtons(
 						InstructionPanel.newVisible,
-						"You have placed all of your armies. If you would like to replace armies again click Place Again, otherwise click Continue",
+						"You have placed all of your armies. If you would like to place armies again click Place Again, otherwise click Continue",
 						leftButton, rightButton);
 	}
 
-	/**
-	 * Wait until all armies have been placed and user presses continue.
-	 */
-	public void await() {
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	@Override
+	public void action(Territory territory) {
+		if (!confirmingPlacement) {
+			placeArmies(territory);
 		}
 	}
 

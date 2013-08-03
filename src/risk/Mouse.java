@@ -18,7 +18,7 @@ public class Mouse implements MouseListener {
 	private final HumanStrategy turn;
 
 	// YUCK... FIX THIS LATER!
-	private ArmyPlacer armyPlacer = null;
+	private PhaseHandler phaseHandler = null;
 
 	public Mouse(Board board) {
 		this.board = board;
@@ -26,8 +26,8 @@ public class Mouse implements MouseListener {
 		this.turn = null; // game.playerTurn;
 	}
 
-	public void setArmyPlacer(ArmyPlacer armyPlacer) {
-		this.armyPlacer = armyPlacer;
+	public void setPhaseHandler(PhaseHandler phaseHandler) {
+		this.phaseHandler = phaseHandler;
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -63,7 +63,7 @@ public class Mouse implements MouseListener {
 	}
 
 	private void fortifySelection(Territory territory) {
-		if (!territory.player.equals(game.playerTurn.player)) {
+		if (!territory.player.equals(turn.player)) {
 			JOptionPane.showMessageDialog(null,
 					"You must fortify between to territories you control");
 		} else {
@@ -125,28 +125,11 @@ public class Mouse implements MouseListener {
 	}
 
 	private void placeArmies(Territory territory) {
-		if (armyPlacer != null) {
-			armyPlacer.placeArmies(territory);
-		}
+		phaseHandler.action(territory);
 	}
 
 	private void attackTo(Territory territory) {
-		if (!game.playerTurn.player.territoryAttackFrom.adjacents
-				.contains(territory)) {
-			JOptionPane.showMessageDialog(null,
-					"You must attack a territory adjacent to "
-							+ game.playerTurn.player.territoryAttackFrom.name);
-		} else if (territory.player.equals(game.playerTurn.player)) {
-			JOptionPane.showMessageDialog(null,
-					"You cannot attack a territory you control");
-		} else {
-			game.playerTurn.player.territoryAttackTo = territory;
-			game.playerTurn.phase = Phase.ATTACK;
-			synchronized (turn.lock) {
-				turn.lock.notifyAll();
-			}
-
-		}
+		phaseHandler.action(territory);
 	}
 
 	private void wonTerritory(Territory territory) {
@@ -198,25 +181,7 @@ public class Mouse implements MouseListener {
 	}
 
 	private void attackFrom(Territory territory) {
-		boolean canAttackFrom = true;
-		String failMsg = "";
-		if (territory.armies < 2) {
-			canAttackFrom = false;
-			failMsg = "You cannot attack from a territory with less than two armies";
-		}
-		if (!territory.player.equals(turn.player)) {
-			canAttackFrom = false;
-			failMsg = "You cannot attack from a territory you do not control";
-		}
-		if (canAttackFrom) {
-			turn.player.territoryAttackFrom = territory;
-			turn.phase = Phase.ATTACK_TO;
-			synchronized (turn.lock) {
-				turn.lock.notifyAll();
-			}
-		} else {
-			JOptionPane.showMessageDialog(null, failMsg);
-		}
+
 	}
 
 	private Territory findMatch(int x, int y) {

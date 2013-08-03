@@ -17,27 +17,7 @@ public class ButtonLeftListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (turn.phase == Phase.ATTACK_FROM) {
-			synchronized (turn.lock) {
-				if (turn.player.territoryAttackFrom != null) {
-					turn.phase = Phase.ATTACK_TO;
-				} else {
-					turn.phase = Phase.FORTIFY_SELECTION;
-				}
-				turn.lock.notifyAll();
-			}
-		} else if (turn.phase == Phase.ATTACK) {
-			synchronized (turn.lock) {
-				if (turn.attackWon) {
-					if (turn.player.territoryAttackFrom.armies > 1) {
-						turn.phase = Phase.WON_TERRITORY;
-					} else {
-						turn.phase = Phase.ATTACK_FROM;
-					}
-				}
-				turn.lock.notifyAll();
-			}
-		} else if (turn.phase == Phase.WON_TERRITORY) {
+		if (turn.phase == Phase.WON_TERRITORY) {
 			synchronized (turn.lock) {
 				int armies = --turn.player.territoryAttackFrom.armies;
 				turn.player.territoryAttackTo.armies += armies;

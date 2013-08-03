@@ -15,13 +15,7 @@ public class ButtonRightListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (turn.phase == Phase.ATTACK_TO
-				|| (turn.phase == Phase.ATTACK && !turn.attackWon)) {
-			synchronized (turn.lock) {
-				turn.phase = Phase.ATTACK_FROM;
-				turn.lock.notifyAll();
-			}
-		} else if (turn.phase == Phase.WON_TERRITORY) {
+		if (turn.phase == Phase.WON_TERRITORY) {
 			synchronized (turn.lock) {
 				turn.phase = Phase.ATTACK_FROM;
 				turn.lock.notifyAll();

@@ -1,10 +1,11 @@
 package risk;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AttackRoute implements Comparable<AttackRoute> {
 
-	private ArrayList<Territory> route = new ArrayList<Territory>();
+	private List<Territory> route = new ArrayList<Territory>();
 	private Continent continent;
 
 	public AttackRoute(Continent continent) {
@@ -85,7 +86,7 @@ public class AttackRoute implements Comparable<AttackRoute> {
 		return this.route.addAll(route.getRoute());
 	}
 
-	public ArrayList<Territory> getRoute() {
+	public List<Territory> getRoute() {
 		return route;
 	}
 

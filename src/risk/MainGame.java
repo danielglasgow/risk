@@ -41,7 +41,7 @@ public class MainGame {
 		String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
 		for (int i = 1; i <= numPlayers; i++) {
 			Player player = new Player("Player" + i, colors[i - 1], this,
-					i == -1 ? computerStrategy : humanStrategy);
+					i == 1 ? humanStrategy : computerStrategy);
 			players.add(player);
 		}
 	}
@@ -59,11 +59,14 @@ public class MainGame {
 	}
 
 	public void play() {
-		while (true) {
+		boolean testBool = true;
+		while (testBool) {
 			for (Player player : players) {
 				if (player.hasTerritories()) {
 					player.takeTurn();
 				}
+				// for testing ComputerStrategy
+				testBool = false;
 			}
 			int count = 0;
 			for (Player player : players) {

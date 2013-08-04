@@ -8,8 +8,6 @@ public class Continent implements Comparable<Continent> {
 	public final List<Territory> borders = new ArrayList<Territory>();
 	private final List<TerritoryCluster> clusters = new ArrayList<TerritoryCluster>();
 	public final String name;
-	// TODO(dani): Can bonusArmies be final? Prefer to make as many variables
-	// final as possible.
 	public final int bonusArmies;
 	public double ratio;
 
@@ -71,9 +69,26 @@ public class Continent implements Comparable<Continent> {
 		return false;
 	}
 
-	public void setTerritoryCluster(ArrayList<TerritoryCluster> clusters) {
-		this.clusters.clear();
-		this.clusters.addAll(clusters);
+	public void generateTerritoryClusters(Player player) {
+		List<TerritoryCluster> territoryClusters = new ArrayList<TerritoryCluster>();
+		for (Territory t : getTerritories(player, false)) {
+			territoryClusters.add(new TerritoryCluster(t, this, player));
+		}
+		List<TerritoryCluster> uniqueClusters = new ArrayList<TerritoryCluster>();
+		uniqueClusters.add(territoryClusters.get(0));
+		for (TerritoryCluster cluster1 : territoryClusters) {
+			boolean newCluster = true;
+			for (TerritoryCluster cluster2 : uniqueClusters) {
+				if (TerritoryCluster.compareClusters(cluster1, cluster2)) {
+					newCluster = false;
+				}
+			}
+			if (newCluster) {
+				uniqueClusters.add(cluster1);
+			}
+		}
+		clusters.clear();
+		clusters.addAll(uniqueClusters);
 	}
 
 	public List<TerritoryCluster> getClusters() {

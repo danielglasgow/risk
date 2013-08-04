@@ -28,6 +28,7 @@ public class ArmyPlacer extends PhaseHandler {
 			initialArmiesPerTerritory.put(territory, territory.armies);
 		}
 		this.instructionPanel = instructionPanel;
+		System.out.println(instructionPanel);
 		this.armiesToPlace = armiesToPlace;
 	}
 

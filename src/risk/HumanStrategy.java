@@ -11,6 +11,7 @@ public class HumanStrategy implements Strategy {
 	public HumanStrategy(MainGame game) {
 		this.game = game;
 		this.instructionPanel = game.instructionPanel;
+		System.out.println(instructionPanel);
 	}
 
 	@Override

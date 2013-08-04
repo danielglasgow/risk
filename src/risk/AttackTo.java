@@ -16,13 +16,12 @@ public class AttackTo extends PhaseHandler {
 		this.instructionPanel = instructionPanel;
 	}
 
-	public void setInterface() {
+	public void displayInterface() {
 		JButton button = new JButton();
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				nextPhase = Phase.ATTACK_FROM;
-				latch.countDown();
+				finishPhase(Phase.ATTACK_FROM);
 			}
 		});
 		button.setText("Choose a Different Territory to Attack From");
@@ -42,13 +41,12 @@ public class AttackTo extends PhaseHandler {
 					"You cannot attack a territory you control");
 		} else {
 			player.territoryAttackTo = territory;
-			nextPhase = Phase.ATTACK;
-			latch.countDown();
+			finishPhase(Phase.ATTACK);
 		}
 	}
 
 	@Override
-	public void action(Territory territory) {
+	public void mouseClicked(Territory territory) {
 		setAttackToTerritory(territory);
 	}
 

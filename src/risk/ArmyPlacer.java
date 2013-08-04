@@ -35,7 +35,7 @@ public class ArmyPlacer extends PhaseHandler {
 		if (territory.player == player) {
 			territory.armies++;
 			armiesPlaced++;
-			setInterface();
+			displayInterface();
 			if (armiesPlaced == armiesToPlace) {
 				confirmPlacement();
 			}
@@ -55,13 +55,13 @@ public class ArmyPlacer extends PhaseHandler {
 		game.board.updateBackground();
 		armiesPlaced = 0;
 		confirmingPlacement = false;
-		setInterface();
+		displayInterface();
 	}
 
 	/**
 	 * Sets instruction panel interface
 	 */
-	public void setInterface() {
+	public void displayInterface() {
 		JButton button = new JButton();
 		button.addActionListener(new ActionListener() {
 			@Override
@@ -90,8 +90,8 @@ public class ArmyPlacer extends PhaseHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				nextPhase = Phase.ATTACK_FROM;
-				latch.countDown();
+				finishPhase(Phase.ATTACK_FROM);
+
 			}
 		});
 		leftButton.setText("Continue");
@@ -114,7 +114,7 @@ public class ArmyPlacer extends PhaseHandler {
 	}
 
 	@Override
-	public void action(Territory territory) {
+	public void mouseClicked(Territory territory) {
 		if (!confirmingPlacement) {
 			placeArmies(territory);
 		}

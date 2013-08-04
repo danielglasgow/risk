@@ -25,41 +25,31 @@ public class Attack extends PhaseHandler {
 		this.instructionPanel = instructionPanel;
 	}
 
-	public void setInterface() {
+	public void displayInterface() {
 		JButton buttonRight = new JButton();
 		JButton buttonLeft = new JButton();
 		buttonRight.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				nextPhase = Phase.ATTACK_FROM;
-				latch.countDown();
+				finishPhase(Phase.ATTACK_FROM);
 			}
 		});
 		buttonLeft.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				nextPhase = Phase.ATTACK;
-				latch.countDown();
+				finishPhase(Phase.ATTACK);
+
 			}
 		});
 
 		simulateAttack();
 
 		if (player.territoryAttackTo.armies < 1) {
-			playerWinsInterface(buttonRight);
+			playerWinsInterface();
 		} else if (player.territoryAttackFrom.armies < 2) {
 			playerLosesInterface(buttonRight);
 		} else {
-			buttonLeft.setText("Continue Attacking");
-			buttonRight.setText("Stop Attacking");
-			instructionPanel.addCustomButtons(
-					InstructionPanel.newVisible,
-					"Attack Rolls: " + printRolls(3, attackRolls)
-							+ "    Defense rolls: "
-							+ printRolls(2, defenseRolls)
-							+ "     Attack Loses: " + attackLosses
-							+ "    Defense Loses: " + defenseLosses + "    ",
-					buttonLeft, buttonRight);
+			continueAttackInterface(buttonRight, buttonLeft);
 		}
 	}
 
@@ -106,7 +96,14 @@ public class Attack extends PhaseHandler {
 		game.board.updateBackground();
 	}
 
-	private void playerWinsInterface(JButton button) {
+	private void playerWinsInterface() {
+		JButton button = new JButton();
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				finishPhase(Phase.WON_TERRITORY);
+			}
+		});
 		button.setText("Continue");
 		player.territoryAttackFrom.armies--;
 		player.territoryAttackTo.player = player;
@@ -133,12 +130,29 @@ public class Attack extends PhaseHandler {
 						+ " because it only has one army", button);
 	}
 
+	private void continueAttackInterface(JButton buttonRight, JButton buttonLeft) {
+		buttonLeft.setText("Continue Attacking");
+		buttonRight.setText("Stop Attacking");
+		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+				"Attack Rolls: " + printRolls(3, attackRolls)
+						+ "    Defense rolls: " + printRolls(2, defenseRolls)
+						+ "     Attack Loses: " + attackLosses
+						+ "    Defense Loses: " + defenseLosses + "    ",
+				buttonLeft, buttonRight);
+	}
+
 	private String printRolls(int num, int[] array) {
 		String rolls = "" + array[num - 1];
 		for (int i = num - 2; i >= 0; i--) {
 			rolls = rolls + ", " + array[i];
 		}
 		return rolls;
+	}
+
+	@Override
+	public void mouseClicked(Territory territory) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

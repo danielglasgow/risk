@@ -17,12 +17,12 @@ public class AttackFrom extends PhaseHandler {
 
 	}
 
-	public void setInterface() {
+	public void displayInterface() {
 		JButton button = new JButton();
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				nextPhase = Phase.FORTIFY_SELECTION;
+				finishPhase(Phase.FORTIFY_SELECTION);
 			}
 		});
 		button.setText("End Attack Phase");
@@ -44,15 +44,14 @@ public class AttackFrom extends PhaseHandler {
 		}
 		if (canAttackFrom) {
 			player.territoryAttackFrom = territory;
-			nextPhase = Phase.ATTACK_TO;
-			latch.countDown();
+			finishPhase(Phase.ATTACK_TO);
 		} else {
 			JOptionPane.showMessageDialog(null, failMsg);
 		}
 	}
 
 	@Override
-	public void action(Territory territory) {
+	public void mouseClicked(Territory territory) {
 		setAttackFromTerritory(territory);
 	}
 

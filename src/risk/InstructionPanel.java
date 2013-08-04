@@ -27,9 +27,6 @@ public class InstructionPanel {
 		buttonRight = new JButton();
 		buttonLeft = new JButton();
 
-		buttonRight.addActionListener(new ButtonRightListener(game));
-		buttonLeft.addActionListener(new ButtonLeftListener(game));
-
 		buttonArea = new JPanel(new GridLayout(1, 2));
 		buttonArea.add(buttonLeft);
 		buttonArea.add(buttonRight);

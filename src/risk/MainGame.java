@@ -28,9 +28,9 @@ public class MainGame {
 	public void startGame() throws InterruptedException {
 		StartMenu startMenu = new StartMenu();
 		startMenu.await();
+		instructionPanel = new InstructionPanel(this);
 		addPlayers(startMenu.getNumPlayers());
 		divideTerritories(players.size());
-		instructionPanel = new InstructionPanel(this);
 		board = new Board(this);
 		board.updateBackground();
 	}
@@ -41,7 +41,7 @@ public class MainGame {
 		String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
 		for (int i = 1; i <= numPlayers; i++) {
 			Player player = new Player("Player" + i, colors[i - 1], this,
-					i == 1 ? humanStrategy : computerStrategy);
+					i == -1 ? humanStrategy : computerStrategy);
 			players.add(player);
 		}
 	}
@@ -66,7 +66,7 @@ public class MainGame {
 					player.takeTurn();
 				}
 				// for testing ComputerStrategy
-				testBool = false;
+				// testBool = false;
 			}
 			int count = 0;
 			for (Player player : players) {

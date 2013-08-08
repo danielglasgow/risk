@@ -37,12 +37,12 @@ public class Player {
 		return (getTerritories().size() > 1);
 	}
 
-	public int getArmiesToPlace() {
+	public int getArmiesToPlace(boolean hasPlayer) {
 		int armiesToPlace = getTerritories().size() / 3;
 		if (armiesToPlace < 3) {
 			armiesToPlace = 3;
 		}
-		armiesToPlace += checkContinents();
+		armiesToPlace += checkContinents(hasPlayer);
 		return armiesToPlace;
 	}
 
@@ -56,10 +56,10 @@ public class Player {
 		return hasContinent;
 	}
 
-	private int checkContinents() {
+	private int checkContinents(boolean hasPlayer) {
 		int extraArmies = 0;
 		for (Continent c : game.continents) {
-			if (hasContinent(c)) {
+			if (hasContinent(c) && hasPlayer) {
 				extraArmies += c.bonusArmies;
 				JOptionPane.showMessageDialog(null, "You have been awarded "
 						+ c.bonusArmies + " extra armies for controling "

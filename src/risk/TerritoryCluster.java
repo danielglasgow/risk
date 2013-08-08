@@ -37,37 +37,36 @@ public class TerritoryCluster implements Iterable<Territory> {
 	public void makeRoutes() {
 		for (Territory baseTerritory : playerTerritories) {
 			List<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
+			List<AttackRoute> newRoutes = new ArrayList<AttackRoute>();
+			List<AttackRoute> oldRoutes = new ArrayList<AttackRoute>();
 			AttackRoute baseRoute = new AttackRoute(continent);
 			baseRoute.add(baseTerritory);
 			attackRoutes.add(baseRoute);
 			boolean stillWorking = true;
 			while (stillWorking) {
 				stillWorking = false;
-				List<AttackRoute> newRoutes = new ArrayList<AttackRoute>();
 				for (AttackRoute route : attackRoutes) {
-					Territory territory = route.get(route.size() - 1);
-					AttackRoute firstRoute = new AttackRoute(continent);
-					for (Territory t : territory.adjacents) {
-						if (!route.contains(t) && territories.contains(t)) {
+					oldRoutes.add(route);
+					Territory extensionTerritory = route.get(route.size() - 1);
+					for (Territory territory : extensionTerritory.adjacents) {
+						if (!route.contains(territory)
+								&& territories.contains(territory)
+								&& territory.player != player) {
 							stillWorking = true;
-							if (firstRoute.isEmpty()) {
-								firstRoute.addAll(route);
-								if (firstRoute.size() > 1) {
-									this.attackRoutes.add(firstRoute);
-								}
-								route.add(t);
-							} else {
-								AttackRoute newRoute = new AttackRoute(
-										continent, firstRoute);
-								newRoute.add(t);
-								newRoutes.add(newRoute);
-							}
+							AttackRoute newRoute = new AttackRoute(continent,
+									route);
+							newRoute.add(territory);
+							newRoutes.add(newRoute);
 						}
 					}
 				}
+				this.attackRoutes.addAll(newRoutes);
+				attackRoutes.clear();
 				attackRoutes.addAll(newRoutes);
+				newRoutes.clear();
+				attackRoutes.removeAll(oldRoutes);
+				oldRoutes.clear();
 			}
-			this.attackRoutes.addAll(attackRoutes);
 		}
 	}
 

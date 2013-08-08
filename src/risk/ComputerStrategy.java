@@ -5,8 +5,11 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JButton;
@@ -14,21 +17,21 @@ import javax.swing.JButton;
 public class ComputerStrategy implements Strategy {
 	public final MainGame game;
 	public Player player;
-	private List<Continent> continentRatios = new ArrayList<Continent>();
 	private Continent goalContinent;
 	private int armiesToPlace;
 	private final List<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
 	private InstructionPanel instructionPanel;
-	private CountDownLatch latch = new CountDownLatch(1);
+	private CountDownLatch latch;
 
 	public ComputerStrategy(MainGame game) {
 		this.game = game;
 		this.instructionPanel = game.instructionPanel;
-		System.out.println(instructionPanel);
 	}
 
 	@Override
 	public void takeTurn(Player player) {
+		latch = new CountDownLatch(1);
+		attackRoutes.clear();
 		this.player = player;
 		JButton button = new JButton();
 		button.addActionListener(new ActionListener() {
@@ -49,18 +52,10 @@ public class ComputerStrategy implements Strategy {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		buildAttackRoutes();
-		if (captureGoalContinent()) {
-			// lots of code
-		} else {
+		if (goalContinent.ratio != 1) {
+			buildAttackRoutes();
 			placeArmies(attackRoutes.get(0).get(0), armiesToPlace);
-			try {
-				Thread.sleep(4000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("attacking");
+			System.out.println("Chosen ROute:" + attackRoutes.get(0));
 			attack(attackRoutes.get(0));
 		}
 	}
@@ -75,7 +70,6 @@ public class ComputerStrategy implements Strategy {
 		while (attackFrom.armies > 4 || !capturedTerritory) {
 			simulateAttack(attackFrom, attackTo);
 			if (attackTo.armies < 1) {
-				System.out.println("Won!");
 				capturedTerritory = true;
 				attackTo.player = player;
 				attackTo.armies = attackFrom.armies - 1;
@@ -90,7 +84,6 @@ public class ComputerStrategy implements Strategy {
 				}
 
 			} else if (attackFrom.armies < 2) {
-				System.out.println("lost");
 				break;
 			}
 			game.board.updateBackground();
@@ -150,7 +143,7 @@ public class ComputerStrategy implements Strategy {
 	}
 
 	private void setArmiesToPlace() {
-		armiesToPlace = player.getArmiesToPlace();
+		armiesToPlace = player.getArmiesToPlace(false);
 	}
 
 	private void buildAttackRoutes() {
@@ -160,28 +153,35 @@ public class ComputerStrategy implements Strategy {
 			attackRoutes.addAll(territoryCluster.getAttackRoutes());
 		}
 		Collections.sort(attackRoutes);
+		for (AttackRoute attackRoute : attackRoutes) {
+			System.out.print(attackRoute.routeEfficiency());
+			System.out.println(attackRoute);
+		}
 	}
 
 	private void setGoalContinent() {
+		List<Continent> continentRatios = new ArrayList<Continent>();
 		for (int i = 0; i < 6; i++) {
 			double numTerritories = 0;
 			double numTerritoriesControlled = 0;
-			for (Territory t : game.continents.get(i).territories) {
+			double armiesControlled = 0;
+			double enemyArmies = 0;
+			for (Territory territory : game.continents.get(i).territories) {
 				numTerritories++;
-				if (t.player.equals(player)) {
+				if (territory.player.equals(player)) {
 					numTerritoriesControlled++;
+					armiesControlled += territory.armies;
+				} else {
+					enemyArmies += territory.armies;
 				}
 			}
-			double ratio = numTerritoriesControlled / numTerritories;
+			double ratio = (numTerritoriesControlled + armiesControlled)
+					/ (numTerritories + enemyArmies + armiesControlled);
 			game.continents.get(i).ratio = ratio;
 			continentRatios.add(game.continents.get(i));
 			Collections.sort(continentRatios);
 		}
-		if (!continentRatios.get(0).name.equals("Asia")) {
-			goalContinent = continentRatios.get(0);
-		} else {
-			goalContinent = continentRatios.get(1);
-		}
+		goalContinent = continentRatios.get(0);
 	}
 
 	private boolean captureGoalContinent() {
@@ -203,6 +203,51 @@ public class ComputerStrategy implements Strategy {
 			return true;
 		}
 		return false;
+	}
+
+	private void captureContinent() {
+		if (true) {
+			System.out.println(goalContinent.name);
+			List<TerritoryCluster> clusters = goalContinent.getClusters();
+			List<AttackRoute> finalAttackRoutes = new ArrayList<AttackRoute>();
+			Set<Territory> startTerritories = new HashSet<Territory>();
+			for (TerritoryCluster cluster : clusters) {
+				cluster.makeRoutes();
+				List<AttackRoute> attackRoutes = cluster.getAttackRoutes();
+				Iterator<AttackRoute> iterator = attackRoutes.iterator();
+				while (iterator.hasNext()) {
+					AttackRoute nextRoute = iterator.next();
+					if (!startTerritories.contains(nextRoute.get(0))) {
+						startTerritories.add(nextRoute.get(0));
+						finalAttackRoutes.add(nextRoute);
+						break;
+					}
+
+				}
+			}
+			double totalDifficulty = 0;
+			for (AttackRoute attackRoute : finalAttackRoutes) {
+				attackRoute.calculateRouteDifficulty();
+				totalDifficulty += attackRoute.getRouteDifficulty();
+			}
+			int armiesPlaced = 0;
+			for (AttackRoute attackRoute : finalAttackRoutes) {
+				System.out.println(attackRoute);
+				if (attackRoute.equals(finalAttackRoutes.get(finalAttackRoutes
+						.size() - 1))) {
+					placeArmies(attackRoute.get(0), armiesToPlace
+							- armiesPlaced);
+				} else {
+					int placementArmies = (int) (armiesToPlace * (attackRoute
+							.getRouteDifficulty() / totalDifficulty));
+					armiesPlaced += placementArmies;
+					placeArmies(attackRoute.get(0), placementArmies);
+				}
+			}
+			for (AttackRoute attackRoute : finalAttackRoutes) {
+				attack(attackRoute);
+			}
+		}
 	}
 
 }

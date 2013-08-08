@@ -1,12 +1,15 @@
 package risk;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class AttackRoute implements Comparable<AttackRoute> {
+public class AttackRoute implements Comparable<AttackRoute>,
+		Iterable<Territory> {
 
 	private List<Territory> route = new ArrayList<Territory>();
 	private Continent continent;
+	private double routeDifficulty = 0;
 
 	public AttackRoute(Continent continent) {
 		this.continent = continent;
@@ -17,21 +20,30 @@ public class AttackRoute implements Comparable<AttackRoute> {
 		this.route.addAll(attackRoute.route);
 	}
 
+	public void calculateRouteDifficulty() {
+		for (Territory territory : route) {
+			if (!territory.equals(route.get(0))) {
+				routeDifficulty += territory.armies;
+			}
+		}
+	}
+
 	public double routeEfficiency() {
 		Territory baseTerritory = route.get(0);
 		int friendlyArmies = baseTerritory.armies
-				+ baseTerritory.player.getArmiesToPlace() - 4;
+				+ baseTerritory.player.getArmiesToPlace(false) - 4;
 		int enemyArmies = 0;
 		for (Territory t : route.subList(1, route.size() - 1)) {
 			enemyArmies += t.armies;
 		}
 		int efficiency = Math.abs(friendlyArmies - enemyArmies);
+		if (friendlyArmies - enemyArmies > 1 && completesCluster()) {
+			efficiency--;
+		}
 		if (continent.borders.contains(route.get(route.size() - 1))) {
 			efficiency -= 0.5;
 		}
-		if (completesCluster()) {
-			efficiency--;
-		}
+		efficiency -= ((double) baseTerritory.armies) * 0.25;
 		return efficiency;
 
 	}
@@ -93,6 +105,15 @@ public class AttackRoute implements Comparable<AttackRoute> {
 	@Override
 	public int compareTo(AttackRoute route) {
 		return Double.compare(this.routeEfficiency(), route.routeEfficiency());
+	}
+
+	public double getRouteDifficulty() {
+		return routeDifficulty;
+	}
+
+	@Override
+	public Iterator<Territory> iterator() {
+		return route.iterator();
 	}
 
 }

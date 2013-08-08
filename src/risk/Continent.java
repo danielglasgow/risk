@@ -35,7 +35,7 @@ public class Continent implements Comparable<Continent> {
 	}
 
 	public String toString() {
-		String continent = name + ": ";
+		String continent = name + ": " + ratio;
 		// for (Territory t : territories) {
 		// continent = continent + " " + t.name;
 		// }

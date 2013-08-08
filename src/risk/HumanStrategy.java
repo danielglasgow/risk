@@ -11,7 +11,6 @@ public class HumanStrategy implements Strategy {
 	public HumanStrategy(MainGame game) {
 		this.game = game;
 		this.instructionPanel = game.instructionPanel;
-		System.out.println(instructionPanel);
 	}
 
 	@Override
@@ -21,7 +20,7 @@ public class HumanStrategy implements Strategy {
 		while (true) {
 			if (phase == Phase.PLACE_ARMIES) {
 				handlePhase(new ArmyPlacer(game, player, instructionPanel,
-						player.getArmiesToPlace()));
+						player.getArmiesToPlace(false)));
 			} else if (phase == Phase.ATTACK_TO) {
 				handlePhase(new AttackTo(player, instructionPanel));
 			} else if (phase == Phase.ATTACK_FROM) {

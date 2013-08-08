@@ -1,7 +1,5 @@
 package risk;
 
-import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -164,8 +162,7 @@ public class Tester {
 	}
 
 	private static void probableOutCome(AttackRoute attackRoute) {
-		System.out.println("attackRoute; " + attackRoute);
-		double runs = 100000;
+		double runs = 10000;
 		Map<Integer, Integer> armiesLeft = new HashMap<Integer, Integer>();
 		for (int i = 0; i < attackRoute.get(0).armies + 2 - attackRoute.size(); i++) {
 			armiesLeft.put(i, 0);
@@ -175,28 +172,27 @@ public class Tester {
 			int[] results = { attackRouteIterator.next().armies,
 					attackRoute.get(1).armies };
 			while (attackRouteIterator.hasNext()) {
-				System.out.println("attackArmies: " + results[0]);
-				System.out.println("defense Armies: " + results[1]);
 				results = simulateBattle(results[0], results[1]);
 				if (results[0] == 1) {
 					results[0] = 0;
 					break;
 				}
 				if (results[1] == 0) {
-					System.out.println("won!");
 					results[0] = results[0] - 1;
 					results[1] = attackRouteIterator.next().armies;
 				}
 			}
-			System.out.println(results[0]);
 			int value = armiesLeft.get(results[0]) + 1;
 			armiesLeft.put(results[0], value);
 		}
+		double probableOutcome = 0;
 		for (Integer armies : armiesLeft.keySet()) {
+			probableOutcome += armies * armiesLeft.get(armies) / runs;
 			System.out.println("Attack Finishes With " + armies + ": "
 					+ armiesLeft.get(armies) + " Percentage: "
 					+ armiesLeft.get(armies) / runs * 100);
 		}
+		System.out.println("Probable OUtcome: " + probableOutcome);
 	}
 
 	private static AttackRoute prepareAttackRoute() {
@@ -205,77 +201,56 @@ public class Tester {
 		Territory t2 = new Territory("t2", 0, 0);
 		Territory t3 = new Territory("t3", 0, 0);
 		Territory t4 = new Territory("t4", 0, 0);
-		t1.armies = 9;
+		t1.armies = 10;
 		t2.armies = 1;
 		t3.armies = 1;
-		t4.armies = 1;
+		t4.armies = 2;
 		attackRoute.add(t1);
 		attackRoute.add(t2);
 		attackRoute.add(t3);
-		attackRoute.add(t4);
+		// attackRoute.add(t4);
 		return attackRoute;
 	}
 
-	private static void ABCombos(int num0s, int num1s) {
-		ArrayList<Integer> nums = new ArrayList<Integer>();// why can't I make
-															// the decleration a
-															// list
-		for (int i = 0; i < num0s; i++) {
-			nums.add(0);
-		}
-		for (int i = 0; i < num1s; i++) {
-			nums.add(1);
-		}
-
-	}
-
-	private static void expectedValueNv1(double n) {
-		Map<Double, Double> outcomePercentages = new HashMap<Double, Double>();
-		for (double i = 0; i < n; i++) {
-			if (n - i > 3) {
-				if (i == 0) {
-					outcomePercentages.put(i, .659);
-				} else {
-					outcomePercentages.put(i,
-							outcomePercentages.get(i - 1) * .341);
-				}
-			} else if (n - i == 3) {
-				outcomePercentages.put(i, Math.pow(.341, i) * .579);
-			} else if (n - i == 2) {
-				outcomePercentages
-						.put(i, Math.pow(.341, (i - 1)) * .421 * .414);
-			} else if (n - i == 1) {
-				outcomePercentages
-						.put(i, Math.pow(.341, (i - 2)) * .421 * .586);
-			}
-		}
-		double expectedValue = 0;
-		for (Double losses : outcomePercentages.keySet()) {
-			double outcomePercentage = outcomePercentages.get(losses);
-			System.out.println("Losses: " + losses + " percentage: "
-					+ outcomePercentage);
-			expectedValue += outcomePercentage * (n - losses);
-		}
-		System.out.println("Expected Value: " + expectedValue);
-	}
-
 	public static void attackRouteExpectedValue(AttackRoute attackRoute) {
-		ExpectedValue expectedValue = new ExpectedValue();
-		Map<Point, Double> expectedValueTable = expectedValue
-				.getExpectedValueTable();
+		StandardBattlePredictor sbp = new StandardBattlePredictor();
 		Iterator<Territory> attackRouteIterator = attackRoute.iterator();
 		int attackArmies = attackRouteIterator.next().armies;
 		int defenseArmies = attackRouteIterator.next().armies;
-		// double expectedArmies =
+		double expectedArmies = sbp.predict(new Battle(attackArmies,
+				defenseArmies)) - 1;
+		double percentage = expectedArmies / (double) (attackArmies - 1);
+		int count = 0;
+		while (attackRouteIterator.hasNext()) {
+			count++;
+			System.out.println("expectedArmies after " + count + " :"
+					+ expectedArmies);
+			attackArmies = (int) expectedArmies;
+			defenseArmies = attackRouteIterator.next().armies;
+			expectedArmies = sbp
+					.predict(new Battle(attackArmies, defenseArmies)) - 1;
+			double newPercentage = expectedArmies / ((double) attackArmies - 1);
+			expectedArmies *= percentage;
+			percentage = newPercentage;
+		}
+		System.out.println("expectedArmeis: " + expectedArmies);
+
 	}
 
 	public static void main(String[] args) {
-		// expectedValueNv1(4);
-		showBattleResults(100000, 5, 4);
-		// diceOddsResults(1000000, 2, 2);
-		// probableOutCome(prepareAttackRoute());
+		// showBattleResults(100000, 5, 4);
+		// diceOddsResults(10000000, 2, 2);
+		probableOutCome(prepareAttackRoute());
 		// System.out.println(ABCombos(1, , 0));
-		new ExpectedValue();
+		attackRouteExpectedValue(prepareAttackRoute());
+		StandardBattlePredictor sbp = new StandardBattlePredictor();
+		sbp.print();
+		for (int i = 2; i < 10; i++) {
+			for (int j = 1; j < 10; j++) {
+				sbp.predict(new Battle(i, j));
+			}
+		}
+		sbp.print();
 
 	}
 

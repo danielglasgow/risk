@@ -58,6 +58,14 @@ public class ComputerStrategy implements Strategy {
 			System.out.println("Chosen ROute:" + attackRoutes.get(0));
 			attack(attackRoutes.get(0));
 		}
+		ComputerFortifier fortifier = new ComputerFortifier(player,
+				goalContinent);
+		List<Territory> fortification = fortifier.getFortification();
+		System.out.println(fortification);
+		int armiesToMove = fortification.get(0).armies - 1;
+		fortification.get(0).armies = 1;
+		fortification.get(1).armies += armiesToMove;
+		game.board.updateBackground();
 	}
 
 	private void attack(AttackRoute attackRoute) {

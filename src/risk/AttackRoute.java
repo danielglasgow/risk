@@ -29,21 +29,19 @@ public class AttackRoute implements Comparable<AttackRoute>,
 	}
 
 	public double routeEfficiency() {
-		Territory baseTerritory = route.get(0);
-		int friendlyArmies = baseTerritory.armies
-				+ baseTerritory.player.getArmiesToPlace(false) - 4;
-		int enemyArmies = 0;
-		for (Territory t : route.subList(1, route.size() - 1)) {
-			enemyArmies += t.armies;
+		double expectedArmies = attackRouteExpectedArmies(this);
+		// System.out.print(expectedArmies);
+		double efficiency = 0;
+		if (expectedArmies - 5 < 0) {
+			efficiency -= (expectedArmies - 5);
 		}
-		int efficiency = Math.abs(friendlyArmies - enemyArmies);
-		if (friendlyArmies - enemyArmies > 1 && completesCluster()) {
-			efficiency--;
+		if (completesCluster()) {
+			efficiency -= 1;
 		}
 		if (continent.borders.contains(route.get(route.size() - 1))) {
 			efficiency -= 0.5;
 		}
-		efficiency -= ((double) baseTerritory.armies) * 0.25;
+		// efficiency -= ((double) baseTerritory.armies) * 0.25;
 		return efficiency;
 
 	}
@@ -64,6 +62,30 @@ public class AttackRoute implements Comparable<AttackRoute>,
 			completesCluster = true;
 		}
 		return false;
+	}
+
+	private double attackRouteExpectedArmies(AttackRoute attackRoute) {
+		StandardBattlePredictor sbp = new StandardBattlePredictor();
+		Iterator<Territory> attackRouteIterator = attackRoute.iterator();
+		int attackArmies = attackRouteIterator.next().armies
+				+ attackRoute.get(0).player.getArmiesToPlace(false);
+		int defenseArmies = attackRouteIterator.next().armies;
+		double expectedArmies = sbp.predict(new Battle(attackArmies,
+				defenseArmies)) - 1;
+		double percentage = expectedArmies / ((double) attackArmies - 1);
+		while (attackRouteIterator.hasNext()) {
+			attackArmies = (int) expectedArmies + 1;
+			defenseArmies = attackRouteIterator.next().armies;
+			expectedArmies = sbp
+					.predict(new Battle(attackArmies, defenseArmies)) - 1;
+			if (attackArmies == 1) {
+				return 0;
+			}
+			double newPercentage = expectedArmies / ((double) attackArmies - 1);
+			expectedArmies *= percentage;
+			percentage = newPercentage;
+		}
+		return expectedArmies;
 	}
 
 	public void add(Territory territory) {

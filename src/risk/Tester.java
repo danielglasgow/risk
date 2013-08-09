@@ -201,14 +201,14 @@ public class Tester {
 		Territory t2 = new Territory("t2", 0, 0);
 		Territory t3 = new Territory("t3", 0, 0);
 		Territory t4 = new Territory("t4", 0, 0);
-		t1.armies = 10;
-		t2.armies = 1;
-		t3.armies = 1;
-		t4.armies = 2;
+		t1.armies = 5;
+		t2.armies = 3;
+		t3.armies = 2;
+		t4.armies = 1;
 		attackRoute.add(t1);
 		attackRoute.add(t2);
 		attackRoute.add(t3);
-		// attackRoute.add(t4);
+		attackRoute.add(t4);
 		return attackRoute;
 	}
 
@@ -219,13 +219,9 @@ public class Tester {
 		int defenseArmies = attackRouteIterator.next().armies;
 		double expectedArmies = sbp.predict(new Battle(attackArmies,
 				defenseArmies)) - 1;
-		double percentage = expectedArmies / (double) (attackArmies - 1);
-		int count = 0;
+		double percentage = expectedArmies / ((double) attackArmies - 1);
 		while (attackRouteIterator.hasNext()) {
-			count++;
-			System.out.println("expectedArmies after " + count + " :"
-					+ expectedArmies);
-			attackArmies = (int) expectedArmies;
+			attackArmies = (int) expectedArmies + 1;
 			defenseArmies = attackRouteIterator.next().armies;
 			expectedArmies = sbp
 					.predict(new Battle(attackArmies, defenseArmies)) - 1;
@@ -234,7 +230,6 @@ public class Tester {
 			percentage = newPercentage;
 		}
 		System.out.println("expectedArmeis: " + expectedArmies);
-
 	}
 
 	public static void main(String[] args) {

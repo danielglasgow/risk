@@ -1,9 +1,10 @@
 package risk;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+
+import com.google.common.collect.Lists;
 
 public class Player {
 
@@ -21,16 +22,6 @@ public class Player {
 		this.name = name;
 		this.color = color;
 		this.strategy = strategy;
-	}
-
-	private List<Territory> getTerritories() {
-		ArrayList<Territory> territories = new ArrayList<Territory>();
-		for (Territory t : game.territories) {
-			if (t.player.equals(this)) {
-				territories.add(t);
-			}
-		}
-		return territories;
 	}
 
 	public boolean hasTerritories() {
@@ -73,8 +64,13 @@ public class Player {
 		strategy.takeTurn(this);
 	}
 
-	public List<Territory> getTerritories(Continent continent) {
-
-		return null;
+	public List<Territory> getTerritories() {
+		List<Territory> playerTerritories = Lists.newArrayList();
+		for (Territory territory : game.territories) {
+			if (territory.player == this) {
+				playerTerritories.add(territory);
+			}
+		}
+		return playerTerritories;
 	}
 }

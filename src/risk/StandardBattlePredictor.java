@@ -4,45 +4,47 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-public class StandardBattlePredictor {
+public class StandardBattlePredictor implements BattlePredictor {
 	// 1 Attack Die 1 Defense Die
-	static final double WIN_PERCENTAGE_TWO_VS_ONE = 0.417;// 66666666667;
-	static final double LOSE_PERCENTAGE_TWO_VS_ONE = (1 - WIN_PERCENTAGE_TWO_VS_ONE);
+	static final double WIN_PERCENTAGE_ONE_DIE_VS_ONE = 0.417;// 66666666667;
+	static final double LOSE_PERCENTAGE_ONE_DIE_VS_ONE = (1 - WIN_PERCENTAGE_ONE_DIE_VS_ONE);
 
 	// 2 Attack Dice 1 Defense Die
-	static final double WIN_PERCENTAGE_THREE_VS_ONE = 0.579;// 7037037037;
-	static final double LOSE_PERCENTAGE_THREE_VS_ONE = (1 - WIN_PERCENTAGE_THREE_VS_ONE);
+	static final double WIN_PERCENTAGE_TWO_DICE_VS_ONE = 0.579;// 7037037037;
+	static final double LOSE_PERCENTAGE_TWO_DICE_VS_ONE = (1 - WIN_PERCENTAGE_TWO_DICE_VS_ONE);
 
 	// 3 Attack Dice 1 Defense Die
-	static final double WIN_PERCENTAGE_FOUR_VS_ONE = 0.660;// 0.6597222222222;
-	static final double LOSE_PERCENTAGE_FOUR_VS_ONE = (1 - WIN_PERCENTAGE_FOUR_VS_ONE);
+	static final double WIN_PERCENTAGE_THREE_DICE_VS_ONE = 0.660;// 0.6597222222222;
+	static final double LOSE_PERCENTAGE_THREE_DICE_VS_ONE = (1 - WIN_PERCENTAGE_THREE_DICE_VS_ONE);
 
 	// 1 Attack Die 2 Defense Dice
-	static final double WIN_PERCENTAGE_TWO_VS_TWO = 0.255;// 0.25462962962963;
-	static final double LOSE_PERCENTAGE_TWO_VS_TWO = (1 - WIN_PERCENTAGE_TWO_VS_TWO);
+	static final double WIN_PERCENTAGE_ONE_DIE_VS_TWO = 0.255;// 0.25462962962963;
+	static final double LOSE_PERCENTAGE_ONE_DIE_VS_TWO = (1 - WIN_PERCENTAGE_ONE_DIE_VS_TWO);
 
 	// 2 Attack Dice 2 Defense Dice
-	static final double WIN_PERCENTAGE_THREE_VS_TWO = 0.228;
-	static final double SPLIT_PERCENTAGE_THREE_VS_TWO = 0.324;
-	static final double LOSE_PERCENTAGE_THREE_VS_TWO = (1 - WIN_PERCENTAGE_THREE_VS_TWO - SPLIT_PERCENTAGE_THREE_VS_TWO);
+	static final double WIN_PERCENTAGE_TWO_DICE_VS_TWO = 0.228;
+	static final double SPLIT_PERCENTAGE_TWO_DICE_VS_TWO = 0.324;
+	static final double LOSE_PERCENTAGE_TWO_DICE_VS_TWO = (1 - WIN_PERCENTAGE_TWO_DICE_VS_TWO - SPLIT_PERCENTAGE_TWO_DICE_VS_TWO);
 
 	// 3 Attack Dice 2 Defense Dice
-	static final double WIN_PERCENTAGE_FOUR_VS_TWO = 0.372;
-	static final double SPLIT_PERCENTAGE_FOUR_VS_TWO = 0.336;
-	static final double LOSE_PERCENTAGE_FOUR_VS_TWO = (1 - WIN_PERCENTAGE_FOUR_VS_TWO - SPLIT_PERCENTAGE_FOUR_VS_TWO);
+	static final double WIN_PERCENTAGE_THREE_DICE_VS_TWO = 0.372;
+	static final double SPLIT_PERCENTAGE_THREE_DICE_VS_TWO = 0.336;
+	static final double LOSE_PERCENTAGE_THREE_DICE_VS_TWO = (1 - WIN_PERCENTAGE_THREE_DICE_VS_TWO - SPLIT_PERCENTAGE_THREE_DICE_VS_TWO);
 
 	private final Map<Battle, Double> outcomes = Maps.newHashMap();
 
 	public StandardBattlePredictor() {
-		buildTable();
+		buildStartingValues();
 	}
 
-	private void buildTable() {
-		// Generate better starting values
-		outcomes.put(new Battle(2, 1), WIN_PERCENTAGE_TWO_VS_ONE * 2
-				+ LOSE_PERCENTAGE_TWO_VS_ONE * 1);
-		outcomes.put(new Battle(3, 1), WIN_PERCENTAGE_THREE_VS_ONE * 3
-				+ LOSE_PERCENTAGE_THREE_VS_ONE * outcomes.get(new Battle(2, 1)));
+	private void buildStartingValues() {
+		outcomes.put(new Battle(2, 1), WIN_PERCENTAGE_ONE_DIE_VS_ONE * 2
+				+ LOSE_PERCENTAGE_ONE_DIE_VS_ONE * 1);
+		outcomes.put(
+				new Battle(3, 1),
+				WIN_PERCENTAGE_TWO_DICE_VS_ONE * 3
+						+ LOSE_PERCENTAGE_TWO_DICE_VS_ONE
+						* outcomes.get(new Battle(2, 1)));
 	}
 
 	public double predict(Battle battle) {
@@ -62,30 +64,34 @@ public class StandardBattlePredictor {
 			return battle.getAttackArmies();
 		}
 		if (battle.getAttackArmies() == 2) {
-			return WIN_PERCENTAGE_TWO_VS_TWO
+			assert battle.getDefenseArmies() >= 2;
+			return WIN_PERCENTAGE_ONE_DIE_VS_TWO
 					* predict(battle.defenseLosesOne())
-					+ LOSE_PERCENTAGE_TWO_VS_TWO
+					+ LOSE_PERCENTAGE_ONE_DIE_VS_TWO
 					* predict(battle.attackLosesOne());
 		}
 		if (battle.getAttackArmies() == 3) {
-			return WIN_PERCENTAGE_THREE_VS_TWO
+			assert battle.getDefenseArmies() >= 2;
+			return WIN_PERCENTAGE_TWO_DICE_VS_TWO
 					* predict(battle.defenseLosesTwo())
-					+ LOSE_PERCENTAGE_THREE_VS_TWO
+					+ LOSE_PERCENTAGE_TWO_DICE_VS_TWO
 					* predict(battle.attackLosesTwo())
-					+ SPLIT_PERCENTAGE_THREE_VS_TWO * predict(battle.splits());
+					+ SPLIT_PERCENTAGE_TWO_DICE_VS_TWO
+					* predict(battle.splits());
 		}
 		if (battle.getAttackArmies() > 3 && battle.getDefenseArmies() == 1) {
-			return WIN_PERCENTAGE_FOUR_VS_ONE
+			return WIN_PERCENTAGE_THREE_DICE_VS_ONE
 					* predict(battle.defenseLosesOne())
-					+ LOSE_PERCENTAGE_FOUR_VS_ONE
+					+ LOSE_PERCENTAGE_THREE_DICE_VS_ONE
 					* predict(battle.attackLosesOne());
 		}
 		if (battle.getAttackArmies() > 3 && battle.getDefenseArmies() > 1) {
-			return WIN_PERCENTAGE_FOUR_VS_TWO
+			return WIN_PERCENTAGE_THREE_DICE_VS_TWO
 					* predict(battle.defenseLosesTwo())
-					+ LOSE_PERCENTAGE_FOUR_VS_TWO
+					+ LOSE_PERCENTAGE_THREE_DICE_VS_TWO
 					* predict(battle.attackLosesTwo())
-					+ SPLIT_PERCENTAGE_FOUR_VS_TWO * predict(battle.splits());
+					+ SPLIT_PERCENTAGE_THREE_DICE_VS_TWO
+					* predict(battle.splits());
 		}
 
 		return 0;

@@ -147,4 +147,8 @@ public class TerritoryCluster implements Iterable<Territory> {
 		return territories.iterator();
 	}
 
+	public List<Territory> getTerritories() {
+		return territories;
+	}
+
 }

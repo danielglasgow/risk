@@ -5,21 +5,21 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JButton;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ComputerStrategy implements Strategy {
 	public final MainGame game;
 	public Player player;
 	private Continent goalContinent;
 	private int armiesToPlace;
-	private final List<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
 	private InstructionPanel instructionPanel;
 	private CountDownLatch latch;
 
@@ -31,7 +31,6 @@ public class ComputerStrategy implements Strategy {
 	@Override
 	public void takeTurn(Player player) {
 		latch = new CountDownLatch(1);
-		attackRoutes.clear();
 		this.player = player;
 		JButton button = new JButton();
 		button.addActionListener(new ActionListener() {
@@ -53,19 +52,19 @@ public class ComputerStrategy implements Strategy {
 			e.printStackTrace();
 		}
 		if (goalContinent.ratio != 1) {
-			buildAttackRoutes();
-			placeArmies(attackRoutes.get(0).get(0), armiesToPlace);
-			System.out.println("Chosen ROute:" + attackRoutes.get(0));
-			attack(attackRoutes.get(0));
+			AttackRoute chosenRoute = chooseAttackRoute();
+			placeArmies(chosenRoute.get(0), armiesToPlace);
+			System.out.println("Chosen ROute:" + chosenRoute);
+			attack(chosenRoute);
 		}
-		ComputerFortifier fortifier = new ComputerFortifier(player,
-				goalContinent);
-		List<Territory> fortification = fortifier.getFortification();
-		System.out.println(fortification);
-		int armiesToMove = fortification.get(0).armies - 1;
-		fortification.get(0).armies = 1;
-		fortification.get(1).armies += armiesToMove;
-		game.board.updateBackground();
+		/*
+		 * ComputerFortifier fortifier = new ComputerFortifier(player,
+		 * goalContinent); List<Territory> fortification =
+		 * fortifier.getFortification(); System.out.println(fortification); int
+		 * armiesToMove = fortification.get(0).armies - 1;
+		 * fortification.get(0).armies = 1; fortification.get(1).armies +=
+		 * armiesToMove; game.board.updateBackground();
+		 */
 	}
 
 	private void attack(AttackRoute attackRoute) {
@@ -154,17 +153,47 @@ public class ComputerStrategy implements Strategy {
 		armiesToPlace = player.getArmiesToPlace(false);
 	}
 
-	private void buildAttackRoutes() {
+	private List<AttackRoute> buildAttackRoutes() {
+		List<AttackRoute> attackRoutes = Lists.newArrayList();
 		goalContinent.generateTerritoryClusters(player);
 		for (TerritoryCluster territoryCluster : goalContinent.getClusters()) {
 			territoryCluster.makeRoutes();
 			attackRoutes.addAll(territoryCluster.getAttackRoutes());
 		}
-		Collections.sort(attackRoutes);
+		return attackRoutes;
+	}
+
+	private Map<BoardState, AttackRoute> buildBoardStates(
+			List<AttackRoute> attackRoutes) {
+		Map<BoardState, AttackRoute> boardStates = Maps.newHashMap();
 		for (AttackRoute attackRoute : attackRoutes) {
-			System.out.print(attackRoute.routeEfficiency());
-			System.out.println(attackRoute);
+			BoardState boardState = attackRoute.getBoardState(game.territories);
+			if (boardState != null) {
+				boardStates.put(boardState, attackRoute);
+			}
 		}
+		return boardStates;
+	}
+
+	private AttackRoute chooseAttackRoute() {
+		Map<BoardState, Integer> boardStateValues = Maps.newHashMap();
+		BasicBoardValue basicBoardValue = new BasicBoardValue();
+		Map<BoardState, AttackRoute> boardStates = buildBoardStates(buildAttackRoutes());
+		for (BoardState boardState : boardStates.keySet()) {
+			boardStateValues.put(
+					boardState,
+					basicBoardValue.getBoardValue(player,
+							boardState.getTerritories(), goalContinent));
+		}
+		int highestBoardValue = 0;
+		BoardState bestBoardState = null;
+		for (BoardState boardState : boardStateValues.keySet()) {
+			if (boardStateValues.get(boardState) > highestBoardValue) {
+				highestBoardValue = boardStateValues.get(boardState);
+				bestBoardState = boardState;
+			}
+		}
+		return boardStates.get(bestBoardState);
 	}
 
 	private void setGoalContinent() {
@@ -190,72 +219,6 @@ public class ComputerStrategy implements Strategy {
 			Collections.sort(continentRatios);
 		}
 		goalContinent = continentRatios.get(0);
-	}
-
-	private boolean captureGoalContinent() {
-		ArrayList<Territory> territoriesControlled = new ArrayList<Territory>();
-		int controlledArmies = 0;
-		int enemyArmies = 0;
-		int enemyTerritories = 0;
-		for (Territory t : goalContinent.territories) {
-			if (t.player.equals(player)) {
-				territoriesControlled.add(t);
-				controlledArmies += t.armies;
-			} else {
-				enemyArmies += t.armies;
-				enemyTerritories++;
-			}
-
-		}
-		if (controlledArmies + armiesToPlace > 2 * (enemyArmies + enemyTerritories)) {
-			return true;
-		}
-		return false;
-	}
-
-	private void captureContinent() {
-		if (true) {
-			System.out.println(goalContinent.name);
-			List<TerritoryCluster> clusters = goalContinent.getClusters();
-			List<AttackRoute> finalAttackRoutes = new ArrayList<AttackRoute>();
-			Set<Territory> startTerritories = new HashSet<Territory>();
-			for (TerritoryCluster cluster : clusters) {
-				cluster.makeRoutes();
-				List<AttackRoute> attackRoutes = cluster.getAttackRoutes();
-				Iterator<AttackRoute> iterator = attackRoutes.iterator();
-				while (iterator.hasNext()) {
-					AttackRoute nextRoute = iterator.next();
-					if (!startTerritories.contains(nextRoute.get(0))) {
-						startTerritories.add(nextRoute.get(0));
-						finalAttackRoutes.add(nextRoute);
-						break;
-					}
-
-				}
-			}
-			double totalDifficulty = 0;
-			for (AttackRoute attackRoute : finalAttackRoutes) {
-				attackRoute.calculateRouteDifficulty();
-				totalDifficulty += attackRoute.getRouteDifficulty();
-			}
-			int armiesPlaced = 0;
-			for (AttackRoute attackRoute : finalAttackRoutes) {
-				System.out.println(attackRoute);
-				if (attackRoute.equals(finalAttackRoutes.get(finalAttackRoutes
-						.size() - 1))) {
-					placeArmies(attackRoute.get(0), armiesToPlace
-							- armiesPlaced);
-				} else {
-					int placementArmies = (int) (armiesToPlace * (attackRoute
-							.getRouteDifficulty() / totalDifficulty));
-					armiesPlaced += placementArmies;
-					placeArmies(attackRoute.get(0), placementArmies);
-				}
-			}
-			for (AttackRoute attackRoute : finalAttackRoutes) {
-				attack(attackRoute);
-			}
-		}
 	}
 
 }

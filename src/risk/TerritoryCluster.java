@@ -39,7 +39,7 @@ public class TerritoryCluster implements Iterable<Territory> {
 			List<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
 			List<AttackRoute> newRoutes = new ArrayList<AttackRoute>();
 			List<AttackRoute> oldRoutes = new ArrayList<AttackRoute>();
-			AttackRoute baseRoute = new AttackRoute(continent);
+			AttackRoute baseRoute = new AttackRoute();
 			baseRoute.add(baseTerritory);
 			attackRoutes.add(baseRoute);
 			boolean stillWorking = true;
@@ -53,8 +53,7 @@ public class TerritoryCluster implements Iterable<Territory> {
 								&& territories.contains(territory)
 								&& territory.player != player) {
 							stillWorking = true;
-							AttackRoute newRoute = new AttackRoute(continent,
-									route);
+							AttackRoute newRoute = new AttackRoute(route);
 							newRoute.add(territory);
 							newRoutes.add(newRoute);
 						}

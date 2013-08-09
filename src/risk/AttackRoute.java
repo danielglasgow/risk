@@ -4,64 +4,38 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AttackRoute implements Comparable<AttackRoute>,
-		Iterable<Territory> {
+public class AttackRoute implements Iterable<Territory> {
 
 	private List<Territory> route = new ArrayList<Territory>();
-	private Continent continent;
-	private double routeDifficulty = 0;
 
-	public AttackRoute(Continent continent) {
-		this.continent = continent;
-	}
-
-	public AttackRoute(Continent continent, AttackRoute attackRoute) {
-		this.continent = continent;
+	public AttackRoute(AttackRoute attackRoute) {
 		this.route.addAll(attackRoute.route);
 	}
 
-	public void calculateRouteDifficulty() {
-		for (Territory territory : route) {
-			if (!territory.equals(route.get(0))) {
-				routeDifficulty += territory.armies;
-			}
-		}
+	public AttackRoute() {
+		// TODO Auto-generated constructor stub
 	}
 
-	public double routeEfficiency() {
+	public BoardState getBoardState(List<Territory> territories) {
+		BoardState boardState = new BoardState(territories);
 		double expectedArmies = attackRouteExpectedArmies(this);
-		// System.out.print(expectedArmies);
-		double efficiency = 0;
-		if (expectedArmies - 5 < 0) {
-			efficiency -= (expectedArmies - 5);
-		}
-		if (completesCluster()) {
-			efficiency -= 1;
-		}
-		if (continent.borders.contains(route.get(route.size() - 1))) {
-			efficiency -= 0.5;
-		}
-		// efficiency -= ((double) baseTerritory.armies) * 0.25;
-		return efficiency;
-
-	}
-
-	private boolean completesCluster() {
-		ArrayList<TerritoryCluster> clusters = (ArrayList<TerritoryCluster>) continent
-				.getClusters();
-		boolean completesCluster = true;
-		for (TerritoryCluster cluster : clusters) {
-			for (Territory t : cluster) {
-				if (!route.contains(t)) {
-					completesCluster = false;
+		Player player = route.get(0).player;
+		if (expectedArmies < 1) {
+			return null;
+		} else {
+			int territoryCount = 0;
+			for (Territory territory : route) {
+				territoryCount++;
+				if (territoryCount != route.size()) {
+					boardState.setTerritoryArmies(territory, 1);
+				} else {
+					boardState.setTerritoryArmies(territory,
+							(int) expectedArmies);
 				}
+				boardState.setTerritoryPlayer(territory, player);
 			}
-			if (completesCluster) {
-				return true;
-			}
-			completesCluster = true;
 		}
-		return false;
+		return boardState;
 	}
 
 	private double attackRouteExpectedArmies(AttackRoute attackRoute) {
@@ -122,15 +96,6 @@ public class AttackRoute implements Comparable<AttackRoute>,
 
 	public List<Territory> getRoute() {
 		return route;
-	}
-
-	@Override
-	public int compareTo(AttackRoute route) {
-		return Double.compare(this.routeEfficiency(), route.routeEfficiency());
-	}
-
-	public double getRouteDifficulty() {
-		return routeDifficulty;
 	}
 
 	@Override

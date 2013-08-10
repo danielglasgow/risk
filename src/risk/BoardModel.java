@@ -13,7 +13,7 @@ public class BoardModel {
 		this.continents = ImmutableList.copyOf(continents);
 	}
 
-	public List<Territory> getTerritories() {
+	public ImmutableList<Territory> getTerritories() {
 		return territories;
 	}
 

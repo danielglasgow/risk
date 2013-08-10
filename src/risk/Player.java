@@ -66,7 +66,7 @@ public class Player {
 
 	public List<Territory> getTerritories() {
 		List<Territory> playerTerritories = Lists.newArrayList();
-		for (Territory territory : game.territories) {
+		for (Territory territory : game.boardState.getTerritories()) {
 			if (territory.player == this) {
 				playerTerritories.add(territory);
 			}

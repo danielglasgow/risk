@@ -23,9 +23,12 @@ public class ComputerStrategy implements Strategy {
 	private InstructionPanel instructionPanel;
 	private CountDownLatch latch;
 
+	private final BoardState boardState;
+
 	public ComputerStrategy(MainGame game) {
 		this.game = game;
 		this.instructionPanel = game.instructionPanel;
+		this.boardState = game.boardState;
 	}
 
 	@Override
@@ -74,15 +77,16 @@ public class ComputerStrategy implements Strategy {
 		next++;
 		Territory attackTo = attackRoute.get(next);
 		next++;
-		while (attackFrom.armies > 4 || !capturedTerritory) {
+		while (boardState.getArmies(attackFrom) > 4 || !capturedTerritory) {
 			simulateAttack(attackFrom, attackTo);
-			if (attackTo.armies < 1) {
+			if (boardState.getArmies(attackTo) < 1) {
 				capturedTerritory = true;
-				attackTo.player = player;
-				attackTo.armies = attackFrom.armies - 1;
-				attackFrom.armies = 1;
+				boardState.setPlayer(attackTo, player);
+				boardState.increaseArmies(attackTo,
+						boardState.getArmies(attackFrom) - 1);
+				boardState.setArmies(attackFrom, 1);
 				attackFrom = attackTo;
-				game.board.updateBackground();
+				boardState.updateBackground();
 				if (attackRoute.size() > next) {
 					attackTo = attackRoute.get(next);
 					next++;
@@ -90,17 +94,17 @@ public class ComputerStrategy implements Strategy {
 					break;
 				}
 
-			} else if (attackFrom.armies < 2) {
+			} else if (boardState.getArmies(attackFrom) < 2) {
 				break;
 			}
-			game.board.updateBackground();
+			boardState.updateBackground();
 		}
 	}
 
 	private void simulateAttack(Territory attackFrom, Territory attackTo) {
 		Random random = new Random();
-		int attackArmies = attackFrom.armies;
-		int defenseArmies = attackTo.armies;
+		int attackArmies = boardState.getArmies(attackFrom);
+		int defenseArmies = boardState.getArmies(attackTo);
 		int attackDice = 1;
 		int defenseDice = 1;
 		int[] attackRolls = new int[3];
@@ -139,14 +143,14 @@ public class ComputerStrategy implements Strategy {
 			}
 
 		}
-		attackFrom.armies -= attackLosses;
-		attackTo.armies -= defenseLosses;
-		game.board.updateBackground();
+		boardState.decreaseArmies(attackFrom, attackLosses);
+		boardState.decreaseArmies(attackTo, defenseLosses);
+		boardState.updateBackground();
 	}
 
 	private void placeArmies(Territory territory, int numArmies) {
-		territory.armies += numArmies;
-		game.board.updateBackground();
+		boardState.increaseArmies(territory, numArmies);
+		boardState.updateBackground();
 	}
 
 	private void setArmiesToPlace() {
@@ -167,7 +171,8 @@ public class ComputerStrategy implements Strategy {
 			List<AttackRoute> attackRoutes) {
 		Map<BoardState, AttackRoute> boardStates = Maps.newHashMap();
 		for (AttackRoute attackRoute : attackRoutes) {
-			BoardState boardState = attackRoute.getBoardState(game.territories);
+			BoardState boardState = attackRoute.getBoardState(game.boardState
+					.getTerritories());
 			if (boardState != null) {
 				boardStates.put(boardState, attackRoute);
 			}
@@ -205,11 +210,11 @@ public class ComputerStrategy implements Strategy {
 			double enemyArmies = 0;
 			for (Territory territory : game.continents.get(i).territories) {
 				numTerritories++;
-				if (territory.player.equals(player)) {
+				if (boardState.getPlayer(territory) == player) {
 					numTerritoriesControlled++;
-					armiesControlled += territory.armies;
+					armiesControlled += boardState.getArmies(territory);
 				} else {
-					enemyArmies += territory.armies;
+					enemyArmies += boardState.getArmies(territory);
 				}
 			}
 			double ratio = (numTerritoriesControlled + armiesControlled)

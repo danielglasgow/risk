@@ -1,5 +1,8 @@
 package risk;
 
+/**
+ * Represents a number of attack armies and a number of defense armies.
+ */
 public class Battle {
 	private final int attackArmies;
 	private final int defenseArmies;

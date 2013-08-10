@@ -19,27 +19,27 @@ public class HumanStrategy implements Strategy {
 		phase = Phase.PLACE_ARMIES;
 		while (true) {
 			if (phase == Phase.PLACE_ARMIES) {
-				handlePhase(new ArmyPlacer(game, player, instructionPanel,
+				handlePhase(new PlaceArmiesHandler(game, player, instructionPanel,
 						player.getArmiesToPlace(false)));
 			} else if (phase == Phase.ATTACK_TO) {
-				handlePhase(new AttackTo(player, instructionPanel));
+				handlePhase(new AttackToHandler(player, instructionPanel));
 			} else if (phase == Phase.ATTACK_FROM) {
-				handlePhase(new AttackFrom(player, instructionPanel));
+				handlePhase(new AttackFromHandler(player, instructionPanel));
 			} else if (phase == Phase.ATTACK) {
-				handlePhase(new Attack(game, player, instructionPanel));
+				handlePhase(new AttackHandler(game, player, instructionPanel));
 			} else if (phase == Phase.WON_TERRITORY) {
-				handlePhase(new WonTerritory(game, player, instructionPanel));
+				handlePhase(new WonTerritoryHandler(game, player, instructionPanel));
 			} else if (phase == Phase.FORTIFY_SELECTION) {
 				handlePhase(new FortifySelection(game, player, instructionPanel));
 			} else if (phase == Phase.FORTIFY) {
-				handlePhase(new Fortify(player, instructionPanel));
+				handlePhase(new FortifyHandler(player, instructionPanel));
 			} else if (phase == Phase.END_TURN) {
 				break;
 			}
 		}
 	}
 
-	private void handlePhase(PhaseHandler phaseHandler) {
+	private void handlePhase(HumanPhaseHandler phaseHandler) {
 		game.board.mouse.setPhaseHandler(phaseHandler);
 		phaseHandler.displayInterface();
 		phase = phaseHandler.await();

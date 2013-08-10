@@ -8,22 +8,22 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
-public class FortifySelection extends PhaseHandler {
+public class FortifySelection extends HumanPhaseHandler {
 
-	private Player player;
-	private InstructionPanel instructionPanel;
-	private MainGame game;
+	private final BoardState boardState;
+	private final Player player;
+	private final InstructionPanel instructionPanel;
 
-	public FortifySelection(MainGame game, Player player,
+	public FortifySelection(BoardState boardState, Player player,
 			InstructionPanel instructionPanel) {
-		this.game = game;
+		this.boardState = boardState;
 		this.player = player;
 		this.instructionPanel = instructionPanel;
 	}
 
 	@Override
 	public void mouseClicked(Territory territory) {
-		if (!territory.player.equals(player)) {
+		if (boardState.getPlayer(territory) != player) {
 			JOptionPane.showMessageDialog(null,
 					"You must fortify between to territories you control");
 		} else {
@@ -47,7 +47,7 @@ public class FortifySelection extends PhaseHandler {
 
 	private boolean hasPath(Territory startTerritory, Territory endTerritory) {
 		Set<Territory> territories = new HashSet<Territory>();
-		territories.addAll(game.territories);
+		territories.addAll(boardState.getTerritories());
 
 		Set<Territory> nextSet = adjacentControlledTerritories(startTerritory,
 				territories);
@@ -73,9 +73,10 @@ public class FortifySelection extends PhaseHandler {
 	private Set<Territory> adjacentControlledTerritories(Territory territory,
 			Set<Territory> territories) {
 		Set<Territory> adjacentControlled = new HashSet<Territory>();
-		for (Territory t : territory.adjacents) {
-			if (t.player.equals(player) && territories.contains(t)) {
-				adjacentControlled.add(t);
+		for (Territory adjacent : territory.adjacents) {
+			if (boardState.getPlayer(adjacent) == player
+					&& territories.contains(adjacent)) {
+				adjacentControlled.add(adjacent);
 			}
 		}
 		return adjacentControlled;

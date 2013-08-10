@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -13,13 +12,13 @@ public class Board { // make board a JPanel not frame...
 	private final JFrame mainFrame;
 	private BufferedImage background;
 	private TextOverlay currentBackground;
-	private final List<Territory> territories;
-	public MainGame game;
 
 	// YUCK
 	public final Mouse mouse;
+	public MainGame game;
 
 	public Board(MainGame game) {
+		this.game = game;
 		mainFrame = new JFrame("risk");
 		try {
 			background = ImageIO.read(new File(
@@ -27,10 +26,6 @@ public class Board { // make board a JPanel not frame...
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		this.territories = game.territories;
-		this.game = game;
-
 		currentBackground = new TextOverlay(background);
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(currentBackground, BorderLayout.CENTER);
@@ -43,18 +38,17 @@ public class Board { // make board a JPanel not frame...
 		mainFrame.addMouseListener(mouse);
 	}
 
-	public void updateBackground() {
-		TextOverlay newBG = new TextOverlay(background);
-		for (Territory territory : territories) {
-			newBG = new TextOverlay(newBG.getImage(), territory);
+	public void updateBackground(BoardState boardState) {
+		TextOverlay newBackGround = new TextOverlay(background);
+		for (Territory territory : boardState.getTerritories()) {
+			newBackGround = new TextOverlay(newBackGround.getImage(),
+					territory, boardState.getArmies(territory),
+					boardState.getPlayer(territory));
 		}
 		mainFrame.remove(currentBackground);
-		currentBackground = newBG;
+		currentBackground = newBackGround;
 		mainFrame.add(currentBackground);
 		mainFrame.pack();
 	}
 
-	public List<Territory> getTerritories() {
-		return territories;
-	}
 }

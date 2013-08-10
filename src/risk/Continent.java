@@ -20,11 +20,11 @@ public class Continent implements Comparable<Continent> {
 			Boolean controlledByPlayer) {
 		ArrayList<Territory> playerTerritories = new ArrayList<Territory>();
 		ArrayList<Territory> otherTerritories = new ArrayList<Territory>();
-		for (Territory t : territories) {
-			if (t.player.equals(player)) {
-				playerTerritories.add(t);
+		for (Territory territory : territories) {
+			if (boardState.getPlayer(player) == player) {
+				playerTerritories.add(territory);
 			} else {
-				otherTerritories.add(t);
+				otherTerritories.add(territory);
 			}
 		}
 		if (controlledByPlayer) {

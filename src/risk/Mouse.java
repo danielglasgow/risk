@@ -15,14 +15,14 @@ public class Mouse implements MouseListener {
 	private final MainGame game;
 
 	// YUCK... FIX THIS LATER!
-	private PhaseHandler phaseHandler = null;
+	private HumanPhaseHandler phaseHandler = null;
 
 	public Mouse(Board board) {
 		this.board = board;
 		this.game = board.game;
 	}
 
-	public void setPhaseHandler(PhaseHandler phaseHandler) {
+	public void setPhaseHandler(HumanPhaseHandler phaseHandler) {
 		this.phaseHandler = phaseHandler;
 	}
 
@@ -42,11 +42,11 @@ public class Mouse implements MouseListener {
 					.showMessageDialog(null,
 							"Make sure to click on the army indicator in order select a territory");
 		}
-		board.updateBackground();
+		board.updateBackground(game.boardState);
 	}
 
 	private Territory findMatch(int x, int y) {
-		for (Territory territory : board.getTerritories()) {
+		for (Territory territory : game.boardState.getTerritories()) {
 			if ((Math.abs(territory.locX - x) < 30)
 					&& (Math.abs(territory.locY - y) < 30)) {
 				return territory;

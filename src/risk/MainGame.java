@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 public class MainGame {
 	private static final String TERRITORY_FILENAME = "TerritoryInfo/territories.txt";
 	private static final String ADJACENCY_FILENAME = "TerritoryInfo/Adjacentterritories.txt";
 	private static final String Continents_FILENAME = "TerritoryInfo/Continents.txt";
 
-	public final List<Territory> territories;
+	private final ImmutableList<Territory> territories;
 	public final List<Continent> continents;
 	public final ArrayList<Player> players = new ArrayList<Player>();
 	public final Object startMenuLock = new Object();
+	public final BoardState boardState;
 
-	public Board board;
 	public InstructionPanel instructionPanel;
 
 	public MainGame() {
@@ -23,6 +25,7 @@ public class MainGame {
 		BoardModel boardModel = territoriesBuilder.build();
 		this.territories = boardModel.getTerritories();
 		this.continents = boardModel.getContinents();
+		this.boardState = new BoardState(territories, new Board(this));
 	}
 
 	public void startGame() throws InterruptedException {
@@ -31,8 +34,7 @@ public class MainGame {
 		instructionPanel = new InstructionPanel(this);
 		addPlayers(startMenu.getNumPlayers());
 		divideTerritories(players.size());
-		board = new Board(this);
-		board.updateBackground();
+		boardState.updateBackground();
 	}
 
 	private void addPlayers(int numPlayers) {
@@ -51,10 +53,10 @@ public class MainGame {
 				territories);
 		Collections.shuffle(mutableTerritories);
 		int counter = 0;
-		for (Territory t : mutableTerritories) {
+		for (Territory territory : mutableTerritories) {
 			counter = (counter + 1) % numPlayers;
 			Player currentPlayer = players.get(counter);
-			t.player = currentPlayer;
+			boardState.setPlayer(territory, currentPlayer);
 		}
 	}
 

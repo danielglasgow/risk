@@ -4,6 +4,11 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+/**
+ * Provides a map from a battle (a given number of attack armies and defense
+ * armies) to the expected outcome of that battle (how many attack armies, on
+ * average, are left).
+ */
 public class StandardBattlePredictor implements BattlePredictor {
 	// 1 Attack Die 1 Defense Die
 	static final double WIN_PERCENTAGE_ONE_DIE_VS_ONE = 0.417;// 66666666667;

@@ -17,7 +17,7 @@ public class MainGame {
 	public final Object startMenuLock = new Object();
 	public final BoardState boardState;
 
-	public InstructionPanel instructionPanel;
+	private InstructionPanel instructionPanel;
 
 	public MainGame() {
 		TerritoriesBuilder territoriesBuilder = new TerritoriesBuilder(
@@ -25,25 +25,27 @@ public class MainGame {
 		BoardModel boardModel = territoriesBuilder.build();
 		this.territories = boardModel.getTerritories();
 		this.continents = boardModel.getContinents();
-		this.boardState = new BoardState(territories, new Board(this));
+		this.boardState = new BoardState(territories, new Board());
+		boardState.getBoard().addMouse(new Mouse(boardState));
 	}
 
 	public void startGame() throws InterruptedException {
 		StartMenu startMenu = new StartMenu();
 		startMenu.await();
-		instructionPanel = new InstructionPanel(this);
+		instructionPanel = boardState.getBoard().getInstructionPanel();
 		addPlayers(startMenu.getNumPlayers());
 		divideTerritories(players.size());
 		boardState.updateBackground();
 	}
 
 	private void addPlayers(int numPlayers) {
-		HumanStrategy humanStrategy = new HumanStrategy(this);
+		HumanStrategy humanStrategy = new HumanStrategy(boardState,
+				instructionPanel);
 		ComputerStrategy computerStrategy = new ComputerStrategy(this);
 		String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
 		for (int i = 1; i <= numPlayers; i++) {
 			Player player = new Player("Player" + i, colors[i - 1], this,
-					i == -1 ? humanStrategy : computerStrategy);
+					i == -1 ? computerStrategy : humanStrategy);
 			players.add(player);
 		}
 	}

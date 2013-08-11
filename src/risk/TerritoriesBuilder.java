@@ -80,7 +80,7 @@ public class TerritoriesBuilder {
 				// you will write on the continent object.
 				// Better still would be to construct the continent with the
 				// list of territories from the very start.
-				continents.get(continentName).territories.add(t);
+				continents.get(continentName).getTerritories().add(t);
 			}
 		} catch (Exception e) {
 			System.out.println("Error: " + e);

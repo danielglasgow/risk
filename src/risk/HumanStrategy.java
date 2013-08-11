@@ -2,37 +2,42 @@ package risk;
 
 public class HumanStrategy implements Strategy {
 
-	private final MainGame game;
+	private final BoardState boardState;
 	private final InstructionPanel instructionPanel;
 
-	public Player player;
 	public Phase phase;
 
-	public HumanStrategy(MainGame game) {
-		this.game = game;
-		this.instructionPanel = game.instructionPanel;
+	public HumanStrategy(BoardState boardState,
+			InstructionPanel instructionPanel) {
+		this.boardState = boardState;
+		this.instructionPanel = instructionPanel;
 	}
 
 	@Override
 	public void takeTurn(Player player) {
-		this.player = player;
 		phase = Phase.PLACE_ARMIES;
 		while (true) {
 			if (phase == Phase.PLACE_ARMIES) {
-				handlePhase(new PlaceArmiesHandler(game, player, instructionPanel,
-						player.getArmiesToPlace(false)));
+				handlePhase(new PlaceArmiesHandler(boardState, player,
+						instructionPanel, player.getArmiesToPlace(false)));
 			} else if (phase == Phase.ATTACK_TO) {
-				handlePhase(new AttackToHandler(player, instructionPanel));
+				handlePhase(new AttackToHandler(boardState, player,
+						instructionPanel));
 			} else if (phase == Phase.ATTACK_FROM) {
-				handlePhase(new AttackFromHandler(player, instructionPanel));
+				handlePhase(new AttackFromHandler(boardState, player,
+						instructionPanel));
 			} else if (phase == Phase.ATTACK) {
-				handlePhase(new AttackHandler(game, player, instructionPanel));
+				handlePhase(new AttackHandler(boardState, player,
+						instructionPanel));
 			} else if (phase == Phase.WON_TERRITORY) {
-				handlePhase(new WonTerritoryHandler(game, player, instructionPanel));
+				handlePhase(new WonTerritoryHandler(boardState, player,
+						instructionPanel));
 			} else if (phase == Phase.FORTIFY_SELECTION) {
-				handlePhase(new FortifySelection(game, player, instructionPanel));
+				handlePhase(new FortifySelectionHandler(boardState, player,
+						instructionPanel));
 			} else if (phase == Phase.FORTIFY) {
-				handlePhase(new FortifyHandler(player, instructionPanel));
+				handlePhase(new FortifyHandler(boardState, player,
+						instructionPanel));
 			} else if (phase == Phase.END_TURN) {
 				break;
 			}
@@ -40,7 +45,7 @@ public class HumanStrategy implements Strategy {
 	}
 
 	private void handlePhase(HumanPhaseHandler phaseHandler) {
-		game.board.mouse.setPhaseHandler(phaseHandler);
+		boardState.getBoard().getMouse().setPhaseHandler(phaseHandler);
 		phaseHandler.displayInterface();
 		phase = phaseHandler.await();
 	}

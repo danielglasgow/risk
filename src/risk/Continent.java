@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Continent implements Comparable<Continent> {
-	public final List<Territory> territories = new ArrayList<Territory>();
-	public final List<Territory> borders = new ArrayList<Territory>();
+	private final List<Territory> territories = new ArrayList<Territory>();
+	private final List<Territory> borders = new ArrayList<Territory>();
 	private final List<TerritoryCluster> clusters = new ArrayList<TerritoryCluster>();
 	public final String name;
 	public final int bonusArmies;
@@ -14,24 +14,6 @@ public class Continent implements Comparable<Continent> {
 	public Continent(String name, int bonusArmies) {
 		this.name = name;
 		this.bonusArmies = bonusArmies;
-	}
-
-	public ArrayList<Territory> getTerritories(Player player,
-			Boolean controlledByPlayer) {
-		ArrayList<Territory> playerTerritories = new ArrayList<Territory>();
-		ArrayList<Territory> otherTerritories = new ArrayList<Territory>();
-		for (Territory territory : territories) {
-			if (boardState.getPlayer(player) == player) {
-				playerTerritories.add(territory);
-			} else {
-				otherTerritories.add(territory);
-			}
-		}
-		if (controlledByPlayer) {
-			return playerTerritories;
-		} else {
-			return otherTerritories;
-		}
 	}
 
 	public String toString() {
@@ -69,29 +51,20 @@ public class Continent implements Comparable<Continent> {
 		return false;
 	}
 
-	public void generateTerritoryClusters(Player player) {
-		List<TerritoryCluster> territoryClusters = new ArrayList<TerritoryCluster>();
-		for (Territory t : getTerritories(player, false)) {
-			territoryClusters.add(new TerritoryCluster(t, this, player));
-		}
-		List<TerritoryCluster> uniqueClusters = new ArrayList<TerritoryCluster>();
-		uniqueClusters.add(territoryClusters.get(0));
-		for (TerritoryCluster cluster1 : territoryClusters) {
-			boolean newCluster = true;
-			for (TerritoryCluster cluster2 : uniqueClusters) {
-				if (TerritoryCluster.compareClusters(cluster1, cluster2)) {
-					newCluster = false;
-				}
-			}
-			if (newCluster) {
-				uniqueClusters.add(cluster1);
-			}
-		}
-		clusters.clear();
-		clusters.addAll(uniqueClusters);
+	public List<Territory> getTerritories() {
+		return territories;
 	}
 
 	public List<TerritoryCluster> getClusters() {
 		return clusters;
+	}
+
+	public void setClusters(List<TerritoryCluster> newClusters) {
+		clusters.clear();
+		clusters.addAll(newClusters);
+	}
+
+	public List<Territory> getBorders() {
+		return borders;
 	}
 }

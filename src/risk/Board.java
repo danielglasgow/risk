@@ -12,13 +12,12 @@ public class Board { // make board a JPanel not frame...
 	private final JFrame mainFrame;
 	private BufferedImage background;
 	private TextOverlay currentBackground;
+	private InstructionPanel instructionPanel;
 
 	// YUCK
-	public final Mouse mouse;
-	public MainGame game;
+	private Mouse mouse = null;
 
-	public Board(MainGame game) {
-		this.game = game;
+	public Board() {
 		mainFrame = new JFrame("risk");
 		try {
 			background = ImageIO.read(new File(
@@ -27,14 +26,19 @@ public class Board { // make board a JPanel not frame...
 			e.printStackTrace();
 		}
 		currentBackground = new TextOverlay(background);
+		instructionPanel = new InstructionPanel();
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(currentBackground, BorderLayout.CENTER);
-		mainFrame.add(game.instructionPanel.getMainPanel(), BorderLayout.SOUTH);
+		mainFrame.add(instructionPanel.getMainPanel(), BorderLayout.SOUTH);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 		mainFrame.setResizable(false);
-		mouse = new Mouse(this);
+
+	}
+
+	public void addMouse(Mouse mouse) {
+		this.mouse = mouse;
 		mainFrame.addMouseListener(mouse);
 	}
 
@@ -49,6 +53,14 @@ public class Board { // make board a JPanel not frame...
 		currentBackground = newBackGround;
 		mainFrame.add(currentBackground);
 		mainFrame.pack();
+	}
+
+	public InstructionPanel getInstructionPanel() {
+		return instructionPanel;
+	}
+
+	public Mouse getMouse() {
+		return mouse;
 	}
 
 }

@@ -20,7 +20,7 @@ public class InstructionPanel {
 	public static final String newVisible = "			NEW			";
 	public static final String newInvisible = "									";
 
-	public InstructionPanel(MainGame game) {
+	public InstructionPanel() {
 		mainPanel = new JPanel();
 		instruction = new JLabel();
 		newIndicator = new JLabel();

@@ -53,6 +53,7 @@ public class FortifyHandler extends HumanPhaseHandler {
 				finishPhase(Phase.END_TURN);
 			}
 		});
+		button.setText("End Turn");
 		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
 				"Click on " + player.fortify1.name + " to move armies from "
 						+ player.fortify2.name + ". Click on "

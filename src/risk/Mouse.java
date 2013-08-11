@@ -11,15 +11,14 @@ import javax.swing.SwingUtilities;
 
 public class Mouse implements MouseListener {
 
-	private final Board board;
-	private final MainGame game;
+	// private final Board board;
+	private final BoardState boardState;
 
 	// YUCK... FIX THIS LATER!
 	private HumanPhaseHandler phaseHandler = null;
 
-	public Mouse(Board board) {
-		this.board = board;
-		this.game = board.game;
+	public Mouse(BoardState boardState) {
+		this.boardState = boardState;
 	}
 
 	public void setPhaseHandler(HumanPhaseHandler phaseHandler) {
@@ -27,7 +26,7 @@ public class Mouse implements MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		game.instructionPanel.newIndicator
+		boardState.getBoard().getInstructionPanel().newIndicator
 				.setText(InstructionPanel.newInvisible);
 		PointerInfo a = MouseInfo.getPointerInfo();
 		Point point = new Point(a.getLocation());
@@ -42,11 +41,11 @@ public class Mouse implements MouseListener {
 					.showMessageDialog(null,
 							"Make sure to click on the army indicator in order select a territory");
 		}
-		board.updateBackground(game.boardState);
+		boardState.updateBackground();
 	}
 
 	private Territory findMatch(int x, int y) {
-		for (Territory territory : game.boardState.getTerritories()) {
+		for (Territory territory : boardState.getTerritories()) {
 			if ((Math.abs(territory.locX - x) < 30)
 					&& (Math.abs(territory.locY - y) < 30)) {
 				return territory;

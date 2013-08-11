@@ -23,11 +23,11 @@ public class BoardState {
 		buildBoardState();
 	}
 
-	private BoardState(Map<Territory, TerritoryState> boardState,
-			ImmutableList<Territory> territories, Board board) {
-		this.boardState = boardState;
-		this.territories = territories;
-		this.board = board;
+	private BoardState(BoardState boardState) {
+		this.boardState = Maps.newHashMap();
+		this.territories = boardState.territories;
+		this.board = boardState.board;
+		this.update(boardState);
 	}
 
 	private void buildBoardState() {
@@ -75,11 +75,15 @@ public class BoardState {
 	}
 
 	public BoardState copy() {
-		return new BoardState(boardState, territories, board);
+		return new BoardState(this);
 	}
 
 	public TerritoryState getTerritoryState(Territory territory) {
 		return boardState.get(territory);
+	}
+
+	public Board getBoard() {
+		return board;
 	}
 
 	/**

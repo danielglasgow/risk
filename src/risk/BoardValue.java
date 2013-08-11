@@ -1,7 +1,5 @@
 package risk;
 
-import java.util.List;
-
 /**
  * Determines a given player's BoardValue, an integer score of how well that
  * player is doing according to a board set up (how many armies on each
@@ -11,7 +9,7 @@ import java.util.List;
  */
 public interface BoardValue {
 
-	int getBoardValue(Player player, List<Territory> territories,
+	int getBoardValue(BoardState boardState, Player player,
 			Continent goalContinent);
 
 }

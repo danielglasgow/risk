@@ -39,7 +39,7 @@ public class Player {
 
 	private boolean hasContinent(Continent continent) {
 		boolean hasContinent = true;
-		for (Territory t : continent.territories) {
+		for (Territory t : continent.getTerritories()) {
 			if (!getTerritories().contains(t)) {
 				hasContinent = false;
 			}
@@ -67,7 +67,7 @@ public class Player {
 	public List<Territory> getTerritories() {
 		List<Territory> playerTerritories = Lists.newArrayList();
 		for (Territory territory : game.boardState.getTerritories()) {
-			if (territory.player == this) {
+			if (game.boardState.getPlayer(territory) == this) {
 				playerTerritories.add(territory);
 			}
 		}

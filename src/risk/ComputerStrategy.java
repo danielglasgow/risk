@@ -27,8 +27,8 @@ public class ComputerStrategy implements Strategy {
 
 	public ComputerStrategy(MainGame game) {
 		this.game = game;
-		this.instructionPanel = game.instructionPanel;
 		this.boardState = game.boardState;
+		this.instructionPanel = boardState.getBoard().getInstructionPanel();
 	}
 
 	@Override
@@ -159,7 +159,8 @@ public class ComputerStrategy implements Strategy {
 
 	private List<AttackRoute> buildAttackRoutes() {
 		List<AttackRoute> attackRoutes = Lists.newArrayList();
-		goalContinent.generateTerritoryClusters(player);
+		goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(
+				player, goalContinent, boardState));
 		for (TerritoryCluster territoryCluster : goalContinent.getClusters()) {
 			territoryCluster.makeRoutes();
 			attackRoutes.addAll(territoryCluster.getAttackRoutes());
@@ -171,8 +172,8 @@ public class ComputerStrategy implements Strategy {
 			List<AttackRoute> attackRoutes) {
 		Map<BoardState, AttackRoute> boardStates = Maps.newHashMap();
 		for (AttackRoute attackRoute : attackRoutes) {
-			BoardState boardState = attackRoute.getBoardState(game.boardState
-					.getTerritories());
+			BoardState boardState = attackRoute
+					.getExpectedBoardState(game.boardState.getTerritories());
 			if (boardState != null) {
 				boardStates.put(boardState, attackRoute);
 			}
@@ -182,13 +183,11 @@ public class ComputerStrategy implements Strategy {
 
 	private AttackRoute chooseAttackRoute() {
 		Map<BoardState, Integer> boardStateValues = Maps.newHashMap();
-		BasicBoardValue basicBoardValue = new BasicBoardValue();
+		BasicBoardEvaluator boardEvaluator = new BasicBoardEvaluator();
 		Map<BoardState, AttackRoute> boardStates = buildBoardStates(buildAttackRoutes());
 		for (BoardState boardState : boardStates.keySet()) {
-			boardStateValues.put(
-					boardState,
-					basicBoardValue.getBoardValue(player,
-							boardState.getTerritories(), goalContinent));
+			boardStateValues.put(boardState, boardEvaluator.getBoardValue(
+					boardState, player, goalContinent));
 		}
 		int highestBoardValue = 0;
 		BoardState bestBoardState = null;
@@ -208,7 +207,7 @@ public class ComputerStrategy implements Strategy {
 			double numTerritoriesControlled = 0;
 			double armiesControlled = 0;
 			double enemyArmies = 0;
-			for (Territory territory : game.continents.get(i).territories) {
+			for (Territory territory : game.continents.get(i).getTerritories()) {
 				numTerritories++;
 				if (boardState.getPlayer(territory) == player) {
 					numTerritoriesControlled++;

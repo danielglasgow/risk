@@ -6,20 +6,22 @@ import java.util.List;
 
 public class AttackRoute implements Iterable<Territory> {
 
+	private final BoardState boardState;
 	private List<Territory> route = new ArrayList<Territory>();
 
-	public AttackRoute(AttackRoute attackRoute) {
+	public AttackRoute(BoardState boardState, AttackRoute attackRoute) {
+		this.boardState = boardState;
 		this.route.addAll(attackRoute.route);
 	}
 
-	public AttackRoute() {
-		// TODO Auto-generated constructor stub
+	public AttackRoute(BoardState boardState) {
+		this.boardState = boardState;
 	}
 
-	public BoardState getBoardState(List<Territory> territories) {
-		BoardState boardState = new BoardState(territories);
+	public BoardState getExpectedBoardState(List<Territory> territories) {
+		BoardState expectedBoardState = boardState.copy();
 		double expectedArmies = attackRouteExpectedArmies(this);
-		Player player = route.get(0).player;
+		Player player = boardState.getPlayer(route.get(0));
 		if (expectedArmies < 1) {
 			return null;
 		} else {
@@ -27,29 +29,30 @@ public class AttackRoute implements Iterable<Territory> {
 			for (Territory territory : route) {
 				territoryCount++;
 				if (territoryCount != route.size()) {
-					boardState.setTerritoryArmies(territory, 1);
+					expectedBoardState.setArmies(territory, 1);
 				} else {
-					boardState.setTerritoryArmies(territory,
+					expectedBoardState.setArmies(territory,
 							(int) expectedArmies);
 				}
-				boardState.setTerritoryPlayer(territory, player);
+				expectedBoardState.setPlayer(territory, player);
 			}
 		}
-		return boardState;
+		return expectedBoardState;
 	}
 
 	private double attackRouteExpectedArmies(AttackRoute attackRoute) {
 		StandardBattlePredictor sbp = new StandardBattlePredictor();
 		Iterator<Territory> attackRouteIterator = attackRoute.iterator();
-		int attackArmies = attackRouteIterator.next().armies
-				+ attackRoute.get(0).player.getArmiesToPlace(false);
-		int defenseArmies = attackRouteIterator.next().armies;
+		int attackArmies = boardState.getArmies(attackRouteIterator.next())
+				+ boardState.getPlayer(attackRoute.get(0)).getArmiesToPlace(
+						false);
+		int defenseArmies = boardState.getArmies(attackRouteIterator.next());
 		double expectedArmies = sbp.predict(new Battle(attackArmies,
 				defenseArmies)) - 1;
 		double percentage = expectedArmies / ((double) attackArmies - 1);
 		while (attackRouteIterator.hasNext()) {
 			attackArmies = (int) expectedArmies + 1;
-			defenseArmies = attackRouteIterator.next().armies;
+			defenseArmies = boardState.getArmies(attackRouteIterator.next());
 			expectedArmies = sbp
 					.predict(new Battle(attackArmies, defenseArmies)) - 1;
 			if (attackArmies == 1) {

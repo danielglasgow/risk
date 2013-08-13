@@ -5,7 +5,7 @@ public class HumanStrategy implements Strategy {
 	private final BoardState boardState;
 	private final InstructionPanel instructionPanel;
 
-	public Phase phase;
+	private Phase phase;
 
 	public HumanStrategy(BoardState boardState,
 			InstructionPanel instructionPanel) {

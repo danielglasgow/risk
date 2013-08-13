@@ -12,7 +12,7 @@ public class Board { // make board a JPanel not frame...
 	private final JFrame mainFrame;
 	private BufferedImage background;
 	private TextOverlay currentBackground;
-	private InstructionPanel instructionPanel;
+	private final InstructionPanel instructionPanel;
 
 	// YUCK
 	private Mouse mouse = null;

@@ -10,7 +10,7 @@ public class PlaceArmiesHandler extends HumanPhaseHandler {
 	private final Player player;
 	private final InstructionPanel instructionPanel;
 	private final int armiesToPlace;
-	private BoardState boardState;
+	private final BoardState boardState;
 	private final BoardState savedBoardState;
 
 	private int armiesPlaced = 0;
@@ -64,7 +64,7 @@ public class PlaceArmiesHandler extends HumanPhaseHandler {
 		button.setText("Restart Army Placement");
 		instructionPanel
 				.addCustomButtons(
-						InstructionPanel.newVisible,
+						InstructionPanel.NEW_VISIBLE,
 						player.color.toUpperCase()
 								+ "'s turn! Distribute "
 								+ (armiesToPlace - armiesPlaced)
@@ -100,7 +100,7 @@ public class PlaceArmiesHandler extends HumanPhaseHandler {
 
 		instructionPanel
 				.addCustomButtons(
-						InstructionPanel.newVisible,
+						InstructionPanel.NEW_VISIBLE,
 						"You have placed all of your armies. If you would like to place armies again click Place Again, otherwise click Continue",
 						leftButton, rightButton);
 	}

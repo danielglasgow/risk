@@ -18,7 +18,7 @@ import javax.swing.JLabel;
  * @author danielglasgow
  */
 public class StartMenu {
-	public final JFrame startMenuFrame;
+	private final JFrame startMenuFrame;
 	private int numPlayers;
 	private final CountDownLatch latch = new CountDownLatch(1);
 

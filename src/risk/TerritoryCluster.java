@@ -75,7 +75,8 @@ public class TerritoryCluster implements Iterable<Territory> {
 				for (AttackRoute route : attackRoutes) {
 					oldRoutes.add(route);
 					Territory extensionTerritory = route.get(route.size() - 1);
-					for (Territory territory : extensionTerritory.adjacents) {
+					for (Territory territory : extensionTerritory
+							.getAdjacents()) {
 						if (!route.contains(territory)
 								&& clusterTerritories.contains(territory)
 								&& boardState.getPlayer(territory) != player) {
@@ -105,7 +106,7 @@ public class TerritoryCluster implements Iterable<Territory> {
 	private Set<Territory> getAdjacentPlayerTerritories() {
 		Set<Territory> playerTerritories = new HashSet<Territory>();
 		for (Territory clusterTerritory : clusterTerritories) {
-			for (Territory borderTerritory : clusterTerritory.adjacents) {
+			for (Territory borderTerritory : clusterTerritory.getAdjacents()) {
 				if (continent.getTerritories().contains(borderTerritory)
 						&& boardState.getPlayer(borderTerritory) == player) {
 					playerTerritories.add(borderTerritory);
@@ -142,7 +143,7 @@ public class TerritoryCluster implements Iterable<Territory> {
 	private ArrayList<Territory> qualifyingNeighbors(Territory territory,
 			List<Territory> cluster) {
 		ArrayList<Territory> adjacents = new ArrayList<Territory>();
-		for (Territory adjacent : territory.adjacents) {
+		for (Territory adjacent : territory.getAdjacents()) {
 			if (boardState.getPlayer(adjacent) != player
 					&& !cluster.contains(adjacent)
 					&& continent.getTerritories().contains(adjacent)) {

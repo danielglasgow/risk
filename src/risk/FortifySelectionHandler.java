@@ -73,7 +73,7 @@ public class FortifySelectionHandler extends HumanPhaseHandler {
 	private Set<Territory> adjacentControlledTerritories(Territory territory,
 			Set<Territory> territories) {
 		Set<Territory> adjacentControlled = new HashSet<Territory>();
-		for (Territory adjacent : territory.adjacents) {
+		for (Territory adjacent : territory.getAdjacents()) {
 			if (boardState.getPlayer(adjacent) == player
 					&& territories.contains(adjacent)) {
 				adjacentControlled.add(adjacent);
@@ -103,7 +103,7 @@ public class FortifySelectionHandler extends HumanPhaseHandler {
 		buttonLeft.setText("Continue");
 		buttonRight.setText("EndTurn");
 
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
 				"Click on two territories to fortify", buttonLeft, buttonRight);
 		String fort2 = "...";
 		if (player.fortify2 != null) {
@@ -111,11 +111,11 @@ public class FortifySelectionHandler extends HumanPhaseHandler {
 					+ " (click continue or select territories again)";
 		}
 		if (player.fortify1 == null) {
-			instructionPanel.addCustomButtons(InstructionPanel.newInvisible,
+			instructionPanel.addCustomButtons(InstructionPanel.NEW_INVISIBLE,
 					"Click on two territories to fortify", buttonLeft,
 					buttonRight);
 		} else {
-			instructionPanel.addCustomButtons(InstructionPanel.newInvisible,
+			instructionPanel.addCustomButtons(InstructionPanel.NEW_INVISIBLE,
 					"Fortify from " + player.fortify1.name + " to " + fort2,
 					buttonLeft, buttonRight);
 		}

@@ -12,22 +12,24 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JButton;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ComputerStrategy implements Strategy {
-	public final MainGame game;
-	public Player player;
+	private Player player;
 	private Continent goalContinent;
 	private int armiesToPlace;
-	private InstructionPanel instructionPanel;
 	private CountDownLatch latch;
 
 	private final BoardState boardState;
+	private final InstructionPanel instructionPanel;
+	private final ImmutableList<Continent> continents;
 
-	public ComputerStrategy(MainGame game) {
-		this.game = game;
-		this.boardState = game.boardState;
+	public ComputerStrategy(BoardState boardState,
+			ImmutableList<Continent> continents) {
+		this.boardState = boardState;
+		this.continents = continents;
 		this.instructionPanel = boardState.getBoard().getInstructionPanel();
 	}
 
@@ -45,9 +47,10 @@ public class ComputerStrategy implements Strategy {
 		button.setText("Continue");
 		setArmiesToPlace();
 		setGoalContinent();
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(
+				InstructionPanel.NEW_VISIBLE,
 				"player: " + player.color + "Goal Continent: "
-						+ goalContinent.name, button);
+						+ goalContinent.getName(), button);
 
 		try {
 			latch.await();
@@ -60,14 +63,27 @@ public class ComputerStrategy implements Strategy {
 			System.out.println("Chosen ROute:" + chosenRoute);
 			attack(chosenRoute);
 		}
-		/*
-		 * ComputerFortifier fortifier = new ComputerFortifier(player,
-		 * goalContinent); List<Territory> fortification =
-		 * fortifier.getFortification(); System.out.println(fortification); int
-		 * armiesToMove = fortification.get(0).armies - 1;
-		 * fortification.get(0).armies = 1; fortification.get(1).armies +=
-		 * armiesToMove; game.board.updateBackground();
-		 */
+		ComputerFortifier fortifier = new ComputerFortifier(boardState);
+		Map<BoardState, Double> boardStateValues = Maps.newHashMap();
+		BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
+		for (BoardState boardState : fortifier.getFortificationOptions(player)) {
+			boardStateValues.put(boardState, boardEvaluator.getBoardValue(
+					boardState, player, continents));
+		}
+		double highestBoardValue = 0;
+		BoardState bestBoardState = null;
+		for (BoardState boardState : boardStateValues.keySet()) {
+			System.out.println(boardStateValues.get(boardState));
+			if (boardStateValues.get(boardState) > highestBoardValue) {
+				highestBoardValue = boardStateValues.get(boardState);
+				bestBoardState = boardState;
+			}
+		}
+		System.out.println("Current Board State: "
+				+ boardStateValues.get(boardState));
+		boardState.update(bestBoardState);
+		boardState.updateBackground();
+
 	}
 
 	private void attack(AttackRoute attackRoute) {
@@ -173,7 +189,7 @@ public class ComputerStrategy implements Strategy {
 		Map<BoardState, AttackRoute> boardStates = Maps.newHashMap();
 		for (AttackRoute attackRoute : attackRoutes) {
 			BoardState boardState = attackRoute
-					.getExpectedBoardState(game.boardState.getTerritories());
+					.getExpectedBoardState(this.boardState.getTerritories());
 			if (boardState != null) {
 				boardStates.put(boardState, attackRoute);
 			}
@@ -182,14 +198,14 @@ public class ComputerStrategy implements Strategy {
 	}
 
 	private AttackRoute chooseAttackRoute() {
-		Map<BoardState, Integer> boardStateValues = Maps.newHashMap();
-		BasicBoardEvaluator boardEvaluator = new BasicBoardEvaluator();
+		Map<BoardState, Double> boardStateValues = Maps.newHashMap();
+		BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
 		Map<BoardState, AttackRoute> boardStates = buildBoardStates(buildAttackRoutes());
 		for (BoardState boardState : boardStates.keySet()) {
 			boardStateValues.put(boardState, boardEvaluator.getBoardValue(
-					boardState, player, goalContinent));
+					boardState, player, continents));
 		}
-		int highestBoardValue = 0;
+		double highestBoardValue = 0;
 		BoardState bestBoardState = null;
 		for (BoardState boardState : boardStateValues.keySet()) {
 			if (boardStateValues.get(boardState) > highestBoardValue) {
@@ -207,7 +223,7 @@ public class ComputerStrategy implements Strategy {
 			double numTerritoriesControlled = 0;
 			double armiesControlled = 0;
 			double enemyArmies = 0;
-			for (Territory territory : game.continents.get(i).getTerritories()) {
+			for (Territory territory : continents.get(i).getTerritories()) {
 				numTerritories++;
 				if (boardState.getPlayer(territory) == player) {
 					numTerritoriesControlled++;
@@ -218,8 +234,8 @@ public class ComputerStrategy implements Strategy {
 			}
 			double ratio = (numTerritoriesControlled + armiesControlled)
 					/ (numTerritories + enemyArmies + armiesControlled);
-			game.continents.get(i).ratio = ratio;
-			continentRatios.add(game.continents.get(i));
+			continents.get(i).ratio = ratio;
+			continentRatios.add(continents.get(i));
 			Collections.sort(continentRatios);
 		}
 		goalContinent = continentRatios.get(0);

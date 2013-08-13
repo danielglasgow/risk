@@ -1,26 +1,29 @@
 package risk;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 public class Continent implements Comparable<Continent> {
-	private final List<Territory> territories = new ArrayList<Territory>();
-	private final List<Territory> borders = new ArrayList<Territory>();
-	private final List<TerritoryCluster> clusters = new ArrayList<TerritoryCluster>();
-	public final String name;
-	public final int bonusArmies;
+	private final ImmutableList<Territory> territories;
+	private final ImmutableList<Territory> borders;
+	private final List<TerritoryCluster> clusters = Lists.newArrayList();
+	private final String name;
+	private final int bonusArmies;
+
 	public double ratio;
 
-	public Continent(String name, int bonusArmies) {
+	public Continent(String name, int bonusArmies, List<Territory> territories,
+			List<Territory> borders) {
 		this.name = name;
 		this.bonusArmies = bonusArmies;
+		this.territories = ImmutableList.copyOf(territories);
+		this.borders = ImmutableList.copyOf(borders);
 	}
 
 	public String toString() {
 		String continent = name + ": " + ratio;
-		// for (Territory t : territories) {
-		// continent = continent + " " + t.name;
-		// }
 		return continent;
 	}
 
@@ -32,23 +35,6 @@ public class Continent implements Comparable<Continent> {
 			return -1;
 		}
 		return 0;
-	}
-
-	public void addBorders() {
-		for (Territory t : territories) {
-			if (isBorder(t)) {
-				borders.add(t);
-			}
-		}
-	}
-
-	private boolean isBorder(Territory territory) {
-		for (Territory t : territory.adjacents) {
-			if (!territories.contains(t)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public List<Territory> getTerritories() {
@@ -66,5 +52,13 @@ public class Continent implements Comparable<Continent> {
 
 	public List<Territory> getBorders() {
 		return borders;
+	}
+
+	public int getBonusArmies() {
+		return bonusArmies;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

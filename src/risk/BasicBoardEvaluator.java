@@ -36,7 +36,7 @@ public class BasicBoardEvaluator implements BoardValue {
 		}
 		if (territoriesControlled == state.goalContinent.getTerritories()
 				.size()) {
-			score += state.goalContinent.bonusArmies;
+			score += state.goalContinent.getBonusArmies();
 			controlsContinent = true;
 		}
 		if (controlsContinent) {

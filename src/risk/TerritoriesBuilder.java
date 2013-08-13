@@ -2,8 +2,11 @@ package risk;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 // TODO(dani): add Java doc.  Document the format of the files!
 public class TerritoriesBuilder {
@@ -19,49 +22,51 @@ public class TerritoriesBuilder {
 	}
 
 	public BoardModel build() {
-		Map<String, Continent> continents = readContinents(new File(
+		Map<String, ContinentModel> modelContinents = readContinents(new File(
 				continentsFileName));
 		Map<String, Territory> territories = readTerritories(new File(
-				territroyFileName), continents);
-		buildBorders(continents);
+				territroyFileName), modelContinents);
+		buildBorders(modelContinents);
 		return new BoardModel(new ArrayList<Territory>(territories.values()),
-				new ArrayList<Continent>(continents.values()));
+				buildContinents(modelContinents));
 	}
 
-	private void buildBorders(Map<String, Continent> continents) {
-		for (Continent c : continents.values()) {
-			c.addBorders();
-		}
-	}
-
-	private Map<String, Continent> readContinents(File file) {
-		Map<String, Continent> continents = new HashMap<String, Continent>();
-		try {
-			java.util.Scanner scanner = new java.util.Scanner(file);
-			while (scanner.hasNext()) {
-				String name = scanner.next();
-				// TODO(dani): is there a better name than value? bonusArmies?
-				int value = scanner.nextInt();
-				continents.put(name, new Continent(name, value));
-			}
-		} catch (Exception e) {
-			System.out.println("Error: " + e);
-		}
-
-		// TODO(dani): eliminate?????
-		// This looks similar to the buildBorders() function, but I'm not sure
-		// it can be
-		// done yet. In anycase, using continent.values() is better than using
-		// the keySet().
-		for (String name : continents.keySet()) {
-			continents.get(name).addBorders();
+	private List<Continent> buildContinents(
+			Map<String, ContinentModel> modelContinents) {
+		List<Continent> continents = Lists.newArrayList();
+		for (ContinentModel modelContinent : modelContinents.values()) {
+			continents.add(new Continent(modelContinent.name,
+					modelContinent.bonusArmies, modelContinent.territories,
+					modelContinent.borders));
 		}
 		return continents;
 	}
 
+	private void buildBorders(Map<String, ContinentModel> continents) {
+		for (ContinentModel continent : continents.values()) {
+			continent.addBorders();
+		}
+	}
+
+	private Map<String, ContinentModel> readContinents(File file) {
+		Map<String, ContinentModel> modelContinents = Maps.newHashMap();
+		try {
+			java.util.Scanner scanner = new java.util.Scanner(file);
+			while (scanner.hasNext()) {
+				String name = scanner.next();
+				int bonusArmies = scanner.nextInt();
+				modelContinents
+						.put(name, new ContinentModel(name, bonusArmies));
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e);
+		}
+		return modelContinents;
+	}
+
 	private Map<String, Territory> readTerritories(File file,
-			Map<String, Continent> continents) {
-		Map<String, Territory> territories = new HashMap<String, Territory>();
+			Map<String, ContinentModel> modelContinents) {
+		Map<String, Territory> territories = Maps.newHashMap();
 		try {
 			java.util.Scanner scanner = new java.util.Scanner(file);
 			String continentName = "";
@@ -73,14 +78,9 @@ public class TerritoriesBuilder {
 				}
 				int x = scanner.nextInt();
 				int y = scanner.nextInt();
-				Territory t = new Territory(name, x, y);
-				territories.put(name, t);
-				// TODO(dani): Do not access a public member.
-				// At least call addTerritory(t) which is a new function
-				// you will write on the continent object.
-				// Better still would be to construct the continent with the
-				// list of territories from the very start.
-				continents.get(continentName).getTerritories().add(t);
+				Territory territory = new Territory(name, x, y);
+				territories.put(name, territory);
+				modelContinents.get(continentName).territories.add(territory);
 			}
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
@@ -99,10 +99,8 @@ public class TerritoriesBuilder {
 				if (name.contains(":")) {
 					currentTerritory = name.substring(0, name.length() - 1);
 				} else {
-					// TODO(dani): Add a method to territory called
-					// addAdjacent(Territory territory);
-					territories.get(currentTerritory).adjacents.add(territories
-							.get(name));
+					territories.get(currentTerritory).addAdjacentTerritory(
+							territories.get(name));
 				}
 			}
 		} catch (Exception e) {
@@ -110,4 +108,32 @@ public class TerritoriesBuilder {
 		}
 	}
 
+	private class ContinentModel {
+		public final List<Territory> territories = Lists.newArrayList();
+		public final List<Territory> borders = Lists.newArrayList();
+		public final String name;
+		public final int bonusArmies;
+
+		public ContinentModel(String name, int bonusArmies) {
+			this.name = name;
+			this.bonusArmies = bonusArmies;
+		}
+
+		public void addBorders() {
+			for (Territory territory : territories) {
+				if (isBorder(territory)) {
+					borders.add(territory);
+				}
+			}
+		}
+
+		private boolean isBorder(Territory territory) {
+			for (Territory adjacent : territory.getAdjacents()) {
+				if (!territories.contains(adjacent)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 }

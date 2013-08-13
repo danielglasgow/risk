@@ -109,7 +109,7 @@ public class AttackHandler extends HumanPhaseHandler {
 		boardState.setPlayer(player.territoryAttackTo, player);
 		boardState.increaseArmies(player.territoryAttackTo, 1);
 		boardState.updateBackground();
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
 				"Attack Rolls: " + printRolls(3, attackRolls)
 						+ "    Defense rolls: " + printRolls(2, defenseRolls)
 						+ "     Attack Loses: " + attackLosses
@@ -120,7 +120,7 @@ public class AttackHandler extends HumanPhaseHandler {
 
 	private void playerLosesInterface(JButton button) {
 		button.setText("Continue");
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
 				"Attack Rolls: " + printRolls(3, attackRolls)
 						+ "    Defense rolls: " + printRolls(2, defenseRolls)
 						+ "     Attack Loses: " + attackLosses
@@ -133,7 +133,7 @@ public class AttackHandler extends HumanPhaseHandler {
 	private void continueAttackInterface(JButton buttonRight, JButton buttonLeft) {
 		buttonLeft.setText("Continue Attacking");
 		buttonRight.setText("Stop Attacking");
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
 				"Attack Rolls: " + printRolls(3, attackRolls)
 						+ "    Defense rolls: " + printRolls(2, defenseRolls)
 						+ "     Attack Loses: " + attackLosses

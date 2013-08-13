@@ -5,19 +5,18 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class MainGame {
 	private static final String TERRITORY_FILENAME = "TerritoryInfo/territories.txt";
 	private static final String ADJACENCY_FILENAME = "TerritoryInfo/Adjacentterritories.txt";
 	private static final String Continents_FILENAME = "TerritoryInfo/Continents.txt";
 
+	private final BoardState boardState;
 	private final ImmutableList<Territory> territories;
-	public final List<Continent> continents;
-	public final ArrayList<Player> players = new ArrayList<Player>();
-	public final Object startMenuLock = new Object();
-	public final BoardState boardState;
+	private final ImmutableList<Continent> continents;
 
-	private InstructionPanel instructionPanel;
+	private final List<Player> players = Lists.newArrayList();
 
 	public MainGame() {
 		TerritoriesBuilder territoriesBuilder = new TerritoriesBuilder(
@@ -25,27 +24,32 @@ public class MainGame {
 		BoardModel boardModel = territoriesBuilder.build();
 		this.territories = boardModel.getTerritories();
 		this.continents = boardModel.getContinents();
-		this.boardState = new BoardState(territories, new Board());
-		boardState.getBoard().addMouse(new Mouse(boardState));
+		this.boardState = new BoardState(territories, new Board(), this);
+		boardState.getBoard().addMouse(new Mouse(boardState)); // not the best..
+																// talk with
+																// Abba
 	}
 
 	public void startGame() throws InterruptedException {
 		StartMenu startMenu = new StartMenu();
 		startMenu.await();
-		instructionPanel = boardState.getBoard().getInstructionPanel();
 		addPlayers(startMenu.getNumPlayers());
 		divideTerritories(players.size());
 		boardState.updateBackground();
 	}
 
-	private void addPlayers(int numPlayers) {
-		HumanStrategy humanStrategy = new HumanStrategy(boardState,
-				instructionPanel);
-		ComputerStrategy computerStrategy = new ComputerStrategy(this);
+	private void addPlayers(int numPlayers) { // always initialize six players
+												// so boad can be loaded
+		HumanStrategy humanStrategy = new HumanStrategy(boardState, boardState
+				.getBoard().getInstructionPanel());
+		ComputerStrategy computerStrategy = new ComputerStrategy(boardState,
+				continents);
+		EditMode editMode = new EditMode(boardState, boardState.getBoard()
+				.getInstructionPanel(), this);
 		String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
 		for (int i = 1; i <= numPlayers; i++) {
-			Player player = new Player("Player" + i, colors[i - 1], this,
-					i == -1 ? computerStrategy : humanStrategy);
+			Player player = new Player("Player" + i, colors[i - 1], boardState,
+					i == -1 ? humanStrategy : editMode, continents);
 			players.add(player);
 		}
 	}
@@ -88,6 +92,10 @@ public class MainGame {
 		MainGame game = new MainGame();
 		game.startGame();
 		game.play();
+	}
+
+	public List<Player> getPlayers() {
+		return players;
 	}
 
 }

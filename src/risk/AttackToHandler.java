@@ -7,12 +7,13 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 public class AttackToHandler extends HumanPhaseHandler {
-	
+
 	private final BoardState boardState;
 	private final Player player;
 	private final InstructionPanel instructionPanel;
 
-	public AttackToHandler(BoardState boardState, Player player, InstructionPanel instructionPanel) {
+	public AttackToHandler(BoardState boardState, Player player,
+			InstructionPanel instructionPanel) {
 		this.boardState = boardState;
 		this.player = player;
 		this.instructionPanel = instructionPanel;
@@ -27,14 +28,14 @@ public class AttackToHandler extends HumanPhaseHandler {
 			}
 		});
 		button.setText("Choose a Different Territory to Attack From");
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
 				"Attacking from " + player.territoryAttackFrom.name
 						+ ".  Select the territory you would like to attack.",
 				button);
 	}
 
 	public void setAttackToTerritory(Territory territory) {
-		if (!player.territoryAttackFrom.adjacents.contains(territory)) {
+		if (!player.territoryAttackFrom.getAdjacents().contains(territory)) {
 			JOptionPane.showMessageDialog(null,
 					"You must attack a territory adjacent to "
 							+ player.territoryAttackFrom.name);

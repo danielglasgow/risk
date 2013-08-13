@@ -17,7 +17,7 @@ public class BoardModel {
 		return territories;
 	}
 
-	public List<Continent> getContinents() {
+	public ImmutableList<Continent> getContinents() {
 		return continents;
 	}
 

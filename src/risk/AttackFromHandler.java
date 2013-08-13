@@ -30,7 +30,7 @@ public class AttackFromHandler extends HumanPhaseHandler {
 		});
 		button.setText("End Attack Phase");
 		player.territoryAttackFrom = null;
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
 				"Select the territory you would like to attack from", button);
 	}
 

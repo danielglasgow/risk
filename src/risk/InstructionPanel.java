@@ -12,13 +12,13 @@ import javax.swing.JPanel;
 public class InstructionPanel {
 	private final JPanel mainPanel;
 	private final JLabel instruction;
-	public final JLabel newIndicator; // Note should not be public!
+	private final JLabel newIndicator;
 	private final JButton buttonRight;
 	private final JButton buttonLeft;
 	private final JPanel buttonArea;
 
-	public static final String newVisible = "			NEW			";
-	public static final String newInvisible = "									";
+	public static final String NEW_VISIBLE = "			NEW			";
+	public static final String NEW_INVISIBLE = "									";
 
 	public InstructionPanel() {
 		mainPanel = new JPanel();
@@ -27,7 +27,7 @@ public class InstructionPanel {
 		buttonRight = new JButton();
 		buttonLeft = new JButton();
 
-		buttonArea = new JPanel(new GridLayout(1, 2));
+		buttonArea = new JPanel(new GridLayout(1, 5));
 		buttonArea.add(buttonLeft);
 		buttonArea.add(buttonRight);
 
@@ -83,5 +83,22 @@ public class InstructionPanel {
 		buttonArea.add(button);
 		this.newIndicator.setText(newIndicator);
 		this.instruction.setText(instruction);
+	}
+
+	public void addCustomButtons(String newIndicator, String instruction,
+			JButton button1, JButton button2, JButton button3, JButton button4,
+			JButton button5) {
+		removeButtons();
+		buttonArea.add(button1);
+		buttonArea.add(button2);
+		buttonArea.add(button3);
+		buttonArea.add(button4);
+		buttonArea.add(button5);
+		this.newIndicator.setText(newIndicator);
+		this.instruction.setText(instruction);
+	}
+
+	public JLabel getNewIndicator() {
+		return newIndicator;
 	}
 }

@@ -1,13 +1,14 @@
 package risk;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class AttackRoute implements Iterable<Territory> {
 
 	private final BoardState boardState;
-	private List<Territory> route = new ArrayList<Territory>();
+	private final List<Territory> route = Lists.newArrayList();
 
 	public AttackRoute(BoardState boardState, AttackRoute attackRoute) {
 		this.boardState = boardState;

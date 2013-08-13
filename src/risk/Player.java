@@ -4,24 +4,30 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class Player {
 
 	public final String color;
 	public final String name;
-	private final MainGame game;
+	private final BoardState boardState;
 	private final Strategy strategy;
+	private final ImmutableList<Continent> continents;
+
+	// THIS NEEDS TO BE FIXED
 	public Territory territoryAttackTo;
 	public Territory territoryAttackFrom;
 	public Territory fortify1;
 	public Territory fortify2;
 
-	public Player(String name, String color, MainGame game, Strategy strategy) {
-		this.game = game;
+	public Player(String name, String color, BoardState boardState,
+			Strategy strategy, ImmutableList<Continent> continents) {
+		this.boardState = boardState;
 		this.name = name;
 		this.color = color;
 		this.strategy = strategy;
+		this.continents = continents;
 	}
 
 	public boolean hasTerritories() {
@@ -49,12 +55,16 @@ public class Player {
 
 	private int checkContinents(boolean hasPlayer) {
 		int extraArmies = 0;
-		for (Continent c : game.continents) {
-			if (hasContinent(c) && hasPlayer) {
-				extraArmies += c.bonusArmies;
-				JOptionPane.showMessageDialog(null, "You have been awarded "
-						+ c.bonusArmies + " extra armies for controling "
-						+ c.name);
+		for (Continent continent : continents) {
+			if (hasContinent(continent) && hasPlayer) {
+				extraArmies += continent.getBonusArmies();
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"You have been awarded "
+										+ continent.getBonusArmies()
+										+ " extra armies for controling "
+										+ continent.getName());
 			}
 		}
 		return extraArmies;
@@ -66,8 +76,8 @@ public class Player {
 
 	public List<Territory> getTerritories() {
 		List<Territory> playerTerritories = Lists.newArrayList();
-		for (Territory territory : game.boardState.getTerritories()) {
-			if (game.boardState.getPlayer(territory) == this) {
+		for (Territory territory : boardState.getTerritories()) {
+			if (boardState.getPlayer(territory) == this) {
 				playerTerritories.add(territory);
 			}
 		}

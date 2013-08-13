@@ -15,11 +15,15 @@ public class BoardState {
 	private final Map<Territory, TerritoryState> boardState;
 	private final ImmutableList<Territory> territories;
 	private final Board board;
+	private final MainGame game;
 
-	public BoardState(ImmutableList<Territory> territories, Board board) {
-		this.territories = territories;
+	private Territory editTerritory = null;
+
+	public BoardState(List<Territory> territories, Board board, MainGame game) {
+		this.territories = ImmutableList.copyOf(territories);
 		this.boardState = Maps.newHashMap();
 		this.board = board;
+		this.game = game;
 		buildBoardState();
 	}
 
@@ -27,6 +31,7 @@ public class BoardState {
 		this.boardState = Maps.newHashMap();
 		this.territories = boardState.territories;
 		this.board = boardState.board;
+		this.game = boardState.game;
 		this.update(boardState);
 	}
 
@@ -96,4 +101,14 @@ public class BoardState {
 					boardState.getTerritoryState(territory));
 		}
 	}
+
+	public void setEditTerritory(Territory territory) {
+		editTerritory = territory;
+
+	}
+
+	public Territory getEditTerritory() {
+		return editTerritory;
+	}
+
 }

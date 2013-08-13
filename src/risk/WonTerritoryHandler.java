@@ -9,8 +9,8 @@ import javax.swing.JOptionPane;
 public class WonTerritoryHandler extends HumanPhaseHandler {
 
 	private final BoardState boardState;
-	private Player player;
-	private InstructionPanel instructionPanel;
+	private final Player player;
+	private final InstructionPanel instructionPanel;
 
 	public WonTerritoryHandler(BoardState boardState, Player player,
 			InstructionPanel instructionPanel) {
@@ -64,7 +64,7 @@ public class WonTerritoryHandler extends HumanPhaseHandler {
 			}
 		});
 		buttonRight.setText("Continue");
-		instructionPanel.addCustomButtons(InstructionPanel.newVisible,
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
 				"Click on " + player.territoryAttackTo.name
 						+ " to move armies from "
 						+ player.territoryAttackFrom.name + ". Click on "

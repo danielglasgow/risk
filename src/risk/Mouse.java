@@ -11,7 +11,6 @@ import javax.swing.SwingUtilities;
 
 public class Mouse implements MouseListener {
 
-	// private final Board board;
 	private final BoardState boardState;
 
 	// YUCK... FIX THIS LATER!
@@ -26,8 +25,8 @@ public class Mouse implements MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		boardState.getBoard().getInstructionPanel().newIndicator
-				.setText(InstructionPanel.newInvisible);
+		boardState.getBoard().getInstructionPanel().getNewIndicator()
+				.setText(InstructionPanel.NEW_INVISIBLE);
 		PointerInfo a = MouseInfo.getPointerInfo();
 		Point point = new Point(a.getLocation());
 		SwingUtilities.convertPointFromScreen(point, e.getComponent());

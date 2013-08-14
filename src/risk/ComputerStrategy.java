@@ -35,6 +35,9 @@ public class ComputerStrategy implements Strategy {
 
 	@Override
 	public void takeTurn(Player player) {
+		System.out.println("Turn: " + player.name);
+		// ComputerFortifier fortifier = new ComputerFortifier(boardState);
+		// System.out.println(fortifier.getFortificationOptions(player));
 		BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
 		System.out.println("Board State At beggining of Turn: "
 				+ boardEvaluator.getBoardValue(boardState, player, continents));
@@ -72,14 +75,14 @@ public class ComputerStrategy implements Strategy {
 		if (goalContinent.ratio != 1) {
 			AttackRoute chosenRoute = chooseAttackRoute();
 			placeArmies(chosenRoute.get(0), armiesToPlace);
-			System.out.println("Chosen ROute:" + chosenRoute);
+			// System.out.println("Chosen ROute:" + chosenRoute);
 			attack(chosenRoute);
 		}
-		System.out.println("Board State before fortify: "
-				+ boardEvaluator.getBoardValue(boardState, player, continents));
+		// System.out.println("Board State before fortify: "
+		// + boardEvaluator.getBoardValue(boardState, player, continents));
 		chooseFortification();
-		System.out.println("Board State after fortify: "
-				+ boardEvaluator.getBoardValue(boardState, player, continents));
+		// System.out.println("Board State after fortify: "
+		// + boardEvaluator.getBoardValue(boardState, player, continents));
 	}
 
 	private void chooseFortification() {
@@ -207,9 +210,19 @@ public class ComputerStrategy implements Strategy {
 			BoardState boardState = attackRoute
 					.getExpectedBoardState(this.boardState.getTerritories());
 			if (boardState != null) {
+				boolean armiesToMove = false;
+				for (Territory territory : attackRoute) {
+					if (boardState.getArmies(territory) > 1) {
+						armiesToMove = true;
+					}
+				}
 				ComputerFortifier fortifier = new ComputerFortifier(boardState);
-				for (BoardState fortifyState : fortifier
-						.getFortificationOptions(player)) {
+				List<BoardState> fortifyOptions = fortifier
+						.getFortificationOptions(player);
+				if (armiesToMove != (fortifyOptions.size() > 1)) {
+					System.out.println("fail");
+				}
+				for (BoardState fortifyState : fortifyOptions) {
 					boardStates.put(fortifyState, attackRoute);
 				}
 			}
@@ -228,11 +241,19 @@ public class ComputerStrategy implements Strategy {
 		double highestBoardValue = 0;
 		BoardState bestBoardState = null;
 		for (BoardState boardState : boardStateValues.keySet()) {
+			AttackRoute attackRoute = boardStates.get(boardState);
+			if (attackRoute.get(1).name.equals("LotR")
+					&& boardState.getArmies(attackRoute.get(0)) > 1) {
+				BoardStateSaver.saveBoard(boardState);
+			}
 			if (boardStateValues.get(boardState) > highestBoardValue) {
 				highestBoardValue = boardStateValues.get(boardState);
 				bestBoardState = boardState;
 			}
 		}
+		System.out.println("Chosen Attack Route: "
+				+ boardStates.get(bestBoardState));
+		BoardStateSaver.saveBoard(bestBoardState);
 		return boardStates.get(bestBoardState);
 	}
 

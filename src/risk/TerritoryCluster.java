@@ -39,22 +39,8 @@ public class TerritoryCluster implements Iterable<Territory> {
 		Set<TerritoryCluster> territoryClusters = Sets.newHashSet();
 		for (Territory territory : continent.getTerritories()) {
 			if (boardState.getPlayer(territory) != player) {
-				System.out.println("seed Territory: " + territory.name);
 				territoryClusters.add(new TerritoryCluster(boardState,
 						territory, continent, player));
-			}
-		}
-		List<TerritoryCluster> uniqueClusters = new ArrayList<TerritoryCluster>();
-		// uniqueClusters.add(territoryClusters.get(0));
-		for (TerritoryCluster cluster1 : territoryClusters) {
-			boolean newCluster = true;
-			for (TerritoryCluster cluster2 : uniqueClusters) {
-				if (TerritoryCluster.compareClusters(cluster1, cluster2)) {
-					newCluster = false;
-				}
-			}
-			if (newCluster) {
-				uniqueClusters.add(cluster1);
 			}
 		}
 		return territoryClusters;
@@ -124,8 +110,6 @@ public class TerritoryCluster implements Iterable<Territory> {
 	 * enemy territories within this continent.
 	 */
 	private Set<Territory> buildCluster(Territory territory) {
-		// TODO(Dani + Abba) use sets and better algorithm. STILL BAD NEED TO
-		// FIX
 		Set<Territory> cluster = Sets.newHashSet();
 		Set<Territory> newAdjacents = Sets.newHashSet();
 		Set<Territory> adjacents = Sets.newHashSet();
@@ -134,7 +118,6 @@ public class TerritoryCluster implements Iterable<Territory> {
 		int clusterSize = 0;
 		while (clusterSize != cluster.size()) {
 			clusterSize = cluster.size();
-			System.out.println("CLuster In process: " + cluster);
 			adjacents.addAll(newAdjacents);
 			newAdjacents.clear();
 			for (Territory adjacent : adjacents) {

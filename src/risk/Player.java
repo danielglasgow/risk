@@ -31,11 +31,11 @@ public class Player {
 	}
 
 	public boolean hasTerritories() {
-		return (getTerritories().size() > 1);
+		return (getTerritories(boardState).size() > 0);
 	}
 
 	public int getArmiesToPlace(boolean hasPlayer) {
-		int armiesToPlace = getTerritories().size() / 3;
+		int armiesToPlace = getTerritories(boardState).size() / 3;
 		if (armiesToPlace < 3) {
 			armiesToPlace = 3;
 		}
@@ -46,7 +46,7 @@ public class Player {
 	private boolean hasContinent(Continent continent) {
 		boolean hasContinent = true;
 		for (Territory t : continent.getTerritories()) {
-			if (!getTerritories().contains(t)) {
+			if (!getTerritories(boardState).contains(t)) {
 				hasContinent = false;
 			}
 		}
@@ -74,7 +74,7 @@ public class Player {
 		strategy.takeTurn(this);
 	}
 
-	public List<Territory> getTerritories() {
+	public List<Territory> getTerritories(BoardState boardState) {
 		List<Territory> playerTerritories = Lists.newArrayList();
 		for (Territory territory : boardState.getTerritories()) {
 			if (boardState.getPlayer(territory) == this) {

@@ -15,7 +15,7 @@ public class ComputerFortifier {
 
 	private List<Territory> makeFortifyFromOptions(Player player) {
 		List<Territory> fortifyFromOptions = Lists.newArrayList();
-		for (Territory territory : player.getTerritories()) {
+		for (Territory territory : player.getTerritories(boardState)) {
 			if (boardState.getArmies(territory) > 1) {
 				fortifyFromOptions.add(territory);
 			}
@@ -56,10 +56,10 @@ public class ComputerFortifier {
 		List<BoardState> fortificationOptions = Lists.newArrayList();
 		List<Territory> fortifyFromOptions = makeFortifyFromOptions(player);
 		for (Territory fortifyFrom : fortifyFromOptions) {
-			System.out.print("FOrtifyFrom: " + fortifyFrom);
+			// System.out.print("FOrtifyFrom: " + fortifyFrom);
 			List<Territory> fortifyToOptions = makefortifyToOptions(player,
 					fortifyFrom);
-			System.out.println(" FortufyTOOptions: " + fortifyToOptions);
+			// System.out.println(" FortufyTOOptions: " + fortifyToOptions);
 			for (Territory fortifyTo : fortifyToOptions) {
 				for (int i = 1; i <= boardState.getArmies(fortifyFrom); i++) {
 					int armiesToMove = boardState.getArmies(fortifyFrom) - i;

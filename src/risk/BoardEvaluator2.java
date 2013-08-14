@@ -10,12 +10,37 @@ import com.google.common.collect.Sets;
 
 public class BoardEvaluator2 {
 
+	/**
+	 * 1 Point for each territory player controls.
+	 */
+	private static final double TERRITORY_BONUS = 1;
+	/**
+	 * 1 Point for each army player controls
+	 */
+	private static final int ARMY_BONUS = 1;
+
+	/**
+	 * -2 Points for every territory with more than 1 army.
+	 */
 	private static final double ARMY_DISPERSION_PENALTY = 2;
-	private static final double BORDER_ARMIES_MULTIPLIER = 2;
-	private static final double CLUSTER_PENALTY = 5;
-	private static final int ARMY_BONUS_MULTIPLIER = 1;
-	private static final double HIGHEST_TERRITORY_MULTIPLIER = 1;
+
+	/**
+	 * -2 Points for every cluster in player's goal continent.
+	 */
+	private static final double CLUSTER_PENALTY = 2;
+
+	/**
+	 * 1 Point for each army adjacent to the biggest cluster in player's goal
+	 * continent. Those armies must all belong to the same territory. (The
+	 * territory with the most armies adjacent to the biggest cluster).
+	 */
 	private static final double CLUSTER_BONUS = 1;
+
+	private static final double BORDER_ARMIES_MULTIPLIER = 2;
+	private static final double BORDER_ARMIES_DEFLATOR = 0.9;
+	private static final double MOST_ARMIES_DEFLATOR = 0.5;
+	private static final double MOST_ARMIES_MULTIPLIER = 5;
+	private static final double MOST_ARMIES_CONSTANT = 1;
 
 	private final BorderFinder borderFinder = new BorderFinder();
 
@@ -23,17 +48,28 @@ public class BoardEvaluator2 {
 			List<Continent> continents) {
 		State state = new State(boardState, player, continents);
 		double continentBonuses = getContinentBonuses(state);
+		double dispersionPenalty = getDispersionPenalty(state);
 		double territoryBonus = getTerritoryBonus(state);
 		double armyBonus = getArmyBonus(state);
-		System.out.println("Army Bonus: " + armyBonus);
-		return continentBonuses + territoryBonus + armyBonus;
+		double clusterBonus = getClusterBonus(state);
+		return continentBonuses + territoryBonus + armyBonus
+				+ dispersionPenalty + clusterBonus;
+	}
+
+	private double getDispersionPenalty(State state) {
+		double dispersionPenalty = 0;
+		for (Territory territory : state.boardState.getTerritories()) {
+			if (state.boardState.getArmies(territory) > 1)
+				dispersionPenalty -= ARMY_DISPERSION_PENALTY;
+		}
+		return dispersionPenalty;
 	}
 
 	private double getTerritoryBonus(State state) {
 		double territoryBonus = 0;
 		for (Territory territory : state.boardState.getTerritories()) {
 			if (state.boardState.getPlayer(territory) == state.player) {
-				territoryBonus++;
+				territoryBonus += TERRITORY_BONUS;
 			}
 		}
 		return territoryBonus;
@@ -41,27 +77,20 @@ public class BoardEvaluator2 {
 
 	private double getArmyBonus(State state) {
 		double armyBonus = 0;
-		double armyConcentration = 0;
-		double clusterBonus = 0;
-		double highestTerritoryArmies = 0;
 		for (Territory territory : state.boardState.getTerritories()) {
 			if (state.boardState.getPlayer(territory) == state.player) {
-				armyBonus += state.boardState.getArmies(territory)
-						* ARMY_BONUS_MULTIPLIER;
-				if (state.boardState.getArmies(territory) > 1) {
-					armyConcentration -= ARMY_DISPERSION_PENALTY;
-				}
-				if (state.boardState.getArmies(territory) > highestTerritoryArmies) {
-					highestTerritoryArmies = state.boardState
-							.getArmies(territory);
-				}
+				armyBonus += state.boardState.getArmies(territory) * ARMY_BONUS;
 			}
 		}
+		return armyBonus;
+	}
+
+	private double getClusterBonus(State state) {
+		double clusterBonus = 0;
 		Continent goalContinent = getGoalContinent(state);
 		goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(
 				state.player, goalContinent, state.boardState));
 		Set<TerritoryCluster> clusters = goalContinent.getClusters();
-		System.out.println("Clusters: " + clusters);
 		if (!clusters.isEmpty()) {
 			Iterator<TerritoryCluster> clusterIterator = clusters.iterator();
 			List<TerritoryCluster> biggestClusters = Lists.newArrayList();
@@ -76,19 +105,34 @@ public class BoardEvaluator2 {
 					biggestClusters.add(cluster);
 				}
 			}
-			System.out.println("Biggest Cluster: " + biggestClusters);
+			Set<Territory> clusterBorders = Sets.newHashSet();
 			for (Territory territory : goalContinent.getTerritories()) {
 				if (state.boardState.getPlayer(territory) == state.player
-						&& state.boardState.getArmies(territory) == highestTerritoryArmies
 						&& bordersCluster(territory, biggestClusters)) {
-					clusterBonus += CLUSTER_BONUS;
+					clusterBorders.add(territory);
 				}
 			}
+			clusterBonus = mostArmies(state, clusterBorders) * CLUSTER_BONUS;
 			clusterBonus -= (clusters.size() * CLUSTER_PENALTY);
 		}
+		return clusterBonus;
+	}
 
-		return armyBonus + armyConcentration + clusterBonus
-				+ highestTerritoryArmies * HIGHEST_TERRITORY_MULTIPLIER;
+	private double mostArmies(State state, Set<Territory> territories) {
+		int mostArmies = 0;
+		for (Territory territory : territories) {
+			int armies = state.boardState.getArmies(territory);
+			if (armies > mostArmies) {
+				mostArmies = armies;
+			}
+		}
+		double mostArmiesBonus = 0;
+		for (int i = 1; i < mostArmies; i++) {
+			mostArmiesBonus += MOST_ARMIES_MULTIPLIER
+					* Math.pow(MOST_ARMIES_DEFLATOR, i) + MOST_ARMIES_CONSTANT;
+		}
+
+		return mostArmiesBonus;
 	}
 
 	private boolean bordersCluster(Territory territory,
@@ -144,29 +188,15 @@ public class BoardEvaluator2 {
 	private double getContinentBonus(State state, Continent continent) {
 		Set<Territory> trueBorders = borderFinder.findTrueBorders(
 				state.boardState, continent, state.player);
-		double armiesOnBorder = 0;
+		double armiesOnBorderBonus = 0;
 		for (Territory border : trueBorders) {
-			armiesOnBorder += state.boardState.getArmies(border);
-		}
-		double averageBorderArmies = armiesOnBorder / trueBorders.size();
-		double dispersionPenalty = 0;
-		for (Territory border : trueBorders) {
-			if (1 < state.boardState.getArmies(border) - averageBorderArmies) {
-				dispersionPenalty++;
+			for (int i = 1; i < state.boardState.getArmies(border); i++) {
+				armiesOnBorderBonus += BORDER_ARMIES_MULTIPLIER
+						* Math.pow(BORDER_ARMIES_DEFLATOR, i);
 			}
+
 		}
-		double maxBorderArmies = averageBorderArmies;
-		double minBorderArmies = averageBorderArmies;
-		for (Territory border : trueBorders) {
-			if (state.boardState.getArmies(border) > maxBorderArmies) {
-				maxBorderArmies = state.boardState.getArmies(border);
-			} else if (state.boardState.getArmies(border) < minBorderArmies) {
-				minBorderArmies = state.boardState.getArmies(border);
-			}
-		}
-		dispersionPenalty += maxBorderArmies - minBorderArmies;
-		double continentSecurity = armiesOnBorder * BORDER_ARMIES_MULTIPLIER
-				- dispersionPenalty;
+		double continentSecurity = armiesOnBorderBonus / trueBorders.size() + 1;
 		double continentBonusArmies = continent.getBonusArmies();
 		return continentSecurity * continentBonusArmies;
 	}

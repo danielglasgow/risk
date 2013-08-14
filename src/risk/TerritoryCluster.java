@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 /**
  * A TerritoryCluster is an object which represents a group of contiguous
  * territories not controlled by a given player within a continent.
@@ -15,7 +17,7 @@ import java.util.Set;
 public class TerritoryCluster implements Iterable<Territory> {
 
 	private final BoardState boardState;
-	private final List<Territory> clusterTerritories;
+	private final Set<Territory> territories;
 	private final Continent continent;
 	private final Player player;
 	private final Set<Territory> playerTerritories;
@@ -28,21 +30,22 @@ public class TerritoryCluster implements Iterable<Territory> {
 		this.boardState = boardState;
 		this.continent = continent;
 		this.player = player;
-		this.clusterTerritories = buildCluster(territory);
+		this.territories = buildCluster(territory);
 		this.playerTerritories = getAdjacentPlayerTerritories();
 	}
 
-	public static List<TerritoryCluster> generateTerritoryClusters(
+	public static Set<TerritoryCluster> generateTerritoryClusters(
 			Player player, Continent continent, BoardState boardState) {
-		List<TerritoryCluster> territoryClusters = new ArrayList<TerritoryCluster>();
+		Set<TerritoryCluster> territoryClusters = Sets.newHashSet();
 		for (Territory territory : continent.getTerritories()) {
-			if (boardState.getPlayer(territory) == player) {
+			if (boardState.getPlayer(territory) != player) {
+				System.out.println("seed Territory: " + territory.name);
 				territoryClusters.add(new TerritoryCluster(boardState,
 						territory, continent, player));
 			}
 		}
 		List<TerritoryCluster> uniqueClusters = new ArrayList<TerritoryCluster>();
-		uniqueClusters.add(territoryClusters.get(0));
+		// uniqueClusters.add(territoryClusters.get(0));
 		for (TerritoryCluster cluster1 : territoryClusters) {
 			boolean newCluster = true;
 			for (TerritoryCluster cluster2 : uniqueClusters) {
@@ -54,7 +57,7 @@ public class TerritoryCluster implements Iterable<Territory> {
 				uniqueClusters.add(cluster1);
 			}
 		}
-		return uniqueClusters;
+		return territoryClusters;
 	}
 
 	/**
@@ -78,7 +81,7 @@ public class TerritoryCluster implements Iterable<Territory> {
 					for (Territory territory : extensionTerritory
 							.getAdjacents()) {
 						if (!route.contains(territory)
-								&& clusterTerritories.contains(territory)
+								&& territories.contains(territory)
 								&& boardState.getPlayer(territory) != player) {
 							stillWorking = true;
 							AttackRoute newRoute = new AttackRoute(boardState,
@@ -105,7 +108,7 @@ public class TerritoryCluster implements Iterable<Territory> {
 	 */
 	private Set<Territory> getAdjacentPlayerTerritories() {
 		Set<Territory> playerTerritories = new HashSet<Territory>();
-		for (Territory clusterTerritory : clusterTerritories) {
+		for (Territory clusterTerritory : territories) {
 			for (Territory borderTerritory : clusterTerritory.getAdjacents()) {
 				if (continent.getTerritories().contains(borderTerritory)
 						&& boardState.getPlayer(borderTerritory) == player) {
@@ -120,19 +123,24 @@ public class TerritoryCluster implements Iterable<Territory> {
 	 * Starting from a given enemy territory, builds the list of contiguous
 	 * enemy territories within this continent.
 	 */
-	private List<Territory> buildCluster(Territory territory) {
-		// TODO(Dani + Abba) use sets and better algorithm.
-		List<Territory> cluster = new ArrayList<Territory>();
-		List<Territory> newNeighbors = new ArrayList<Territory>();
-		List<Territory> neighbors = new ArrayList<Territory>();
-		newNeighbors.add(territory);
-		while (!newNeighbors.isEmpty()) {
-			cluster.addAll(newNeighbors);
-			neighbors.addAll(newNeighbors);
-			newNeighbors.clear();
-			for (Territory t : neighbors) {
-				newNeighbors.addAll(qualifyingNeighbors(t, cluster));
+	private Set<Territory> buildCluster(Territory territory) {
+		// TODO(Dani + Abba) use sets and better algorithm. STILL BAD NEED TO
+		// FIX
+		Set<Territory> cluster = Sets.newHashSet();
+		Set<Territory> newAdjacents = Sets.newHashSet();
+		Set<Territory> adjacents = Sets.newHashSet();
+		newAdjacents.add(territory);
+		cluster.addAll(newAdjacents);
+		int clusterSize = 0;
+		while (clusterSize != cluster.size()) {
+			clusterSize = cluster.size();
+			System.out.println("CLuster In process: " + cluster);
+			adjacents.addAll(newAdjacents);
+			newAdjacents.clear();
+			for (Territory adjacent : adjacents) {
+				newAdjacents.addAll(qualifyingNeighbors(adjacent));
 			}
+			cluster.addAll(newAdjacents);
 		}
 		return cluster;
 	}
@@ -140,12 +148,10 @@ public class TerritoryCluster implements Iterable<Territory> {
 	/**
 	 * A helper function to buildCluster.
 	 */
-	private ArrayList<Territory> qualifyingNeighbors(Territory territory,
-			List<Territory> cluster) {
+	private ArrayList<Territory> qualifyingNeighbors(Territory territory) {
 		ArrayList<Territory> adjacents = new ArrayList<Territory>();
 		for (Territory adjacent : territory.getAdjacents()) {
 			if (boardState.getPlayer(adjacent) != player
-					&& !cluster.contains(adjacent)
 					&& continent.getTerritories().contains(adjacent)) {
 				adjacents.add(adjacent);
 			}
@@ -155,8 +161,8 @@ public class TerritoryCluster implements Iterable<Territory> {
 
 	public static boolean compareClusters(TerritoryCluster territoryCluster1,
 			TerritoryCluster territoryCluster2) {
-		for (Territory t : territoryCluster1.clusterTerritories) {
-			if (!territoryCluster2.clusterTerritories.contains(t)) {
+		for (Territory t : territoryCluster1.territories) {
+			if (!territoryCluster2.territories.contains(t)) {
 				return false;
 			}
 		}
@@ -168,16 +174,28 @@ public class TerritoryCluster implements Iterable<Territory> {
 	}
 
 	public String toString() {
-		return clusterTerritories.toString();
+		return territories.toString();
 	}
 
 	@Override
 	public Iterator<Territory> iterator() {
-		return clusterTerritories.iterator();
+		return territories.iterator();
 	}
 
-	public List<Territory> getTerritories() {
-		return clusterTerritories;
+	public Set<Territory> getTerritories() {
+		return territories;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		TerritoryCluster territoryCluster = (TerritoryCluster) o;
+		return territories.equals(territoryCluster.getTerritories());
+
+	}
+
+	@Override
+	public int hashCode() {
+		return territories.hashCode();
 	}
 
 }

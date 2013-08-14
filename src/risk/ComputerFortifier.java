@@ -61,16 +61,13 @@ public class ComputerFortifier {
 					fortifyFrom);
 			System.out.println(" FortufyTOOptions: " + fortifyToOptions);
 			for (Territory fortifyTo : fortifyToOptions) {
-				BoardState newBoardState1 = boardState.copy();
-				BoardState newBoardState2 = boardState.copy();
-				int armiesToMove = boardState.getArmies(fortifyFrom) - 1;
-				newBoardState1.decreaseArmies(fortifyFrom, armiesToMove);
-				newBoardState1.increaseArmies(fortifyTo, armiesToMove);
-				armiesToMove = boardState.getArmies(fortifyFrom) / 2;
-				newBoardState2.decreaseArmies(fortifyFrom, armiesToMove);
-				newBoardState2.increaseArmies(fortifyTo, armiesToMove);
-				fortificationOptions.add(newBoardState1);
-				fortificationOptions.add(newBoardState2);
+				for (int i = 1; i <= boardState.getArmies(fortifyFrom); i++) {
+					int armiesToMove = boardState.getArmies(fortifyFrom) - i;
+					BoardState newBoardState = boardState.copy();
+					newBoardState.decreaseArmies(fortifyFrom, armiesToMove);
+					newBoardState.increaseArmies(fortifyTo, armiesToMove);
+					fortificationOptions.add(newBoardState);
+				}
 			}
 		}
 		fortificationOptions.add(boardState);

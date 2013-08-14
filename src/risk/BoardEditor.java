@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 
 public class BoardEditor extends HumanPhaseHandler {
 
@@ -38,7 +37,7 @@ public class BoardEditor extends HumanPhaseHandler {
 		button5.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				saveGame();
+				BoardStateSaver.saveBoard(boardState);
 			}
 		});
 		button4.addActionListener(new ActionListener() {
@@ -104,12 +103,6 @@ public class BoardEditor extends HumanPhaseHandler {
 	private void decreaseArmies() {
 		boardState.decreaseArmies(boardState.getEditTerritory(), 1);
 		boardState.updateBackground();
-	}
-
-	private void saveGame() {
-		BoardStateSaver saver = new BoardStateSaver();
-		String fileName = JOptionPane.showInputDialog("Save As: ");
-		saver.saveBoard(boardState, fileName + ".csv");
 	}
 
 }

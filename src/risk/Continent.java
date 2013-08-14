@@ -1,14 +1,15 @@
 package risk;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class Continent implements Comparable<Continent> {
 	private final ImmutableList<Territory> territories;
 	private final ImmutableList<Territory> borders;
-	private final List<TerritoryCluster> clusters = Lists.newArrayList();
+	private final Set<TerritoryCluster> clusters = Sets.newHashSet();
 	private final String name;
 	private final int bonusArmies;
 
@@ -41,11 +42,11 @@ public class Continent implements Comparable<Continent> {
 		return territories;
 	}
 
-	public List<TerritoryCluster> getClusters() {
+	public Set<TerritoryCluster> getClusters() {
 		return clusters;
 	}
 
-	public void setClusters(List<TerritoryCluster> newClusters) {
+	public void setClusters(Set<TerritoryCluster> newClusters) {
 		clusters.clear();
 		clusters.addAll(newClusters);
 	}

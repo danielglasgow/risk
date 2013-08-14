@@ -35,22 +35,34 @@ public class ComputerStrategy implements Strategy {
 
 	@Override
 	public void takeTurn(Player player) {
+		BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
+		System.out.println("Board State At beggining of Turn: "
+				+ boardEvaluator.getBoardValue(boardState, player, continents));
 		latch = new CountDownLatch(1);
 		this.player = player;
-		JButton button = new JButton();
-		button.addActionListener(new ActionListener() {
+		JButton button1 = new JButton();
+		JButton button2 = new JButton();
+		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				latch.countDown();
 			}
 		});
-		button.setText("Continue");
+		button2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				boardState.getGame().setEditMode(true);
+				latch.countDown();
+			}
+		});
+		button1.setText("Continue");
+		button2.setText("Edit Mode");
 		setArmiesToPlace();
 		setGoalContinent();
 		instructionPanel.addCustomButtons(
 				InstructionPanel.NEW_VISIBLE,
 				"player: " + player.color + "Goal Continent: "
-						+ goalContinent.getName(), button);
+						+ goalContinent.getName(), button1, button2);
 
 		try {
 			latch.await();
@@ -63,9 +75,17 @@ public class ComputerStrategy implements Strategy {
 			System.out.println("Chosen ROute:" + chosenRoute);
 			attack(chosenRoute);
 		}
+		System.out.println("Board State before fortify: "
+				+ boardEvaluator.getBoardValue(boardState, player, continents));
+		chooseFortification();
+		System.out.println("Board State after fortify: "
+				+ boardEvaluator.getBoardValue(boardState, player, continents));
+	}
+
+	private void chooseFortification() {
+		BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
 		ComputerFortifier fortifier = new ComputerFortifier(boardState);
 		Map<BoardState, Double> boardStateValues = Maps.newHashMap();
-		BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
 		for (BoardState boardState : fortifier.getFortificationOptions(player)) {
 			boardStateValues.put(boardState, boardEvaluator.getBoardValue(
 					boardState, player, continents));
@@ -73,17 +93,13 @@ public class ComputerStrategy implements Strategy {
 		double highestBoardValue = 0;
 		BoardState bestBoardState = null;
 		for (BoardState boardState : boardStateValues.keySet()) {
-			System.out.println(boardStateValues.get(boardState));
 			if (boardStateValues.get(boardState) > highestBoardValue) {
 				highestBoardValue = boardStateValues.get(boardState);
 				bestBoardState = boardState;
 			}
 		}
-		System.out.println("Current Board State: "
-				+ boardStateValues.get(boardState));
 		boardState.update(bestBoardState);
 		boardState.updateBackground();
-
 	}
 
 	private void attack(AttackRoute attackRoute) {
@@ -93,7 +109,7 @@ public class ComputerStrategy implements Strategy {
 		next++;
 		Territory attackTo = attackRoute.get(next);
 		next++;
-		while (boardState.getArmies(attackFrom) > 4 || !capturedTerritory) {
+		while (boardState.getArmies(attackFrom) > 3 || !capturedTerritory) {
 			simulateAttack(attackFrom, attackTo);
 			if (boardState.getArmies(attackTo) < 1) {
 				capturedTerritory = true;
@@ -191,7 +207,11 @@ public class ComputerStrategy implements Strategy {
 			BoardState boardState = attackRoute
 					.getExpectedBoardState(this.boardState.getTerritories());
 			if (boardState != null) {
-				boardStates.put(boardState, attackRoute);
+				ComputerFortifier fortifier = new ComputerFortifier(boardState);
+				for (BoardState fortifyState : fortifier
+						.getFortificationOptions(player)) {
+					boardStates.put(fortifyState, attackRoute);
+				}
 			}
 		}
 		return boardStates;

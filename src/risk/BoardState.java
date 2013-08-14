@@ -111,4 +111,16 @@ public class BoardState {
 		return editTerritory;
 	}
 
+	public List<Continent> getContinents() {
+		return game.getContinents();
+	}
+
+	public List<Player> getPlayers() {
+		return game.getPlayers();
+	}
+
+	public MainGame getGame() {
+		return game;
+	}
+
 }

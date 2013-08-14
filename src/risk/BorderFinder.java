@@ -1,17 +1,17 @@
 package risk;
 
-import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class BorderFinder {
 
-	public List<Territory> findTrueBorders(BoardState boardState,
+	public Set<Territory> findTrueBorders(BoardState boardState,
 			Continent continent, Player player) {
-		List<Territory> trueBorders = Lists.newArrayList();
-		List<Territory> potentialBorders = Lists.newArrayList();
-		List<Territory> foundBorders = Lists.newArrayList();
-		List<Territory> notBorders = Lists.newArrayList();
+		Set<Territory> trueBorders = Sets.newHashSet();
+		Set<Territory> potentialBorders = Sets.newHashSet();
+		Set<Territory> newPotentialBorders = Sets.newHashSet();
+		Set<Territory> notBorders = Sets.newHashSet();
 		for (Territory border : continent.getBorders()) {
 			if (boardState.getPlayer(border) == player) {
 				potentialBorders.add(border);
@@ -19,19 +19,19 @@ public class BorderFinder {
 		}
 		while (!potentialBorders.isEmpty()) {
 			for (Territory territory : potentialBorders) {
-				if (isBorder(boardState, territory)
-						&& !foundBorders.contains(territory)) {
+				if (isBorder(boardState, territory)) {
 					trueBorders.add(territory);
-					foundBorders.add(territory);
 				} else {
 					notBorders.add(territory);
+					newPotentialBorders.add(territory);
 				}
 			}
 			potentialBorders.clear();
-			for (Territory territory : notBorders) {
+			for (Territory territory : newPotentialBorders) {
 				potentialBorders.addAll(newPotentialBorders(territory,
 						notBorders));
 			}
+			newPotentialBorders.clear();
 		}
 		return trueBorders;
 	}
@@ -46,9 +46,9 @@ public class BorderFinder {
 		return false;
 	}
 
-	private List<Territory> newPotentialBorders(Territory territory,
-			List<Territory> notBorders) {
-		List<Territory> potentialBorders = Lists.newArrayList();
+	private Set<Territory> newPotentialBorders(Territory territory,
+			Set<Territory> notBorders) {
+		Set<Territory> potentialBorders = Sets.newHashSet();
 		for (Territory adjacent : territory.getAdjacents()) {
 			if (!notBorders.contains(adjacent)) {
 				potentialBorders.add(adjacent);

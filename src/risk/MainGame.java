@@ -12,11 +12,12 @@ public class MainGame {
 	private static final String ADJACENCY_FILENAME = "TerritoryInfo/Adjacentterritories.txt";
 	private static final String Continents_FILENAME = "TerritoryInfo/Continents.txt";
 
+	private final List<Player> players = Lists.newArrayList();
 	private final BoardState boardState;
 	private final ImmutableList<Territory> territories;
 	private final ImmutableList<Continent> continents;
 
-	private final List<Player> players = Lists.newArrayList();
+	private boolean editMode = false;
 
 	public MainGame() {
 		TerritoriesBuilder territoriesBuilder = new TerritoriesBuilder(
@@ -35,6 +36,9 @@ public class MainGame {
 		startMenu.await();
 		addPlayers(startMenu.getNumPlayers());
 		divideTerritories(players.size());
+		EditMode editMode = new EditMode(boardState, boardState.getBoard()
+				.getInstructionPanel());
+		players.add(new Player("editor", null, boardState, editMode, continents));
 		boardState.updateBackground();
 	}
 
@@ -44,12 +48,10 @@ public class MainGame {
 				.getBoard().getInstructionPanel());
 		ComputerStrategy computerStrategy = new ComputerStrategy(boardState,
 				continents);
-		EditMode editMode = new EditMode(boardState, boardState.getBoard()
-				.getInstructionPanel(), this);
 		String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
 		for (int i = 1; i <= numPlayers; i++) {
 			Player player = new Player("Player" + i, colors[i - 1], boardState,
-					i == -1 ? humanStrategy : editMode, continents);
+					i == -1 ? humanStrategy : computerStrategy, continents);
 			players.add(player);
 		}
 	}
@@ -67,14 +69,18 @@ public class MainGame {
 	}
 
 	public void play() {
-		boolean testBool = true;
-		while (testBool) {
+		BoardStateSaver.loadFile(boardState);
+		while (true) {
 			for (Player player : players) {
-				if (player.hasTerritories()) {
-					player.takeTurn();
+				if (editMode) {
+					if (player.name.equals("editor")) {
+						player.takeTurn();
+					}
+				} else {
+					if (player.hasTerritories()) {
+						player.takeTurn();
+					}
 				}
-				// for testing ComputerStrategy
-				// testBool = false;
 			}
 			int count = 0;
 			for (Player player : players) {
@@ -96,6 +102,15 @@ public class MainGame {
 
 	public List<Player> getPlayers() {
 		return players;
+	}
+
+	public List<Continent> getContinents() {
+		return continents;
+	}
+
+	public void setEditMode(boolean b) {
+		editMode = b;
+
 	}
 
 }

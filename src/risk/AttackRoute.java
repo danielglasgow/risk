@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+// TODO(dani): Maybe implement something more than Iterable?  Collection?
 public class AttackRoute implements Iterable<Territory> {
 
 	private final BoardState boardState;
@@ -21,6 +22,8 @@ public class AttackRoute implements Iterable<Territory> {
 
 	public BoardState getExpectedBoardState(List<Territory> territories) {
 		BoardState expectedBoardState = boardState.copy();
+		// TODO(dani): Do not pass 'this'.
+		// Reconfigure Ecslipse to use SPACES not TABS.
 		double expectedArmies = attackRouteExpectedArmies(this);
 		Player player = boardState.getPlayer(route.get(0));
 		if (expectedArmies < 1) {
@@ -98,6 +101,7 @@ public class AttackRoute implements Iterable<Territory> {
 		return this.route.addAll(route.getRoute());
 	}
 
+	// TODO(dani): Can you remove this method?
 	public List<Territory> getRoute() {
 		return route;
 	}

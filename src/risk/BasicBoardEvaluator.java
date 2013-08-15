@@ -4,12 +4,19 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+/**
+ * TODO(dani): Needs Java doc.
+ * TODO(dani): Descibe how what the basic board evaluator does.
+ */
+
 public class BasicBoardEvaluator implements BoardValue {
 
 	private static final double ARMY_MULTIPLIER = 1.25;
 	private static final double CONTINENT_BONUS = 0.25;
 	private static final double BORDER_BONUS_DEFLATOR = 0.95;
 
+    // TODO(dani): Get rid of constructor if not needed.
+	// TODO(dani): Change constructor to take arguments for MULTIPLIERS.
 	public BasicBoardEvaluator() {
 
 	}

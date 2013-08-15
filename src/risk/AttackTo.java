@@ -6,6 +6,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
+/**
+ * TODO(dani): Needs Java doc.  What is an "AttackTo"?
+ * TODO(dani): Object names must be nouns.
+ */
 public class AttackTo extends PhaseHandler {
 
 	private final Player player;

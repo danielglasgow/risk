@@ -20,7 +20,7 @@ public class EditMode implements Strategy {
 
 	@Override
 	public void takeTurn(Player player) {
-		BoardStateSaver.loadFile(boardState);
+		BoardStateSaver.loadBoard(boardState);
 		phase = Phase.EDIT;
 		while (true) {
 			if (phase == Phase.EDIT) {

@@ -16,6 +16,7 @@ public class MainGame {
 	private final BoardState boardState;
 	private final ImmutableList<Territory> territories;
 	private final ImmutableList<Continent> continents;
+	private final ImmutableList<Player> immutablePlayers;
 
 	private boolean editMode = false;
 
@@ -26,24 +27,25 @@ public class MainGame {
 		this.territories = boardModel.getTerritories();
 		this.continents = boardModel.getContinents();
 		this.boardState = new BoardState(territories, new Board(), this);
-		boardState.getBoard().addMouse(new Mouse(boardState)); // not the best..
-																// talk with
-																// Abba
+		this.immutablePlayers = ImmutableList.copyOf(buildImmutablePlayers());
+		boardState.getBoard().addMouse(new Mouse(boardState));
 	}
 
 	public void startGame() throws InterruptedException {
-		StartMenu startMenu = new StartMenu();
-		startMenu.await();
-		addPlayers(startMenu.getNumPlayers());
-		divideTerritories(players.size());
+		if (!loadBoard()) {
+			StartMenu startMenu = new StartMenu();
+			startMenu.await();
+			addPlayers(startMenu.getNumPlayers());
+			System.out.println("Players: " + players.size());
+			divideTerritories(players.size());
+		}
 		EditMode editMode = new EditMode(boardState, boardState.getBoard()
 				.getInstructionPanel());
 		players.add(new Player("editor", null, boardState, editMode, continents));
 		boardState.updateBackground();
 	}
 
-	private void addPlayers(int numPlayers) { // always initialize six players
-												// so boad can be loaded
+	private void addPlayers(int numPlayers) {
 		HumanStrategy humanStrategy = new HumanStrategy(boardState, boardState
 				.getBoard().getInstructionPanel());
 		ComputerStrategy computerStrategy = new ComputerStrategy(boardState,
@@ -54,6 +56,18 @@ public class MainGame {
 					i == -1 ? humanStrategy : computerStrategy, continents);
 			players.add(player);
 		}
+	}
+
+	private List<Player> buildImmutablePlayers() {
+		List<Player> players = Lists.newArrayList();
+		ComputerStrategy computerStrategy = new ComputerStrategy(boardState,
+				continents);
+		String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
+		for (int i = 1; i <= 6; i++) {
+			players.add(new Player("Player" + i, colors[i - 1], boardState,
+					computerStrategy, continents));
+		}
+		return players;
 	}
 
 	private void divideTerritories(int numPlayers) {
@@ -68,8 +82,13 @@ public class MainGame {
 		}
 	}
 
+	private boolean loadBoard() {
+		BoardStateAsserter.assertBoardValues(territories, this,
+				new BoardEvaluator2(), immutablePlayers.get(0), continents);
+		return BoardStateSaver.loadBoard(boardState);
+	}
+
 	public void play() {
-		BoardStateSaver.loadFile(boardState);
 		while (true) {
 			for (Player player : players) {
 				if (editMode) {
@@ -102,6 +121,10 @@ public class MainGame {
 
 	public List<Player> getPlayers() {
 		return players;
+	}
+
+	public List<Player> getImmutablePlayers() {
+		return immutablePlayers;
 	}
 
 	public List<Continent> getContinents() {

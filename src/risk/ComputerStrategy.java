@@ -241,11 +241,6 @@ public class ComputerStrategy implements Strategy {
 		double highestBoardValue = 0;
 		BoardState bestBoardState = null;
 		for (BoardState boardState : boardStateValues.keySet()) {
-			AttackRoute attackRoute = boardStates.get(boardState);
-			if (attackRoute.get(1).name.equals("LotR")
-					&& boardState.getArmies(attackRoute.get(0)) > 1) {
-				BoardStateSaver.saveBoard(boardState);
-			}
 			if (boardStateValues.get(boardState) > highestBoardValue) {
 				highestBoardValue = boardStateValues.get(boardState);
 				bestBoardState = boardState;
@@ -253,7 +248,6 @@ public class ComputerStrategy implements Strategy {
 		}
 		System.out.println("Chosen Attack Route: "
 				+ boardStates.get(bestBoardState));
-		BoardStateSaver.saveBoard(bestBoardState);
 		return boardStates.get(bestBoardState);
 	}
 

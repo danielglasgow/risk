@@ -84,6 +84,10 @@ public class BoardEditor extends HumanPhaseHandler {
 
 	}
 
+	/**
+	 * Changes a territory's owner in the board state by cycling through the
+	 * CURRENT list of active players.
+	 */
 	private void changePlayer() {
 		if (currentPlayerIndex == players.size() - 1) {
 			currentPlayerIndex = 0;

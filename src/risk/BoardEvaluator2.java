@@ -8,7 +8,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class BoardEvaluator2 {
+public class BoardEvaluator2 implements BoardEvaluator {
 
 	/**
 	 * 1 Point for each territory player controls.

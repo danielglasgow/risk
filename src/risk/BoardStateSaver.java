@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 
 public class BoardStateSaver {
 
-	public static void loadFile(BoardState boardState) {
+	public static boolean loadBoard(BoardState boardState) {
 		int choice = JOptionPane.showConfirmDialog(null, "Load File",
 				"Load File?", JOptionPane.YES_NO_OPTION);
 		if (choice == JOptionPane.YES_OPTION) {
@@ -23,21 +23,29 @@ public class BoardStateSaver {
 					"/Users/danielglasgow/Documents/Source/workspace/risk/SavedBoardStates/"
 							+ fileName + ".csv");
 			boardState.updateBackground();
+			return true;
+		} else {
+			return false;
 		}
+	}
+
+	public static void loadBoard(BoardState boardState, String fileName) {
+		BoardStateSaver saver = new BoardStateSaver();
+		saver.loadFile(boardState, fileName);
 	}
 
 	public static void saveBoard(BoardState boardState) {
 		BoardStateSaver saver = new BoardStateSaver();
 		String fileName = JOptionPane.showInputDialog("Save As: ");
-		saver.saveBoard(boardState, fileName + ".csv");
+		saver.saveFile(boardState, fileName + ".csv");
 	}
 
-	public static void saveFile(BoardState boardState, String fileName) {
+	public static void saveBoard(BoardState boardState, String fileName) {
 		BoardStateSaver saver = new BoardStateSaver();
-		saver.saveBoard(boardState, fileName);
+		saver.saveFile(boardState, fileName);
 	}
 
-	private void saveBoard(final BoardState boardState, String fileName) {
+	private void saveFile(final BoardState boardState, String fileName) {
 		CSV csv = CSV.separator(',').quote('"').create();
 		String directory = "/Users/danielglasgow/Documents/Source/workspace/risk/SavedBoardStates/";
 		csv.write(directory + fileName, new CSVWriteProc() {
@@ -51,15 +59,18 @@ public class BoardStateSaver {
 		});
 	}
 
+	/**
+	 * Loads a board, by default all players will have the computer strategy.
+	 */
 	private void loadFile(final BoardState boardState, String fileName) {
 		Map<String, Territory> territoryMap = Maps.newHashMap();
 		for (Territory territory : boardState.getTerritories()) {
 			territoryMap.put(territory.name, territory);
 		}
 		Map<String, Player> playerMap = Maps.newHashMap();
-		for (Territory territory : boardState.getTerritories()) {
-			playerMap.put(boardState.getPlayer(territory).name,
-					boardState.getPlayer(territory));
+		MainGame game = boardState.getGame();
+		for (Player player : game.getImmutablePlayers()) {
+			playerMap.put(player.name, player);
 		}
 		final Map<String, Territory> finalTerritoryMap = Maps
 				.newHashMap(territoryMap);

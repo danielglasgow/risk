@@ -16,7 +16,7 @@ public interface BoardValue {
     /**
      * TODO(dani): Add Java doc for this method!
      */
-	int getBoardValue(BoardState boardState, Player player,
-			Continent goalContinent);
+    int getBoardValue(BoardState boardState, Player player,
+            Continent goalContinent);
 
 }

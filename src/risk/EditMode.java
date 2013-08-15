@@ -8,40 +8,40 @@ import java.util.List;
  */
 public class EditMode implements Strategy {
 
-	private final BoardState boardState;
-	private final InstructionPanel instructionPanel;
+    private final BoardState boardState;
+    private final InstructionPanel instructionPanel;
 
-	private Phase phase;
+    private Phase phase;
 
-	public EditMode(BoardState boardState, InstructionPanel instructionPanel) {
-		this.boardState = boardState;
-		this.instructionPanel = instructionPanel;
-	}
+    public EditMode(BoardState boardState, InstructionPanel instructionPanel) {
+        this.boardState = boardState;
+        this.instructionPanel = instructionPanel;
+    }
 
-	@Override
-	public void takeTurn(Player player) {
-		BoardStateSaver.loadBoard(boardState);
-		phase = Phase.EDIT;
-		while (true) {
-			if (phase == Phase.EDIT) {
-				handlePhase(new BoardEditor(boardState, getPlayers(),
-						instructionPanel));
-			} else if (phase == Phase.END_TURN) {
-				boardState.getGame().setEditMode(false);
-				break;
-			}
-		}
+    @Override
+    public void takeTurn(Player player) {
+        BoardStateSaver.loadBoard(boardState);
+        phase = Phase.EDIT;
+        while (true) {
+            if (phase == Phase.EDIT) {
+                handlePhase(new BoardEditor(boardState, getPlayers(),
+                        instructionPanel));
+            } else if (phase == Phase.END_TURN) {
+                boardState.getGame().setEditMode(false);
+                break;
+            }
+        }
 
-	}
+    }
 
-	private void handlePhase(HumanPhaseHandler phaseHandler) {
-		boardState.getBoard().getMouse().setPhaseHandler(phaseHandler);
-		phaseHandler.displayInterface();
-		phase = phaseHandler.await();
-	}
+    private void handlePhase(HumanPhaseHandler phaseHandler) {
+        boardState.getBoard().getMouse().setPhaseHandler(phaseHandler);
+        phaseHandler.displayInterface();
+        phase = phaseHandler.await();
+    }
 
-	private List<Player> getPlayers() {
-		return boardState.getPlayers();
-	}
+    private List<Player> getPlayers() {
+        return boardState.getPlayers();
+    }
 
 }

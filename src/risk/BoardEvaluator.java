@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface BoardEvaluator {
 
-	double getBoardValue(BoardState boardState, Player player,
-			List<Continent> continents);
+    double getBoardValue(BoardState boardState, Player player,
+            List<Continent> continents);
 
 }

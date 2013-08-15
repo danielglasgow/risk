@@ -9,6 +9,6 @@ package risk;
  */
 public interface BattlePredictor {
 
-	double predict(Battle battle);
+    double predict(Battle battle);
 
 }

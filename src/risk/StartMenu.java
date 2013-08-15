@@ -18,43 +18,43 @@ import javax.swing.JLabel;
  * @author danielglasgow
  */
 public class StartMenu {
-	private final JFrame startMenuFrame;
-	private int numPlayers;
-	private final CountDownLatch latch = new CountDownLatch(1);
+    private final JFrame startMenuFrame;
+    private int numPlayers;
+    private final CountDownLatch latch = new CountDownLatch(1);
 
-	public StartMenu() {
-		startMenuFrame = new JFrame();
-		startMenu(startMenuFrame);
-	}
+    public StartMenu() {
+        startMenuFrame = new JFrame();
+        startMenu(startMenuFrame);
+    }
 
-	private void startMenu(JFrame startMenu) {
-		startMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		startMenu.setLayout(new FlowLayout());
-		JLabel prompt = new JLabel();
-		prompt.setText("Choose number of players:");
-		startMenu.add(prompt);
-		for (int i = 2; i <= 6; i++) {
-			JButton button = new JButton();
-			final int finalPlayer = i;
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event) {
-					startMenuFrame.dispose();
-					numPlayers = finalPlayer;
-					latch.countDown();
-				}
-			});
-			button.setText("" + i);
-			startMenu.add(button);
-		}
-		startMenu.pack();
-		startMenu.setVisible(true);
-	}
+    private void startMenu(JFrame startMenu) {
+        startMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        startMenu.setLayout(new FlowLayout());
+        JLabel prompt = new JLabel();
+        prompt.setText("Choose number of players:");
+        startMenu.add(prompt);
+        for (int i = 2; i <= 6; i++) {
+            JButton button = new JButton();
+            final int finalPlayer = i;
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    startMenuFrame.dispose();
+                    numPlayers = finalPlayer;
+                    latch.countDown();
+                }
+            });
+            button.setText("" + i);
+            startMenu.add(button);
+        }
+        startMenu.pack();
+        startMenu.setVisible(true);
+    }
 
-	public int getNumPlayers() {
-		return numPlayers;
-	}
+    public int getNumPlayers() {
+        return numPlayers;
+    }
 
-	public void await() throws InterruptedException {
-		latch.await();
-	}
+    public void await() throws InterruptedException {
+        latch.await();
+    }
 }

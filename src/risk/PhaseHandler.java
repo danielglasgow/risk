@@ -4,10 +4,10 @@ import java.util.concurrent.CountDownLatch;
 
 public abstract class PhaseHandler {
 
-    private Phase nextPhase = null;
+    private HumanTurnPhases nextPhase = null;
     private final CountDownLatch latch = new CountDownLatch(1);
 
-    public Phase await() {
+    public HumanTurnPhases await() {
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -16,7 +16,7 @@ public abstract class PhaseHandler {
         return nextPhase;
     }
 
-    protected void finishPhase(Phase nextPhase) {
+    protected void finishPhase(HumanTurnPhases nextPhase) {
         this.nextPhase = nextPhase;
         latch.countDown();
     }

@@ -24,7 +24,7 @@ public class BoardEditor extends HumanPhaseHandler {
     @Override
     public void mouseClicked(Territory territory) {
         boardState.setEditTerritory(territory);
-        finishPhase(Phase.EDIT);
+        finishPhase(HumanTurnPhases.EDIT);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class BoardEditor extends HumanPhaseHandler {
         button4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(Phase.END_TURN);
+                finishPhase(HumanTurnPhases.END_TURN);
             }
         });
         button3.addActionListener(new ActionListener() {

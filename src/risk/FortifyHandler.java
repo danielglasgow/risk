@@ -8,57 +8,58 @@ import javax.swing.JOptionPane;
 
 public class FortifyHandler extends HumanPhaseHandler {
 
-    private final BoardState boardState;
-    private final Player player;
-    private final InstructionPanel instructionPanel;
+	private final BoardState boardState;
+	private final InstructionPanel instructionPanel;
 
-    public FortifyHandler(BoardState boardState, Player player,
-            InstructionPanel instructionPanel) {
-        this.boardState = boardState;
-        this.player = player;
-        this.instructionPanel = instructionPanel;
-    }
+	public FortifyHandler(BoardState boardState,
+			InstructionPanel instructionPanel) {
+		this.boardState = boardState;
+		this.instructionPanel = instructionPanel;
+	}
 
-    @Override
-    public void mouseClicked(Territory territory) {
-        if (player.fortify1.equals(territory)) {
-            if (boardState.getArmies(player.fortify2) > 1) {
-                boardState.increaseArmies(player.fortify1, 1);
-                boardState.decreaseArmies(player.fortify2, 1);
-            } else {
-                JOptionPane.showMessageDialog(null,
-                        "Territories must have at least one army");
-            }
-        } else if (player.fortify2.equals(territory)) {
-            if (boardState.getArmies(player.fortify1) > 1) {
-                boardState.increaseArmies(player.fortify2, 1);
-                boardState.decreaseArmies(player.fortify1, 1);
-            } else {
-                JOptionPane.showMessageDialog(null,
-                        "Territories must have at least one army");
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "You must click on "
-                    + player.fortify1.name + " or " + player.fortify2.name);
-        }
+	@Override
+	public void mouseClicked(Territory territory) {
+		if (boardState.getFortifyFrom().equals(territory)) {
+			if (boardState.getArmies(boardState.getFortifyTo()) > 1) {
+				boardState.increaseArmies(boardState.getFortifyFrom(), 1);
+				boardState.decreaseArmies(boardState.getFortifyTo(), 1);
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"Territories must have at least one army");
+			}
+		} else if (boardState.getFortifyTo().equals(territory)) {
+			if (boardState.getArmies(boardState.getFortifyFrom()) > 1) {
+				boardState.increaseArmies(boardState.getFortifyTo(), 1);
+				boardState.decreaseArmies(boardState.getFortifyFrom(), 1);
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"Territories must have at least one army");
+			}
+		} else {
+			JOptionPane.showMessageDialog(null,
+					"You must click on " + boardState.getFortifyFrom().name
+							+ " or " + boardState.getFortifyTo().name);
+		}
 
-    }
+	}
 
-    @Override
-    public void displayInterface() {
-        JButton button = new JButton();
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                finishPhase(Phase.END_TURN);
-            }
-        });
-        button.setText("End Turn");
-        instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
-                "Click on " + player.fortify1.name + " to move armies from "
-                        + player.fortify2.name + ". Click on "
-                        + player.fortify2.name + " to move armies from "
-                        + player.fortify1.name, button);
-    }
+	@Override
+	public void displayInterface() {
+		JButton button = new JButton();
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				finishPhase(HumanTurnPhases.END_TURN);
+			}
+		});
+		button.setText("End Turn");
+		instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
+				"Click on " + boardState.getFortifyFrom().name
+						+ " to move armies from "
+						+ boardState.getFortifyTo().name + ". Click on "
+						+ boardState.getFortifyTo().name
+						+ " to move armies from "
+						+ boardState.getFortifyFrom().name, button);
+	}
 
 }

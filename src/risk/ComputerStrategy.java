@@ -26,8 +26,7 @@ public class ComputerStrategy implements Strategy {
     private final InstructionPanel instructionPanel;
     private final ImmutableList<Continent> continents;
 
-    public ComputerStrategy(BoardState boardState,
-            ImmutableList<Continent> continents) {
+    public ComputerStrategy(BoardState boardState, ImmutableList<Continent> continents) {
         this.boardState = boardState;
         this.continents = continents;
         this.instructionPanel = boardState.getBoard().getInstructionPanel();
@@ -62,10 +61,8 @@ public class ComputerStrategy implements Strategy {
         button2.setText("Edit Mode");
         setArmiesToPlace();
         setGoalContinent();
-        instructionPanel.addCustomButtons(
-                InstructionPanel.NEW_VISIBLE,
-                "player: " + player.color + "Goal Continent: "
-                        + goalContinent.getName(), button1, button2);
+        instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE, "player: " + player.color
+                + "Goal Continent: " + goalContinent.getName(), button1, button2);
 
         try {
             latch.await();
@@ -90,8 +87,8 @@ public class ComputerStrategy implements Strategy {
         ComputerFortifier fortifier = new ComputerFortifier(boardState);
         Map<BoardState, Double> boardStateValues = Maps.newHashMap();
         for (BoardState boardState : fortifier.getFortificationOptions(player)) {
-            boardStateValues.put(boardState, boardEvaluator.getBoardValue(
-                    boardState, player, continents));
+            boardStateValues.put(boardState,
+                    boardEvaluator.getBoardValue(boardState, player, continents));
         }
         double highestBoardValue = 0;
         BoardState bestBoardState = null;
@@ -117,8 +114,7 @@ public class ComputerStrategy implements Strategy {
             if (boardState.getArmies(attackTo) < 1) {
                 capturedTerritory = true;
                 boardState.setPlayer(attackTo, player);
-                boardState.increaseArmies(attackTo,
-                        boardState.getArmies(attackFrom) - 1);
+                boardState.increaseArmies(attackTo, boardState.getArmies(attackFrom) - 1);
                 boardState.setArmies(attackFrom, 1);
                 attackFrom = attackTo;
                 boardState.updateBackground();
@@ -194,8 +190,8 @@ public class ComputerStrategy implements Strategy {
 
     private List<AttackRoute> buildAttackRoutes() {
         List<AttackRoute> attackRoutes = Lists.newArrayList();
-        goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(
-                player, goalContinent, boardState));
+        goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(player, goalContinent,
+                boardState));
         for (TerritoryCluster territoryCluster : goalContinent.getClusters()) {
             territoryCluster.makeRoutes();
             attackRoutes.addAll(territoryCluster.getAttackRoutes());
@@ -203,12 +199,10 @@ public class ComputerStrategy implements Strategy {
         return attackRoutes;
     }
 
-    private Map<BoardState, AttackRoute> buildBoardStates(
-            List<AttackRoute> attackRoutes) {
+    private Map<BoardState, AttackRoute> buildBoardStates(List<AttackRoute> attackRoutes) {
         Map<BoardState, AttackRoute> boardStates = Maps.newHashMap();
         for (AttackRoute attackRoute : attackRoutes) {
-            BoardState boardState = attackRoute
-                    .getExpectedBoardState(this.boardState.getTerritories());
+            BoardState boardState = attackRoute.getExpectedBoardState();
             if (boardState != null) {
                 boolean armiesToMove = false;
                 for (Territory territory : attackRoute) {
@@ -217,8 +211,7 @@ public class ComputerStrategy implements Strategy {
                     }
                 }
                 ComputerFortifier fortifier = new ComputerFortifier(boardState);
-                List<BoardState> fortifyOptions = fortifier
-                        .getFortificationOptions(player);
+                List<BoardState> fortifyOptions = fortifier.getFortificationOptions(player);
                 if (armiesToMove != (fortifyOptions.size() > 1)) {
                     System.out.println("fail");
                 }
@@ -235,8 +228,8 @@ public class ComputerStrategy implements Strategy {
         BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
         Map<BoardState, AttackRoute> boardStates = buildBoardStates(buildAttackRoutes());
         for (BoardState boardState : boardStates.keySet()) {
-            boardStateValues.put(boardState, boardEvaluator.getBoardValue(
-                    boardState, player, continents));
+            boardStateValues.put(boardState,
+                    boardEvaluator.getBoardValue(boardState, player, continents));
         }
         double highestBoardValue = 0;
         BoardState bestBoardState = null;
@@ -246,8 +239,7 @@ public class ComputerStrategy implements Strategy {
                 bestBoardState = boardState;
             }
         }
-        System.out.println("Chosen Attack Route: "
-                + boardStates.get(bestBoardState));
+        System.out.println("Chosen Attack Route: " + boardStates.get(bestBoardState));
         return boardStates.get(bestBoardState);
     }
 

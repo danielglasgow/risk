@@ -11,6 +11,12 @@ public abstract class HumanPhaseHandler {
     private HumanTurnPhases nextPhase = null;
     private final CountDownLatch latch = new CountDownLatch(1);
 
+    private final HumanTurnPhases phaseType;
+
+    public HumanPhaseHandler(HumanTurnPhases phaseType) {
+        this.phaseType = phaseType;
+    }
+
     public HumanTurnPhases await() {
         try {
             latch.await();
@@ -23,6 +29,10 @@ public abstract class HumanPhaseHandler {
     protected void finishPhase(HumanTurnPhases nextPhase) {
         this.nextPhase = nextPhase;
         latch.countDown();
+    }
+
+    public HumanTurnPhases getPhaseType() {
+        return phaseType;
     }
 
     public abstract void mouseClicked(Territory territory);

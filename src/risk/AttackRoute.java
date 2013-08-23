@@ -20,7 +20,9 @@ public class AttackRoute implements Iterable<Territory> {
 
     public AttackRoute(BoardState boardState, AttackRoute attackRoute) {
         this.boardState = boardState;
-        this.territories.addAll(attackRoute.territories);
+        if (attackRoute != null) {
+            this.territories.addAll(attackRoute.territories);
+        }
     }
 
     /**

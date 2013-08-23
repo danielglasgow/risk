@@ -16,6 +16,7 @@ public class BoardEditor extends HumanPhaseHandler {
 
     public BoardEditor(BoardState boardState, List<Player> players,
             InstructionPanel instructionPanel) {
+        super(HumanTurnPhases.EDIT);
         this.boardState = boardState;
         this.players = players;
         this.instructionPanel = instructionPanel;
@@ -79,8 +80,8 @@ public class BoardEditor extends HumanPhaseHandler {
             territoryName = boardState.getEditTerritory().name;
         }
 
-        instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE, "Edit "
-                + territoryName, button1, button2, button3, button4, button5);
+        instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE, "Edit " + territoryName,
+                button1, button2, button3, button4, button5);
 
     }
 

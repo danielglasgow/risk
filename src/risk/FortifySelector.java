@@ -14,11 +14,16 @@ public class FortifySelector extends SubPhaseHandler {
     private final Player player;
     private final InstructionPanel instructionPanel;
 
-    public FortifySelector(BoardState boardState, Player player,
-            InstructionPanel instructionPanel) {
+    private Territory fortifyTo;
+    private Territory fortifyFrom;
+
+    public FortifySelector(BoardState boardState, Player player, InstructionPanel instructionPanel,
+            Territory fortifyTo, Territory fortifyFrom) {
         this.boardState = boardState;
         this.player = player;
         this.instructionPanel = instructionPanel;
+        this.fortifyTo = fortifyTo;
+        this.fortifyFrom = fortifyFrom;
     }
 
     @Override
@@ -27,19 +32,19 @@ public class FortifySelector extends SubPhaseHandler {
             JOptionPane.showMessageDialog(null,
                     "You must fortify between to territories you control");
         } else {
-            if (boardState.getFortifyTo() == null && boardState.getFortifyFrom() != null) {
-                if (hasPath(boardState.getFortifyFrom(), territory)) {
-                    boardState.setFortifyTo(territory);
+            if (fortifyTo == null && fortifyFrom != null) {
+                if (hasPath(fortifyFrom, territory)) {
+                    fortifyTo = territory;
                 } else {
-                    boardState.setFortifyFrom(null);
+                    fortifyFrom = null;
                     JOptionPane
                             .showMessageDialog(
                                     null,
                                     "There must be a contiguous path of territories you control in order to fortify between two territories");
                 }
             } else {
-                boardState.setFortifyFrom(territory);
-                boardState.setFortifyTo(null);
+                fortifyFrom = territory;
+                fortifyTo = null;
             }
         }
         finishPhase(SubPhase.FORTIFY_SELECTION);
@@ -99,23 +104,28 @@ public class FortifySelector extends SubPhaseHandler {
         });
 
         buttonLeft.setText("Continue");
-        buttonRight.setText("EndTurn");
+        buttonRight.setText("Continue Without Fortifying (End Turn)");
 
-        instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
-                "Click on two territories to fortify", buttonLeft, buttonRight);
-        String fort2 = "...";
-        if (boardState.getFortifyTo() != null) {
-            fort2 = boardState.getFortifyTo().name
-                    + " (click continue or select territories again)";
-        }
-        if (boardState.getFortifyFrom() == null) {
+        if (fortifyFrom == null) {
             instructionPanel.addCustomButtons(InstructionPanel.NEW_INVISIBLE,
-                    "Click on two territories to fortify", buttonLeft, buttonRight);
+                    "Click on two territories to fortify", buttonRight);
+        } else if (fortifyTo != null) {
+            instructionPanel.addCustomButtons(InstructionPanel.NEW_INVISIBLE, "Fortify from "
+                    + fortifyFrom.name + " to " + fortifyTo.name
+                    + " (click continue or select territories again)", buttonLeft);
         } else {
             instructionPanel.addCustomButtons(InstructionPanel.NEW_INVISIBLE, "Fortify from "
-                    + boardState.getFortifyFrom().name + " to " + fort2, buttonLeft, buttonRight);
+                    + fortifyFrom.name + " to ...", buttonRight);
         }
 
+    }
+
+    public Territory getFortifyTo() {
+        return fortifyTo;
+    }
+
+    public Territory getFortifyFrom() {
+        return fortifyFrom;
     }
 
 }

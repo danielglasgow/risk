@@ -111,40 +111,6 @@ public class BoardState {
         return territoryHolder.editTerritory;
     }
 
-    /*
-     * public void setAttackFrom(Territory territory) {
-     * territoryHolder.attackFrom = territory;
-     * 
-     * }
-     * 
-     * public Territory getAttackFrom() { return territoryHolder.attackFrom; }
-     * 
-     * public void setAttackTo(Territory territory) { territoryHolder.attackTo =
-     * territory;
-     * 
-     * }
-     * 
-     * public Territory getAttackTo() { return territoryHolder.attackTo; }
-     */
-
-    public void setFortifyFrom(Territory territory) {
-        territoryHolder.fortifyFrom = territory;
-
-    }
-
-    public Territory getFortifyFrom() {
-        return territoryHolder.fortifyFrom;
-    }
-
-    public void setFortifyTo(Territory territory) {
-        territoryHolder.fortifyTo = territory;
-
-    }
-
-    public Territory getFortifyTo() {
-        return territoryHolder.fortifyTo;
-    }
-
     public List<Continent> getContinents() {
         return game.getContinents();
     }
@@ -163,15 +129,8 @@ public class BoardState {
      * turn phases and a territory selected during edit mode;
      */
     private class TerritoryHolder {
-
-        // get rid of this and make attack phase super class and fortifier
-        // superclass
-        public Territory attackFrom = null;
-        public Territory attackTo = null;
-        public Territory fortifyFrom = null;
-        public Territory fortifyTo = null;
         public Territory editTerritory = null;
-        // should I make a constructor?
+
     }
 
 }

@@ -15,14 +15,16 @@ public class DefenseTerritorySelector extends SubPhaseHandler {
     private final BoardState boardState;
     private final Player player;
     private final InstructionPanel instructionPanel;
-    private final AttackHandler attackPhase;
+    private final Territory attackTerritory;
+
+    private Territory defenseTerritory;
 
     public DefenseTerritorySelector(BoardState boardState, Player player,
-            InstructionPanel instructionPanel, AttackHandler attackPhase) {
+            InstructionPanel instructionPanel, Territory attackTerritory) {
         this.boardState = boardState;
         this.player = player;
         this.instructionPanel = instructionPanel;
-        this.attackPhase = attackPhase;
+        this.attackTerritory = attackTerritory;
     }
 
     public void displayInterface() {
@@ -35,18 +37,18 @@ public class DefenseTerritorySelector extends SubPhaseHandler {
         });
         button.setText("Choose a Different Territory to Attack From");
         instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE, "Attacking from "
-                + attackPhase.getAttackFrom().name
-                + ".  Select the territory you would like to attack.", button);
+                + attackTerritory.name + ".  Select the territory you would like to attack.",
+                button);
     }
 
     public void setAttackToTerritory(Territory territory) {
-        if (!attackPhase.getAttackFrom().getAdjacents().contains(territory)) {
+        if (!attackTerritory.getAdjacents().contains(territory)) {
             JOptionPane.showMessageDialog(null, "You must attack a territory adjacent to "
-                    + attackPhase.getAttackFrom().name);
+                    + attackTerritory.name);
         } else if (boardState.getPlayer(territory).equals(player)) {
             JOptionPane.showMessageDialog(null, "You cannot attack a territory you control");
         } else {
-            attackPhase.setAttackTo(territory);
+            defenseTerritory = territory;
             finishPhase(SubPhase.BATTLE);
         }
     }
@@ -54,6 +56,10 @@ public class DefenseTerritorySelector extends SubPhaseHandler {
     @Override
     public void mouseClicked(Territory territory) {
         setAttackToTerritory(territory);
+    }
+
+    public Territory getDefenseTerritory() {
+        return defenseTerritory;
     }
 
 }

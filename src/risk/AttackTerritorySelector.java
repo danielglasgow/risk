@@ -19,14 +19,14 @@ public class AttackTerritorySelector extends SubPhaseHandler {
     private final BoardState boardState;
     private final Player player;
     private final InstructionPanel instructionPanel;
-    private final AttackHandler attackPhase;
+
+    private Territory attackTerritory;
 
     public AttackTerritorySelector(BoardState boardState, Player player,
-            InstructionPanel instructionPanel, AttackHandler attackPhase) {
+            InstructionPanel instructionPanel) {
         this.boardState = boardState;
         this.player = player;
         this.instructionPanel = instructionPanel;
-        this.attackPhase = attackPhase;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class AttackTerritorySelector extends SubPhaseHandler {
             }
         });
         button.setText("End Attack Phase");
-        attackPhase.setAttackFrom(null);
+        attackTerritory = null;
         instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
                 "Select the territory you would like to attack from", button);
     }
@@ -52,7 +52,7 @@ public class AttackTerritorySelector extends SubPhaseHandler {
             failMessage = "You cannot attack from a territory with less than two armies";
         }
         if (failMessage == null) {
-            attackPhase.setAttackFrom(territory);
+            attackTerritory = territory;
             finishPhase(SubPhase.SELECT_DEFENDING_TERRITORY);
         } else {
             JOptionPane.showMessageDialog(null, failMessage);
@@ -62,6 +62,10 @@ public class AttackTerritorySelector extends SubPhaseHandler {
     @Override
     public void mouseClicked(Territory territory) {
         setAttackFromTerritory(territory);
+    }
+
+    public Territory getAttackTerritory() {
+        return attackTerritory;
     }
 
 }

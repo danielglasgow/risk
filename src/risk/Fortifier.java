@@ -10,31 +10,36 @@ public class Fortifier extends SubPhaseHandler {
 
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
+    private final Territory fortifyTo;
+    private final Territory fortifyFrom;
 
-    public Fortifier(BoardState boardState, InstructionPanel instructionPanel) {
+    public Fortifier(BoardState boardState, InstructionPanel instructionPanel, Territory fortifyTo,
+            Territory fortifyFrom) {
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
+        this.fortifyTo = fortifyTo;
+        this.fortifyFrom = fortifyFrom;
     }
 
     @Override
     public void mouseClicked(Territory territory) {
-        if (boardState.getFortifyFrom().equals(territory)) {
-            if (boardState.getArmies(boardState.getFortifyTo()) > 1) {
-                boardState.increaseArmies(boardState.getFortifyFrom(), 1);
-                boardState.decreaseArmies(boardState.getFortifyTo(), 1);
+        if (fortifyFrom.equals(territory)) {
+            if (boardState.getArmies(fortifyTo) > 1) {
+                boardState.increaseArmies(fortifyFrom, 1);
+                boardState.decreaseArmies(fortifyTo, 1);
             } else {
                 JOptionPane.showMessageDialog(null, "Territories must have at least one army");
             }
-        } else if (boardState.getFortifyTo().equals(territory)) {
-            if (boardState.getArmies(boardState.getFortifyFrom()) > 1) {
-                boardState.increaseArmies(boardState.getFortifyTo(), 1);
-                boardState.decreaseArmies(boardState.getFortifyFrom(), 1);
+        } else if (fortifyTo.equals(territory)) {
+            if (boardState.getArmies(fortifyFrom) > 1) {
+                boardState.increaseArmies(fortifyTo, 1);
+                boardState.decreaseArmies(fortifyFrom, 1);
             } else {
                 JOptionPane.showMessageDialog(null, "Territories must have at least one army");
             }
         } else {
-            JOptionPane.showMessageDialog(null, "You must click on "
-                    + boardState.getFortifyFrom().name + " or " + boardState.getFortifyTo().name);
+            JOptionPane.showMessageDialog(null, "You must click on " + fortifyFrom.name + " or "
+                    + fortifyTo.name);
         }
 
     }
@@ -49,12 +54,9 @@ public class Fortifier extends SubPhaseHandler {
             }
         });
         button.setText("End Turn");
-        instructionPanel.addCustomButtons(
-                InstructionPanel.NEW_VISIBLE,
-                "Click on " + boardState.getFortifyFrom().name + " to move armies from "
-                        + boardState.getFortifyTo().name + ". Click on "
-                        + boardState.getFortifyTo().name + " to move armies from "
-                        + boardState.getFortifyFrom().name, button);
+        instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE, "Click on "
+                + fortifyFrom.name + " to move armies from " + fortifyTo.name + ". Click on "
+                + fortifyTo.name + " to move armies from " + fortifyFrom.name, button);
     }
 
 }

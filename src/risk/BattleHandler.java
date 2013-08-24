@@ -23,7 +23,8 @@ public class BattleHandler extends SubPhaseHandler {
     private final Player player;
     private final InstructionPanel instructionPanel;
     private final BoardState boardState;
-    private final AttackHandler attackPhase;
+    private final Territory attackTerritory;
+    private final Territory defenseTerritory;
 
     private int[] attackRolls = new int[3];
     private int[] defenseRolls = new int[2];
@@ -31,11 +32,13 @@ public class BattleHandler extends SubPhaseHandler {
     private int defenseLosses = 0;
 
     public BattleHandler(BoardState boardState, Player player, InstructionPanel instructionPanel,
-            AttackHandler attackPhase) {
+            Territory attackTerritory, Territory defenseTerritory) {
         this.boardState = boardState;
         this.player = player;
         this.instructionPanel = instructionPanel;
-        this.attackPhase = attackPhase;
+        this.attackTerritory = attackTerritory;
+        this.defenseTerritory = defenseTerritory;
+
     }
 
     @Override
@@ -57,9 +60,9 @@ public class BattleHandler extends SubPhaseHandler {
 
         int[] dice = simulateAttack();
 
-        if (boardState.getArmies(attackPhase.getAttackTo()) < 1) {
+        if (boardState.getArmies(defenseTerritory) < 1) {
             playerWinsInterface(dice);
-        } else if (boardState.getArmies(attackPhase.getAttackFrom()) < 2) {
+        } else if (boardState.getArmies(attackTerritory) < 2) {
             playerLosesInterface(buttonRight, dice);
         } else {
             continueAttackInterface(buttonRight, buttonLeft, dice);
@@ -67,8 +70,8 @@ public class BattleHandler extends SubPhaseHandler {
     }
 
     private int[] simulateAttack() {
-        int attackArmies = boardState.getArmies(attackPhase.getAttackFrom());
-        int defenseArmies = boardState.getArmies(attackPhase.getAttackTo());
+        int attackArmies = boardState.getArmies(attackTerritory);
+        int defenseArmies = boardState.getArmies(defenseTerritory);
         int attackDice = Math.min(attackArmies - 1, 3);
         int defenseDice = Math.min(defenseArmies, 2);
 
@@ -96,8 +99,8 @@ public class BattleHandler extends SubPhaseHandler {
             }
 
         }
-        boardState.decreaseArmies(attackPhase.getAttackFrom(), attackLosses);
-        boardState.decreaseArmies(attackPhase.getAttackTo(), defenseLosses);
+        boardState.decreaseArmies(attackTerritory, attackLosses);
+        boardState.decreaseArmies(defenseTerritory, defenseLosses);
         boardState.updateBackground();
 
         int[] dice = { attackDice, defenseDice };
@@ -118,15 +121,15 @@ public class BattleHandler extends SubPhaseHandler {
             }
         });
         button.setText("Continue");
-        boardState.decreaseArmies(attackPhase.getAttackFrom(), 1);
-        boardState.setPlayer(attackPhase.getAttackTo(), player);
-        boardState.increaseArmies(attackPhase.getAttackTo(), 1);
+        boardState.decreaseArmies(attackTerritory, 1);
+        boardState.setPlayer(defenseTerritory, player);
+        boardState.increaseArmies(defenseTerritory, 1);
         boardState.updateBackground();
         instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE,
                 "Attack Rolls: " + rollsToString(dice[0], attackRolls) + "    Defense rolls: "
                         + rollsToString(dice[1], defenseRolls) + "     Attack Loses: "
                         + attackLosses + "    Defense Loses: " + defenseLosses + "    "
-                        + "You have defeated " + attackPhase.getAttackTo().name + "!", button);
+                        + "You have defeated " + defenseTerritory.name + "!", button);
     }
 
     private void playerLosesInterface(JButton button, int[] dice) {
@@ -135,7 +138,7 @@ public class BattleHandler extends SubPhaseHandler {
                 "Attack Rolls: " + rollsToString(dice[0], attackRolls) + "    Defense rolls: "
                         + rollsToString(dice[1], defenseRolls) + "     Attack Loses: "
                         + attackLosses + "    Defense Loses: " + defenseLosses + "    "
-                        + "You can no longer attack from " + attackPhase.getAttackFrom().name
+                        + "You can no longer attack from " + attackTerritory.name
                         + " because it only has one army", button);
     }
 

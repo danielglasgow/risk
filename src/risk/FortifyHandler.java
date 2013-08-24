@@ -5,6 +5,9 @@ public class FortifyHandler extends MainPhaseHandler {
     private final InstructionPanel instructionPanel;
     private final Player player;
 
+    private Territory fortifyTo;
+    private Territory fortifyFrom;
+
     public FortifyHandler(BoardState boardState, InstructionPanel instructionPanel, Player player) {
         super(boardState, SubPhase.FORTIFY_SELECTION, MainPhase.END_TURN);
         this.boardState = boardState;
@@ -15,9 +18,13 @@ public class FortifyHandler extends MainPhaseHandler {
     @Override
     protected void runSubPhase(SubPhase subPhase) {
         if (subPhase == SubPhase.FORTIFY_SELECTION) {
-            handlePhase(new FortifySelector(boardState, player, instructionPanel));
+            FortifySelector fortifySelector = new FortifySelector(boardState, player,
+                    instructionPanel, fortifyTo, fortifyFrom);
+            handlePhase(fortifySelector);
+            fortifyTo = fortifySelector.getFortifyTo();
+            fortifyFrom = fortifySelector.getFortifyFrom();
         } else if (subPhase == SubPhase.FORTIFY) {
-            handlePhase(new Fortifier(boardState, instructionPanel));
+            handlePhase(new Fortifier(boardState, instructionPanel, fortifyTo, fortifyFrom));
         }
     }
 }

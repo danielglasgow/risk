@@ -10,34 +10,36 @@ public class WonTerritoryHandler extends SubPhaseHandler {
 
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
-    private final AttackHandler attackPhase;
+    private final Territory attackTerritory;
+    private final Territory defenseTerritory;
 
     public WonTerritoryHandler(BoardState boardState, InstructionPanel instructionPanel,
-            AttackHandler attackPhase) {
+            Territory attackTerritory, Territory defenseTerritory) {
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
-        this.attackPhase = attackPhase;
+        this.attackTerritory = attackTerritory;
+        this.defenseTerritory = defenseTerritory;
     }
 
     @Override
     public void mouseClicked(Territory territory) {
-        if (attackPhase.getAttackFrom().equals(territory)) {
-            if (boardState.getArmies(attackPhase.getAttackTo()) > 1) {
-                boardState.increaseArmies(attackPhase.getAttackFrom(), 1);
-                boardState.decreaseArmies(attackPhase.getAttackTo(), 1);
+        if (attackTerritory.equals(territory)) {
+            if (boardState.getArmies(defenseTerritory) > 1) {
+                boardState.increaseArmies(attackTerritory, 1);
+                boardState.decreaseArmies(defenseTerritory, 1);
             } else {
                 JOptionPane.showMessageDialog(null, "Territories must have at least one army");
             }
-        } else if (attackPhase.getAttackTo().equals(territory)) {
-            if (boardState.getArmies(attackPhase.getAttackFrom()) > 1) {
-                boardState.increaseArmies(attackPhase.getAttackTo(), 1);
-                boardState.decreaseArmies(attackPhase.getAttackFrom(), 1);
+        } else if (defenseTerritory.equals(territory)) {
+            if (boardState.getArmies(attackTerritory) > 1) {
+                boardState.increaseArmies(defenseTerritory, 1);
+                boardState.decreaseArmies(attackTerritory, 1);
             } else {
                 JOptionPane.showMessageDialog(null, "Territories must have at least one army");
             }
         } else {
-            JOptionPane.showMessageDialog(null, "You must click on "
-                    + attackPhase.getAttackFrom().name + " or " + attackPhase.getAttackTo().name);
+            JOptionPane.showMessageDialog(null, "You must click on " + attackTerritory.name
+                    + " or " + defenseTerritory.name);
         }
 
     }
@@ -61,19 +63,17 @@ public class WonTerritoryHandler extends SubPhaseHandler {
             }
         });
         buttonRight.setText("Continue");
-        instructionPanel.addCustomButtons(
-                InstructionPanel.NEW_VISIBLE,
-                "Click on " + attackPhase.getAttackTo().name + " to move armies from "
-                        + attackPhase.getAttackFrom().name + ". Click on "
-                        + attackPhase.getAttackFrom().name + " to move armies from "
-                        + attackPhase.getAttackTo().name + ".", buttonLeft, buttonRight);
+        instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE, "Click on "
+                + defenseTerritory.name + " to move armies from " + attackTerritory.name
+                + ". Click on " + attackTerritory.name + " to move armies from "
+                + defenseTerritory.name + ".", buttonLeft, buttonRight);
 
     }
 
     private void moveAll() {
-        int armiesToMove = boardState.getArmies(attackPhase.getAttackFrom()) - 1;
-        boardState.increaseArmies(attackPhase.getAttackTo(), armiesToMove);
-        boardState.setArmies(attackPhase.getAttackFrom(), 1);
+        int armiesToMove = boardState.getArmies(attackTerritory) - 1;
+        boardState.increaseArmies(defenseTerritory, armiesToMove);
+        boardState.setArmies(attackTerritory, 1);
         boardState.updateBackground();
     }
 

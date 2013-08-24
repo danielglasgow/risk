@@ -7,12 +7,14 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 /**
- * This class handles user input while a human player is choosing which
- * territory (if any) he or she wants to attack from. This class also handles
- * the interface while a human player is choosing a territory to attack from.
+ * This class handles user input and interface while a human player is choosing
+ * which territory (if any) he wants to attack from. This class is exclusively
+ * instantiated from within the AttackHandler class.
  * 
- * The human player selects a territory to attack from (by clicking) which
- * advances the turn phase to ATTACK_TO.
+ * The human player either selects a territory to attack from (by clicking)
+ * which advances the SubPhase to "DEFENSE_TERRITORY_SELECTOR", or clicks
+ * "continue without attacking", prompting advancement to the next MainPhase,
+ * Fortification.
  */
 public class AttackTerritorySelector extends SubPhaseHandler {
 

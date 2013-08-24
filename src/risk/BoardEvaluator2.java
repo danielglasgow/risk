@@ -8,6 +8,12 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * This class is a second attempt to build an accurate BoardEvaluator, a class
+ * that can take a BoardState and convert how well a player is doing to a number
+ * value.
+ */
+
 public class BoardEvaluator2 implements BoardEvaluator {
 
     /**
@@ -44,16 +50,14 @@ public class BoardEvaluator2 implements BoardEvaluator {
 
     private final BorderFinder borderFinder = new BorderFinder();
 
-    public double getBoardValue(BoardState boardState, Player player,
-            List<Continent> continents) {
+    public double getBoardValue(BoardState boardState, Player player, List<Continent> continents) {
         State state = new State(boardState, player, continents);
         double continentBonuses = getContinentBonuses(state);
         double dispersionPenalty = getDispersionPenalty(state);
         double territoryBonus = getTerritoryBonus(state);
         double armyBonus = getArmyBonus(state);
         double clusterBonus = getClusterBonus(state);
-        return continentBonuses + territoryBonus + armyBonus
-                + dispersionPenalty + clusterBonus;
+        return continentBonuses + territoryBonus + armyBonus + dispersionPenalty + clusterBonus;
     }
 
     private double getDispersionPenalty(State state) {
@@ -88,16 +92,16 @@ public class BoardEvaluator2 implements BoardEvaluator {
     private double getClusterBonus(State state) {
         double clusterBonus = 0;
         Continent goalContinent = getGoalContinent(state);
-        goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(
-                state.player, goalContinent, state.boardState));
+        goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(state.player,
+                goalContinent, state.boardState));
         Set<TerritoryCluster> clusters = goalContinent.getClusters();
         if (!clusters.isEmpty()) {
             Iterator<TerritoryCluster> clusterIterator = clusters.iterator();
             List<TerritoryCluster> biggestClusters = Lists.newArrayList();
             biggestClusters.add(clusterIterator.next());
             for (TerritoryCluster cluster : clusters) {
-                if (biggestClusters.get(0).getTerritories().size() < cluster
-                        .getTerritories().size()) {
+                if (biggestClusters.get(0).getTerritories().size() < cluster.getTerritories()
+                        .size()) {
                     biggestClusters.clear();
                     biggestClusters.add(cluster);
                 } else if (biggestClusters.get(0).getTerritories().size() == cluster
@@ -128,15 +132,14 @@ public class BoardEvaluator2 implements BoardEvaluator {
         }
         double mostArmiesBonus = 0;
         for (int i = 1; i < mostArmies; i++) {
-            mostArmiesBonus += MOST_ARMIES_MULTIPLIER
-                    * Math.pow(MOST_ARMIES_DEFLATOR, i) + MOST_ARMIES_CONSTANT;
+            mostArmiesBonus += MOST_ARMIES_MULTIPLIER * Math.pow(MOST_ARMIES_DEFLATOR, i)
+                    + MOST_ARMIES_CONSTANT;
         }
 
         return mostArmiesBonus;
     }
 
-    private boolean bordersCluster(Territory territory,
-            List<TerritoryCluster> biggestClusters) {
+    private boolean bordersCluster(Territory territory, List<TerritoryCluster> biggestClusters) {
         for (Territory adjacent : territory.getAdjacents()) {
             for (TerritoryCluster biggestCluster : biggestClusters) {
                 if (biggestCluster.getTerritories().contains(adjacent)) {
@@ -176,8 +179,7 @@ public class BoardEvaluator2 implements BoardEvaluator {
         double continentBonuses = 0;
         for (Continent continent : state.continents) {
             if (isCaptured(state, continent)
-                    && state.boardState.getPlayer(continent.getTerritories()
-                            .get(0)) == state.player) {
+                    && state.boardState.getPlayer(continent.getTerritories().get(0)) == state.player) {
                 continentBonuses += getContinentBonus(state, continent);
             }
         }
@@ -186,8 +188,8 @@ public class BoardEvaluator2 implements BoardEvaluator {
     }
 
     private double getContinentBonus(State state, Continent continent) {
-        Set<Territory> trueBorders = borderFinder.findTrueBorders(
-                state.boardState, continent, state.player);
+        Set<Territory> trueBorders = borderFinder.findTrueBorders(state.boardState, continent,
+                state.player);
         double armiesOnBorderBonus = 0;
         for (Territory border : trueBorders) {
             for (int i = 1; i < state.boardState.getArmies(border); i++) {
@@ -209,13 +211,16 @@ public class BoardEvaluator2 implements BoardEvaluator {
         return players.size() == 1;
     }
 
+    /**
+     * A class to hold several values, so that the state of the risk board can
+     * be passed around easily while calculating a player's boardValue.
+     */
     private class State {
         public final BoardState boardState;
         public final Player player;
         public final List<Continent> continents;
 
-        public State(BoardState boardState, Player player,
-                List<Continent> continents) {
+        public State(BoardState boardState, Player player, List<Continent> continents) {
             this.boardState = boardState;
             this.player = player;
             this.continents = continents;

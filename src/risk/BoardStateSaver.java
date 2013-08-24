@@ -11,11 +11,16 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import com.google.common.collect.Maps;
 
+/**
+ * This class offers to save a BoardState as a csv file in
+ * risk/SavedBoardStates/ or a user specified directory.
+ */
+
 public class BoardStateSaver {
 
     public static boolean loadBoard(BoardState boardState) {
-        int choice = JOptionPane.showConfirmDialog(null, "Load File",
-                "Load File?", JOptionPane.YES_NO_OPTION);
+        int choice = JOptionPane.showConfirmDialog(null, "Load File", "Load File?",
+                JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
             String fileName = JOptionPane.showInputDialog("File Name: ");
             BoardStateSaver saver = new BoardStateSaver();
@@ -72,8 +77,7 @@ public class BoardStateSaver {
         for (Player player : game.getImmutablePlayers()) {
             playerMap.put(player.name, player);
         }
-        final Map<String, Territory> finalTerritoryMap = Maps
-                .newHashMap(territoryMap);
+        final Map<String, Territory> finalTerritoryMap = Maps.newHashMap(territoryMap);
         final Map<String, Player> finalPlayerMap = Maps.newHashMap(playerMap);
         CSV csv = CSV.separator(',').quote('"').create();
         csv.read(fileName, new CSVReadProc() {

@@ -1,8 +1,12 @@
 package risk;
 
+/**
+ * This class handles the "ATTACK" MainPhase by subdividing responsibility among
+ * SubPhaseHandlers, AttackTerritorySelector, DefenseTerritory, BattleHandler
+ * and WonTerritoryHandler.
+ */
 public class AttackHandler extends MainPhaseHandler {
 
-    // should I make these all protected?
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
     private final Player player;
@@ -11,7 +15,7 @@ public class AttackHandler extends MainPhaseHandler {
     private Territory defenseTerritory = null;
 
     public AttackHandler(BoardState boardState, InstructionPanel instructionPanel, Player player) {
-        super(boardState, SubPhase.SELECT_ATTACKING_TERRITORY, MainPhase.FORTIFY);
+        super(boardState, SubPhase.SELECT_ATTACKING_TERRITORY, MainPhase.FORTIFICATION);
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
         this.player = player;
@@ -22,18 +26,18 @@ public class AttackHandler extends MainPhaseHandler {
         if (subPhase == SubPhase.SELECT_ATTACKING_TERRITORY) {
             AttackTerritorySelector attackSelector = new AttackTerritorySelector(boardState,
                     player, instructionPanel);
-            handlePhase(attackSelector);
+            handleSubPhase(attackSelector);
             attackTerritory = attackSelector.getAttackTerritory();
         } else if (subPhase == SubPhase.SELECT_DEFENDING_TERRITORY) {
             DefenseTerritorySelector defenseSelector = new DefenseTerritorySelector(boardState,
                     player, instructionPanel, attackTerritory);
-            handlePhase(defenseSelector);
+            handleSubPhase(defenseSelector);
             defenseTerritory = defenseSelector.getDefenseTerritory();
         } else if (subPhase == SubPhase.BATTLE) {
-            handlePhase(new BattleHandler(boardState, player, instructionPanel, attackTerritory,
+            handleSubPhase(new BattleHandler(boardState, player, instructionPanel, attackTerritory,
                     defenseTerritory));
         } else if (subPhase == SubPhase.WON_TERRITORY) {
-            handlePhase(new WonTerritoryHandler(boardState, instructionPanel, attackTerritory,
+            handleSubPhase(new WonTerritoryHandler(boardState, instructionPanel, attackTerritory,
                     defenseTerritory));
         }
     }

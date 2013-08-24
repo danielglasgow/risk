@@ -8,6 +8,17 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
+/**
+ * This class handles user input and interface while a human player chooses
+ * which two territories he wants to fortify between. This class is exclusively
+ * instantiated from within the FortifyHandler class.
+ * 
+ * The human player clicks on the board to choose a fortifyFrom and fortifyTo
+ * territory. Once the player has selected both, he may click the continue
+ * button, changing the SubPhase to FORTIFY. At any time the player may opt out
+ * of fortification by clicking the "skip fortify" button, prompting the
+ * advancement of the MainPhase to END_TURN.
+ */
 public class FortifySelector extends SubPhaseHandler {
 
     private final BoardState boardState;

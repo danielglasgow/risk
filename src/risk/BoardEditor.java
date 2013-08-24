@@ -6,24 +6,33 @@ import java.util.List;
 
 import javax.swing.JButton;
 
+/**
+ * This class handles user input and interface during the edit SubPhase. It
+ * allows a developer set the armies and player on a specific territory. It is
+ * solely for developers, and is instantiated exclusively from within the
+ * EditMode strategy.
+ * 
+ */
 public class BoardEditor extends SubPhaseHandler {
 
     private final List<Player> players;
     private final InstructionPanel instructionPanel;
     private final BoardState boardState;
 
+    private Territory editTerritory;
     private int currentPlayerIndex = 0;
 
     public BoardEditor(BoardState boardState, List<Player> players,
-            InstructionPanel instructionPanel) {
+            InstructionPanel instructionPanel, Territory editTerritory) {
         this.boardState = boardState;
         this.players = players;
         this.instructionPanel = instructionPanel;
+        this.editTerritory = editTerritory;
     }
 
     @Override
     public void mouseClicked(Territory territory) {
-        boardState.setEditTerritory(territory);
+        editTerritory = territory;
         finishPhase(SubPhase.EDIT);
     }
 
@@ -75,8 +84,8 @@ public class BoardEditor extends SubPhaseHandler {
 
         String territoryName = "(Choose Territory)";
 
-        if (boardState.getEditTerritory() != null) {
-            territoryName = boardState.getEditTerritory().name;
+        if (editTerritory != null) {
+            territoryName = editTerritory.name;
         }
 
         instructionPanel.addCustomButtons(InstructionPanel.NEW_VISIBLE, "Edit " + territoryName,
@@ -95,18 +104,22 @@ public class BoardEditor extends SubPhaseHandler {
             currentPlayerIndex++;
         }
         Player nextPlayer = players.get(currentPlayerIndex);
-        boardState.setPlayer(boardState.getEditTerritory(), nextPlayer);
+        boardState.setPlayer(editTerritory, nextPlayer);
         boardState.updateBackground();
     }
 
     private void increaseArmies() {
-        boardState.increaseArmies(boardState.getEditTerritory(), 1);
+        boardState.increaseArmies(editTerritory, 1);
         boardState.updateBackground();
     }
 
     private void decreaseArmies() {
-        boardState.decreaseArmies(boardState.getEditTerritory(), 1);
+        boardState.decreaseArmies(editTerritory, 1);
         boardState.updateBackground();
+    }
+
+    public Territory getEditTerritory() {
+        return editTerritory;
     }
 
 }

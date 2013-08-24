@@ -7,8 +7,16 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 /**
- * TODO(dani): Needs Java doc. What is an "AttackTo"? TODO(dani): Object names
- * must be nouns.
+ * This class handles user input and interface while a human player is choosing
+ * which territory he wants to attack (this territory must be adjacent to the
+ * attack territory he just selected during the SELECT_ATTACKING_TERRITORY
+ * SubPhase). This class is exclusively instantiated from within the
+ * AttackHandler class.
+ * 
+ * The human player either selects a territory to attack (by clicking) which
+ * advances the SubPhase to "BATTLE", or clicks
+ * "choose new territory to attack from", changing the SubPhase to
+ * SELECT_ATTACKING_TERRITORY (going 'back' a phase).
  */
 public class DefenseTerritorySelector extends SubPhaseHandler {
 

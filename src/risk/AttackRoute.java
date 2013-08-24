@@ -86,6 +86,7 @@ public class AttackRoute implements Iterable<Territory> {
     }
 
     // TODO(dani): Can you remove this method?
+    // ..for now no.. I'll get back to this though
     public List<Territory> getRoute() {
         return territories;
     }

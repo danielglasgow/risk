@@ -9,6 +9,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * This class provides an interface for interaction between a human player and
+ * the risk game. The instruction panel appears at the bottom of the risk board,
+ * with a line of text prompting the user about what he must do, and one or more
+ * buttons for the user to input his decision.
+ */
+
 public class InstructionPanel {
     private final JPanel mainPanel;
     private final JLabel instruction;
@@ -51,8 +58,8 @@ public class InstructionPanel {
         buttonArea.removeAll();
     }
 
-    public void setText(String newIndicator, String instruction,
-            String buttonLeft, String buttonRight) {
+    public void setText(String newIndicator, String instruction, String buttonLeft,
+            String buttonRight) {
         removeButtons();
         this.newIndicator.setText(newIndicator);
         this.instruction.setText(instruction);
@@ -61,8 +68,8 @@ public class InstructionPanel {
         addStandardButtons();
     }
 
-    public void addCustomButtons(String newIndicator, String instruction,
-            JButton leftButton, JButton rightButton) {
+    public void addCustomButtons(String newIndicator, String instruction, JButton leftButton,
+            JButton rightButton) {
         removeButtons();
         buttonArea.add(leftButton);
         buttonArea.add(rightButton);
@@ -77,17 +84,15 @@ public class InstructionPanel {
         return mainPanel;
     }
 
-    public void addCustomButtons(String newIndicator, String instruction,
-            JButton button) {
+    public void addCustomButtons(String newIndicator, String instruction, JButton button) {
         removeButtons();
         buttonArea.add(button);
         this.newIndicator.setText(newIndicator);
         this.instruction.setText(instruction);
     }
 
-    public void addCustomButtons(String newIndicator, String instruction,
-            JButton button1, JButton button2, JButton button3, JButton button4,
-            JButton button5) {
+    public void addCustomButtons(String newIndicator, String instruction, JButton button1,
+            JButton button2, JButton button3, JButton button4, JButton button5) {
         removeButtons();
         buttonArea.add(button1);
         buttonArea.add(button2);

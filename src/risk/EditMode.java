@@ -3,14 +3,15 @@ package risk;
 import java.util.List;
 
 /**
- * Allows a person to set the armies on a specific territory, set the player,
- * and get a boardValue for a given setup.
+ * Allows a developer to set the armies on a specific territory, set the player,
+ * and get a BoardValue for a given setup.
  */
 public class EditMode implements Strategy {
 
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
 
+    private Territory editTerritory;
     private SubPhase phase;
 
     public EditMode(BoardState boardState, InstructionPanel instructionPanel) {
@@ -24,7 +25,10 @@ public class EditMode implements Strategy {
         phase = SubPhase.EDIT;
         while (true) {
             if (phase == SubPhase.EDIT) {
-                handlePhase(new BoardEditor(boardState, getPlayers(), instructionPanel));
+                BoardEditor boardEditor = new BoardEditor(boardState, getPlayers(),
+                        instructionPanel, editTerritory);
+                handlePhase(boardEditor);
+                editTerritory = boardEditor.getEditTerritory();
             } else if (phase == SubPhase.END_SUB_PHASE) {
                 boardState.getGame().setEditMode(false);
                 break;

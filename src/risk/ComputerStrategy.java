@@ -16,6 +16,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * This class handles all the different actions a computer must complete during
+ * a turn. It does this by calling on other classes to decide the comptuer's
+ * best army placement, attack, and fortification decisions.
+ */
+
 public class ComputerStrategy implements Strategy {
     private Player player;
     private Continent goalContinent;

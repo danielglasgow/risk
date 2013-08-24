@@ -1,5 +1,10 @@
 package risk;
 
+/**
+ * This class handles the "FORTIFICATION" MainPhase by subdividing
+ * responsibility among SubPhaseHandlers, FortifySelector and Fortifier.
+ */
+
 public class FortifyHandler extends MainPhaseHandler {
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
@@ -20,11 +25,11 @@ public class FortifyHandler extends MainPhaseHandler {
         if (subPhase == SubPhase.FORTIFY_SELECTION) {
             FortifySelector fortifySelector = new FortifySelector(boardState, player,
                     instructionPanel, fortifyTo, fortifyFrom);
-            handlePhase(fortifySelector);
+            handleSubPhase(fortifySelector);
             fortifyTo = fortifySelector.getFortifyTo();
             fortifyFrom = fortifySelector.getFortifyFrom();
         } else if (subPhase == SubPhase.FORTIFY) {
-            handlePhase(new Fortifier(boardState, instructionPanel, fortifyTo, fortifyFrom));
+            handleSubPhase(new Fortifier(boardState, instructionPanel, fortifyTo, fortifyFrom));
         }
     }
 }

@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * A tester class, that helps compare probable outcomes based off mathematical
+ * approach and MonteCarlo simulation.
+ */
 public class MonteCarloSimulator {
 
     private static int[] diceOdds(int attackDice, int defenseDice) {

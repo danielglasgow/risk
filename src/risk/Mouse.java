@@ -9,6 +9,11 @@ import java.awt.event.MouseListener;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+/**
+ * This class listens to mouse clicks, and handles the data collected from the
+ * mouse clicks to the appropriate subPhaseHandler.
+ */
+
 public class Mouse implements MouseListener {
 
     private final BoardState boardState;
@@ -36,17 +41,15 @@ public class Mouse implements MouseListener {
         if (!territory.name.equals("NoMatch")) {
             phaseHandler.mouseClicked(territory);
         } else {
-            JOptionPane
-                    .showMessageDialog(null,
-                            "Make sure to click on the army indicator in order select a territory");
+            JOptionPane.showMessageDialog(null,
+                    "Make sure to click on the army indicator in order select a territory");
         }
         boardState.updateBackground();
     }
 
     private Territory findMatch(int x, int y) {
         for (Territory territory : boardState.getTerritories()) {
-            if ((Math.abs(territory.locX - x) < 30)
-                    && (Math.abs(territory.locY - y) < 30)) {
+            if ((Math.abs(territory.locX - x) < 30) && (Math.abs(territory.locY - y) < 30)) {
                 return territory;
             }
         }

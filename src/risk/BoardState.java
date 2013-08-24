@@ -16,14 +16,10 @@ public class BoardState {
     private final ImmutableList<Territory> territories;
     private final Board board;
     private final MainGame game;
-    private final TerritoryHolder territoryHolder;
-
-    // private Territory editTerritory = null;
 
     public BoardState(List<Territory> territories, Board board, MainGame game) {
         this.territories = ImmutableList.copyOf(territories);
         this.boardState = Maps.newHashMap();
-        this.territoryHolder = new TerritoryHolder();
         this.board = board;
         this.game = game;
         buildBoardState();
@@ -31,7 +27,6 @@ public class BoardState {
 
     private BoardState(BoardState boardState) {
         this.boardState = Maps.newHashMap();
-        this.territoryHolder = new TerritoryHolder();
         this.territories = boardState.territories;
         this.board = boardState.board;
         this.game = boardState.game;
@@ -102,15 +97,6 @@ public class BoardState {
         }
     }
 
-    public void setEditTerritory(Territory territory) {
-        territoryHolder.editTerritory = territory;
-
-    }
-
-    public Territory getEditTerritory() {
-        return territoryHolder.editTerritory;
-    }
-
     public List<Continent> getContinents() {
         return game.getContinents();
     }
@@ -121,16 +107,6 @@ public class BoardState {
 
     public MainGame getGame() {
         return game;
-    }
-
-    /**
-     * This class stores territories that have been selected by a human player
-     * during the ATTACK_FROM, ATTACK_TO, FORTIFY_FROM, and FORTIFY_TO human
-     * turn phases and a territory selected during edit mode;
-     */
-    private class TerritoryHolder {
-        public Territory editTerritory = null;
-
     }
 
 }

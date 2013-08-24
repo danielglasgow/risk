@@ -8,15 +8,16 @@ import java.util.Random;
 import javax.swing.JButton;
 
 /**
- * This class handles user input while a player attacks from one territory to
- * another. This class also handles the interface while a human player attacks.
+ * This class handles user input and interface while a player attacks from one
+ * territory to another. This class is exclusively instantiated from within the
+ * AttackHandler class.
  * 
  * The computer simulates a round of battle (attack rolls dice and defense rolls
  * dice) and displays the result. The player must then choose to press the
  * "continue attacking" or "stop attacking" button. If a player has defeated a
  * territory or can no longer legally attack, the player is notified, and
- * prompted to click the "continue" button. This changes the turn phase to
- * WON_TERRITORY or ATTACK_FROM respectively.
+ * prompted to click the "continue" button. This changes the SubPhase to
+ * WON_TERRITORY or SELECT_ATTACK_TERRITORY respectively.
  */
 public class BattleHandler extends SubPhaseHandler {
 
@@ -162,7 +163,7 @@ public class BattleHandler extends SubPhaseHandler {
 
     @Override
     public void mouseClicked(Territory territory) {
-        // There is no response to mouse clicks on the board during this phase
+        // There is no response to mouse clicks on the board during this phase.
     }
 
 }

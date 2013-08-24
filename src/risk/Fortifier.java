@@ -6,6 +6,16 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
+/**
+ * This class handles user input and interface while a human player chooses how
+ * many armies to move from his fortifyFrom to his fortifyTo territory. This
+ * class is exclusively instantiated from within the FortifyHandler class.
+ * 
+ * The human player clicks on the fortifyFrom territory to move armies from the
+ * fortifyTo territory and clicks on the fortifyTo territory to move armies from
+ * the fortifyFrom territory. Once a player is satisfied with his army movement,
+ * he clicks "End Turn", which prompts advancement to the MainPhase END_TURN.
+ */
 public class Fortifier extends SubPhaseHandler {
 
     private final BoardState boardState;

@@ -16,7 +16,7 @@ public class PlaceArmiesHandler extends MainPhaseHandler {
     @Override
     protected void runSubPhase(SubPhase subPhase) {
         if (subPhase == SubPhase.PLACE_ARMIES) {
-            handlePhase(new ArmyPlacer(boardState, player, instructionPanel,
+            handleSubPhase(new ArmyPlacer(boardState, player, instructionPanel,
                     player.getArmiesToPlace(false)));
         }
 

@@ -7,16 +7,16 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 /**
- * This class handles user input while a human player is placing armies on the
- * board. This class also handles the interface while a human player is placing
- * armies.
+ * This class handles user input and interface while a human player is placing
+ * armies on the board. This class is exclusively instantiated within the
+ * PlaceArmiesHandler class.
  * 
  * The player clicks on a territory to increase its armies by one. If a player
  * wants to restart army placement , he may click on the "restart placement"
  * button which removes all the armies he has placed so far. Once a player has
  * placed all his alloted armies, he must verify he is satisfied with his
- * placement by clicking the "continue" button which changes the turn phase to
- * "ATTACK_FROM". Otherwise, the player must click the "Place Armies Again"
+ * placement by clicking the "continue" button which prompts continuation to the
+ * attack phase. Otherwise, the player must click the "Place Armies Again"
  * button.
  */
 public class ArmyPlacer extends SubPhaseHandler {
@@ -29,8 +29,8 @@ public class ArmyPlacer extends SubPhaseHandler {
     private int armiesPlaced = 0;
     private boolean confirmingPlacement = false;
 
-    public ArmyPlacer(BoardState boardState, Player player,
-            InstructionPanel instructionPanel, int armiesToPlace) {
+    public ArmyPlacer(BoardState boardState, Player player, InstructionPanel instructionPanel,
+            int armiesToPlace) {
         this.boardState = boardState;
         this.player = player;
         this.savedBoardState = boardState.copy();

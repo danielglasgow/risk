@@ -4,10 +4,20 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+/**
+ * This class provides the tools to find a player's "true borders" around a
+ * continent given a BoardState. A player's "true borders" are all the
+ * territories that must be secured in order for a player to defend a continent
+ * AND that are adjacent to an enemy territory.
+ */
+
 public class BorderFinder {
 
-    public Set<Territory> findTrueBorders(BoardState boardState,
-            Continent continent, Player player) {
+    /**
+     * Given a Player, BoardState, and Continent, findTrueBorders returns that
+     * player's "true borders" of the continent.
+     */
+    public Set<Territory> findTrueBorders(BoardState boardState, Continent continent, Player player) {
         Set<Territory> trueBorders = Sets.newHashSet();
         Set<Territory> potentialBorders = Sets.newHashSet();
         Set<Territory> newPotentialBorders = Sets.newHashSet();
@@ -28,8 +38,7 @@ public class BorderFinder {
             }
             potentialBorders.clear();
             for (Territory territory : newPotentialBorders) {
-                potentialBorders.addAll(newPotentialBorders(territory,
-                        notBorders));
+                potentialBorders.addAll(newPotentialBorders(territory, notBorders));
             }
             newPotentialBorders.clear();
         }
@@ -46,8 +55,7 @@ public class BorderFinder {
         return false;
     }
 
-    private Set<Territory> newPotentialBorders(Territory territory,
-            Set<Territory> notBorders) {
+    private Set<Territory> newPotentialBorders(Territory territory, Set<Territory> notBorders) {
         Set<Territory> potentialBorders = Sets.newHashSet();
         for (Territory adjacent : territory.getAdjacents()) {
             if (!notBorders.contains(adjacent)) {

@@ -14,13 +14,15 @@ import javax.swing.JPanel;
 public class TextOverlay extends JPanel {
 
     /**
-     * 
+     * This class displays the number of armies on each territory, and which
+     * player controls each territory by overlaying text on top of the game's
+     * background image.
      */
     private static final long serialVersionUID = 1L;
     private BufferedImage image;
     private String text;
-    private int locX;
-    private int locY;
+    private int coordinateX;
+    private int coordinateY;
     private String color;
     private Map<String, Color> colors;
 
@@ -28,12 +30,11 @@ public class TextOverlay extends JPanel {
         this.image = inputImage;
     }
 
-    public TextOverlay(BufferedImage inputImage, Territory territory,
-            int armies, Player player) {
+    public TextOverlay(BufferedImage inputImage, Territory territory, int armies, Player player) {
         this.image = inputImage;
         this.text = "" + armies;
-        this.locX = territory.locX;
-        this.locY = territory.locY;
+        this.coordinateX = territory.coordinateX;
+        this.coordinateY = territory.coordinateY;
         this.color = player.color;
         this.colors = new HashMap<String, Color>();
 
@@ -52,11 +53,7 @@ public class TextOverlay extends JPanel {
         g2d.setPaint(colors.get(color));
         g2d.setFont(new Font("Serif", Font.BOLD, 20));
         String s = text;
-        // FontMetrics fm = g2d.getFontMetrics();
-        // int x = img.getWidth() - fm.stringWidth(s) - 100; make a checker that
-        // x and y are in range
-        // int y = fm.getHeight();
-        g2d.drawString(s, locX, locY);
+        g2d.drawString(s, coordinateX, coordinateY);
         g2d.dispose();
         return img;
     }

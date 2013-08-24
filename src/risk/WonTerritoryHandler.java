@@ -6,6 +6,19 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
+/**
+ * This class handles user input and interface when human player has just
+ * conquered a territory and must decide how many armies to move into that
+ * territory. This class is exclusively instantiated from within the
+ * AttackHandler class.
+ * 
+ * The human player clicks on the defenseTerritory to move armies from the
+ * attackTerritory and clicks on the attackTerritory to move armies from the
+ * defenseTerritory. The player may also click the "Move All" button which moves
+ * all the armies in the attackTerritory but one to the defenseTerritory. Once a
+ * player is satisfied with his army movement, he clicks the "continue" button,
+ * which sets the SubPhase to SELECT_ATTACKING_TERRITORY.
+ */
 public class WonTerritoryHandler extends SubPhaseHandler {
 
     private final BoardState boardState;

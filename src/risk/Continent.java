@@ -17,7 +17,7 @@ import com.google.common.collect.Sets;
  * territories not controlled by specified player), and ratio, a value
  * representing a given player's control of a continent. The ratio is used to
  * compare continents (thus comparable implementation), in order to determine
- * which continent a player is best suited to caputure. Both these values,
+ * which continent a player is best suited to capture. Both these values,
  * especially ratio, do not belong inside of continent.
  */
 

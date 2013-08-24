@@ -49,7 +49,7 @@ public class Mouse implements MouseListener {
 
     private Territory findMatch(int x, int y) {
         for (Territory territory : boardState.getTerritories()) {
-            if ((Math.abs(territory.locX - x) < 30) && (Math.abs(territory.locY - y) < 30)) {
+            if ((Math.abs(territory.coordinateX - x) < 30) && (Math.abs(territory.coordinateY - y) < 30)) {
                 return territory;
             }
         }

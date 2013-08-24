@@ -8,36 +8,39 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-// TODO(dani): add Java doc.  Document the format of the files!
+/**
+ * Constructs the game's territories and continents using: Territory file, which
+ * provides territories names, and coordinates on the Board; Adjacency file,
+ * which provides a territory adjacency matrix; Continent file, which provides
+ * the name of the continent's territories, and the number of bonus armies it
+ * provides.
+ */
 public class TerritoriesBuilder {
     private final String territroyFileName;
     private final String adjacencyFileName;
     private final String continentsFileName;
 
-    public TerritoriesBuilder(String territoryFileName,
-            String adjacencyFileName, String continentsFileName) {
+    public TerritoriesBuilder(String territoryFileName, String adjacencyFileName,
+            String continentsFileName) {
         this.territroyFileName = territoryFileName;
         this.adjacencyFileName = adjacencyFileName;
         this.continentsFileName = continentsFileName;
     }
 
     public BoardModel build() {
-        Map<String, ContinentModel> modelContinents = readContinents(new File(
-                continentsFileName));
-        Map<String, Territory> territories = readTerritories(new File(
-                territroyFileName), modelContinents);
+        Map<String, ContinentModel> modelContinents = readContinents(new File(continentsFileName));
+        Map<String, Territory> territories = readTerritories(new File(territroyFileName),
+                modelContinents);
         buildBorders(modelContinents);
         return new BoardModel(new ArrayList<Territory>(territories.values()),
                 buildContinents(modelContinents));
     }
 
-    private List<Continent> buildContinents(
-            Map<String, ContinentModel> modelContinents) {
+    private List<Continent> buildContinents(Map<String, ContinentModel> modelContinents) {
         List<Continent> continents = Lists.newArrayList();
         for (ContinentModel modelContinent : modelContinents.values()) {
-            continents.add(new Continent(modelContinent.name,
-                    modelContinent.bonusArmies, modelContinent.territories,
-                    modelContinent.borders));
+            continents.add(new Continent(modelContinent.name, modelContinent.bonusArmies,
+                    modelContinent.territories, modelContinent.borders));
         }
         return continents;
     }
@@ -55,8 +58,7 @@ public class TerritoriesBuilder {
             while (scanner.hasNext()) {
                 String name = scanner.next();
                 int bonusArmies = scanner.nextInt();
-                modelContinents
-                        .put(name, new ContinentModel(name, bonusArmies));
+                modelContinents.put(name, new ContinentModel(name, bonusArmies));
             }
         } catch (Exception e) {
             System.out.println("Error: " + e);
@@ -89,8 +91,7 @@ public class TerritoriesBuilder {
         return territories;
     }
 
-    private void readAdjacentTerritories(File file,
-            Map<String, Territory> territories) {
+    private void readAdjacentTerritories(File file, Map<String, Territory> territories) {
         try {
             java.util.Scanner scanner = new java.util.Scanner(file);
             String currentTerritory = "";
@@ -99,8 +100,7 @@ public class TerritoriesBuilder {
                 if (name.contains(":")) {
                     currentTerritory = name.substring(0, name.length() - 1);
                 } else {
-                    territories.get(currentTerritory).addAdjacentTerritory(
-                            territories.get(name));
+                    territories.get(currentTerritory).addAdjacentTerritory(territories.get(name));
                 }
             }
         } catch (Exception e) {
@@ -108,6 +108,11 @@ public class TerritoriesBuilder {
         }
     }
 
+    /**
+     * Builds a model continent that is slowly updated as the territories are
+     * read in, so that the Continents can be constructed with all final fields.
+     * 
+     */
     private class ContinentModel {
         public final List<Territory> territories = Lists.newArrayList();
         public final List<Territory> borders = Lists.newArrayList();

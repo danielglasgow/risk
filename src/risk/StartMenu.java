@@ -14,8 +14,6 @@ import javax.swing.JLabel;
  * provides a wait() function which will wait until the number of players has
  * been selected. Clients can then ask the object for the number of players
  * using getNumPlayers().
- * 
- * @author danielglasgow
  */
 public class StartMenu {
     private final JFrame startMenuFrame;

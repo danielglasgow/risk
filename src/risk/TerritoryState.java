@@ -1,8 +1,11 @@
 package risk;
 
 /**
- * Represents the number of armies on each territory and which player controls
- * those armies.
+ * This class stores the number of armies on a given territory and which player
+ * controls those armies.
+ * 
+ * This class is only instantiated within BoardState.. should it be nested
+ * inside?
  */
 public class TerritoryState {
 

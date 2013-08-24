@@ -1,5 +1,9 @@
 package risk;
 
+/**
+ * This class handles the "PLACE_ARMIES" MainPhase by handing responsibility to
+ * the ArmyPlacer subPhaseHandler.
+ */
 public class PlaceArmiesHandler extends MainPhaseHandler {
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;

@@ -30,6 +30,7 @@ public class EditMode implements Strategy {
                 handlePhase(boardEditor);
                 editTerritory = boardEditor.getEditTerritory();
             } else if (phase == SubPhase.END_SUB_PHASE) {
+                System.out.println("Enterd");
                 boardState.getGame().setEditMode(false);
                 break;
             }

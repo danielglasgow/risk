@@ -19,15 +19,15 @@ public class Player {
     public final String color;
     public final String name;
     private final BoardState boardState;
-    private final Strategy strategy;
     private final ImmutableList<Continent> continents;
 
-    public Player(String name, String color, BoardState boardState, Strategy strategy,
+    private Strategy strategy = null;
+
+    public Player(String name, String color, BoardState boardState,
             ImmutableList<Continent> continents) {
         this.boardState = boardState;
         this.name = name;
         this.color = color;
-        this.strategy = strategy;
         this.continents = continents;
     }
 
@@ -90,5 +90,13 @@ public class Player {
             }
         }
         return playerTerritories;
+    }
+
+    public Strategy getStrategy() {
+        return this.strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
     }
 }

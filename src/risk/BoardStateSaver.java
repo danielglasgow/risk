@@ -73,7 +73,8 @@ public class BoardStateSaver {
             territoryMap.put(territory.name, territory);
         }
         Map<String, Player> playerMap = Maps.newHashMap();
-        MainGame game = boardState.getGame();
+        final MainGame game = boardState.getGame(); // why is it making me make
+                                                    // things final?
         for (Player player : game.getImmutablePlayers()) {
             playerMap.put(player.name, player);
         }
@@ -85,11 +86,10 @@ public class BoardStateSaver {
                 Territory territory = finalTerritoryMap.get(values[0]);
                 int armies = Integer.parseInt(values[1]);
                 Player player = finalPlayerMap.get(values[2]);
+                player.setStrategy(game.getStrategies().get("ComputerStrategy"));
                 boardState.setArmies(territory, armies);
                 boardState.setPlayer(territory, player);
             }
         });
-
     }
-
 }

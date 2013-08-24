@@ -48,11 +48,8 @@ public class StartMenu {
         startMenu.setVisible(true);
     }
 
-    public int getNumPlayers() {
-        return numPlayers;
-    }
-
-    public void await() throws InterruptedException {
+    public int await() throws InterruptedException {
         latch.await();
+        return numPlayers;
     }
 }

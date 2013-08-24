@@ -32,9 +32,9 @@ public class ComputerStrategy implements Strategy {
     private final InstructionPanel instructionPanel;
     private final ImmutableList<Continent> continents;
 
-    public ComputerStrategy(BoardState boardState, ImmutableList<Continent> continents) {
+    public ComputerStrategy(BoardState boardState, List<Continent> continents) {
         this.boardState = boardState;
-        this.continents = continents;
+        this.continents = ImmutableList.copyOf(continents);
         this.instructionPanel = boardState.getBoard().getInstructionPanel();
     }
 

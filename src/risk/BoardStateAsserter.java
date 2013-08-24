@@ -29,6 +29,7 @@ public abstract class BoardStateAsserter {
             double betterBoardScore = evaluator.getBoardValue(boardStateBetter, player, continents);
             double worseBoardScore = evaluator.getBoardValue(boardStateWorse, player, continents);
             assert betterBoardScore > worseBoardScore;
+            System.out.println("Successful Assert");
         }
     }
 }

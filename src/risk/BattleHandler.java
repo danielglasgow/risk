@@ -18,12 +18,12 @@ import javax.swing.JButton;
  * prompted to click the "continue" button. This changes the turn phase to
  * WON_TERRITORY or ATTACK_FROM respectively.
  */
-public class BattleHandler extends HumanPhaseHandler {
+public class BattleHandler extends SubPhaseHandler {
 
     private final Player player;
     private final InstructionPanel instructionPanel;
     private final BoardState boardState;
-    private final HumanAttackPhase attackPhase;
+    private final AttackHandler attackPhase;
 
     private int[] attackRolls = new int[3];
     private int[] defenseRolls = new int[2];
@@ -31,8 +31,7 @@ public class BattleHandler extends HumanPhaseHandler {
     private int defenseLosses = 0;
 
     public BattleHandler(BoardState boardState, Player player, InstructionPanel instructionPanel,
-            HumanAttackPhase attackPhase) {
-        super(HumanTurnPhases.BATTLE);
+            AttackHandler attackPhase) {
         this.boardState = boardState;
         this.player = player;
         this.instructionPanel = instructionPanel;
@@ -46,13 +45,13 @@ public class BattleHandler extends HumanPhaseHandler {
         buttonRight.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.SELECT_ATTACKING_TERRITORY);
+                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         buttonLeft.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.BATTLE);
+                finishPhase(SubPhase.BATTLE);
             }
         });
 
@@ -115,7 +114,7 @@ public class BattleHandler extends HumanPhaseHandler {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.WON_TERRITORY);
+                finishPhase(SubPhase.WON_TERRITORY);
             }
         });
         button.setText("Continue");

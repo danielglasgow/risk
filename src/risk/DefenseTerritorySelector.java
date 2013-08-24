@@ -10,16 +10,15 @@ import javax.swing.JOptionPane;
  * TODO(dani): Needs Java doc. What is an "AttackTo"? TODO(dani): Object names
  * must be nouns.
  */
-public class DefenseTerritorySelector extends HumanPhaseHandler {
+public class DefenseTerritorySelector extends SubPhaseHandler {
 
     private final BoardState boardState;
     private final Player player;
     private final InstructionPanel instructionPanel;
-    private final HumanAttackPhase attackPhase;
+    private final AttackHandler attackPhase;
 
     public DefenseTerritorySelector(BoardState boardState, Player player,
-            InstructionPanel instructionPanel, HumanAttackPhase attackPhase) {
-        super(HumanTurnPhases.SELECT_DEFENDING_TERRITORY);
+            InstructionPanel instructionPanel, AttackHandler attackPhase) {
         this.boardState = boardState;
         this.player = player;
         this.instructionPanel = instructionPanel;
@@ -31,7 +30,7 @@ public class DefenseTerritorySelector extends HumanPhaseHandler {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.SELECT_ATTACKING_TERRITORY);
+                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         button.setText("Choose a Different Territory to Attack From");
@@ -48,7 +47,7 @@ public class DefenseTerritorySelector extends HumanPhaseHandler {
             JOptionPane.showMessageDialog(null, "You cannot attack a territory you control");
         } else {
             attackPhase.setAttackTo(territory);
-            finishPhase(HumanTurnPhases.BATTLE);
+            finishPhase(SubPhase.BATTLE);
         }
     }
 

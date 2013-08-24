@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 
-public class BoardEditor extends HumanPhaseHandler {
+public class BoardEditor extends SubPhaseHandler {
 
     private final List<Player> players;
     private final InstructionPanel instructionPanel;
@@ -16,7 +16,6 @@ public class BoardEditor extends HumanPhaseHandler {
 
     public BoardEditor(BoardState boardState, List<Player> players,
             InstructionPanel instructionPanel) {
-        super(HumanTurnPhases.EDIT);
         this.boardState = boardState;
         this.players = players;
         this.instructionPanel = instructionPanel;
@@ -25,7 +24,7 @@ public class BoardEditor extends HumanPhaseHandler {
     @Override
     public void mouseClicked(Territory territory) {
         boardState.setEditTerritory(territory);
-        finishPhase(HumanTurnPhases.EDIT);
+        finishPhase(SubPhase.EDIT);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class BoardEditor extends HumanPhaseHandler {
         button4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.END_TURN);
+                finishPhase(SubPhase.END_SUB_PHASE);
             }
         });
         button3.addActionListener(new ActionListener() {

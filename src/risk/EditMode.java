@@ -11,7 +11,7 @@ public class EditMode implements Strategy {
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
 
-    private HumanTurnPhases phase;
+    private SubPhase phase;
 
     public EditMode(BoardState boardState, InstructionPanel instructionPanel) {
         this.boardState = boardState;
@@ -21,12 +21,11 @@ public class EditMode implements Strategy {
     @Override
     public void takeTurn(Player player) {
         BoardStateSaver.loadBoard(boardState);
-        phase = HumanTurnPhases.EDIT;
+        phase = SubPhase.EDIT;
         while (true) {
-            if (phase == HumanTurnPhases.EDIT) {
-                handlePhase(new BoardEditor(boardState, getPlayers(),
-                        instructionPanel));
-            } else if (phase == HumanTurnPhases.END_TURN) {
+            if (phase == SubPhase.EDIT) {
+                handlePhase(new BoardEditor(boardState, getPlayers(), instructionPanel));
+            } else if (phase == SubPhase.END_SUB_PHASE) {
                 boardState.getGame().setEditMode(false);
                 break;
             }
@@ -34,7 +33,7 @@ public class EditMode implements Strategy {
 
     }
 
-    private void handlePhase(HumanPhaseHandler phaseHandler) {
+    private void handlePhase(SubPhaseHandler phaseHandler) {
         boardState.getBoard().getMouse().setPhaseHandler(phaseHandler);
         phaseHandler.displayInterface();
         phase = phaseHandler.await();

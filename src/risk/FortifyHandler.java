@@ -1,61 +1,23 @@
 package risk;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-
-public class FortifyHandler extends HumanPhaseHandler {
-
+public class FortifyHandler extends MainPhaseHandler {
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
+    private final Player player;
 
-    public FortifyHandler(BoardState boardState, InstructionPanel instructionPanel) {
-        super(HumanTurnPhases.FORTIFY);
+    public FortifyHandler(BoardState boardState, InstructionPanel instructionPanel, Player player) {
+        super(boardState, SubPhase.FORTIFY_SELECTION, MainPhase.END_TURN);
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
+        this.player = player;
     }
 
     @Override
-    public void mouseClicked(Territory territory) {
-        if (boardState.getFortifyFrom().equals(territory)) {
-            if (boardState.getArmies(boardState.getFortifyTo()) > 1) {
-                boardState.increaseArmies(boardState.getFortifyFrom(), 1);
-                boardState.decreaseArmies(boardState.getFortifyTo(), 1);
-            } else {
-                JOptionPane.showMessageDialog(null, "Territories must have at least one army");
-            }
-        } else if (boardState.getFortifyTo().equals(territory)) {
-            if (boardState.getArmies(boardState.getFortifyFrom()) > 1) {
-                boardState.increaseArmies(boardState.getFortifyTo(), 1);
-                boardState.decreaseArmies(boardState.getFortifyFrom(), 1);
-            } else {
-                JOptionPane.showMessageDialog(null, "Territories must have at least one army");
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "You must click on "
-                    + boardState.getFortifyFrom().name + " or " + boardState.getFortifyTo().name);
+    protected void runSubPhase(SubPhase subPhase) {
+        if (subPhase == SubPhase.FORTIFY_SELECTION) {
+            handlePhase(new FortifySelector(boardState, player, instructionPanel));
+        } else if (subPhase == SubPhase.FORTIFY) {
+            handlePhase(new Fortifier(boardState, instructionPanel));
         }
-
     }
-
-    @Override
-    public void displayInterface() {
-        JButton button = new JButton();
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.END_TURN);
-            }
-        });
-        button.setText("End Turn");
-        instructionPanel.addCustomButtons(
-                InstructionPanel.NEW_VISIBLE,
-                "Click on " + boardState.getFortifyFrom().name + " to move armies from "
-                        + boardState.getFortifyTo().name + ". Click on "
-                        + boardState.getFortifyTo().name + " to move armies from "
-                        + boardState.getFortifyFrom().name, button);
-    }
-
 }

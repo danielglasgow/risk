@@ -6,15 +6,14 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
-public class WonTerritoryHandler extends HumanPhaseHandler {
+public class WonTerritoryHandler extends SubPhaseHandler {
 
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
-    private final HumanAttackPhase attackPhase;
+    private final AttackHandler attackPhase;
 
     public WonTerritoryHandler(BoardState boardState, InstructionPanel instructionPanel,
-            HumanAttackPhase attackPhase) {
-        super(HumanTurnPhases.WON_TERRITORY);
+            AttackHandler attackPhase) {
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
         this.attackPhase = attackPhase;
@@ -50,7 +49,7 @@ public class WonTerritoryHandler extends HumanPhaseHandler {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 moveAll();
-                finishPhase(HumanTurnPhases.FORTIFY_SELECTION);
+                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         buttonLeft.setText("Move All");
@@ -58,7 +57,7 @@ public class WonTerritoryHandler extends HumanPhaseHandler {
         buttonRight.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.FORTIFY_SELECTION);
+                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         buttonRight.setText("Continue");

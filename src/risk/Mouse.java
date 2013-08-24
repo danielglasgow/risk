@@ -14,13 +14,13 @@ public class Mouse implements MouseListener {
     private final BoardState boardState;
 
     // YUCK... FIX THIS LATER!
-    private HumanPhaseHandler phaseHandler = null;
+    private SubPhaseHandler phaseHandler = null;
 
     public Mouse(BoardState boardState) {
         this.boardState = boardState;
     }
 
-    public void setPhaseHandler(HumanPhaseHandler phaseHandler) {
+    public void setPhaseHandler(SubPhaseHandler phaseHandler) {
         this.phaseHandler = phaseHandler;
     }
 

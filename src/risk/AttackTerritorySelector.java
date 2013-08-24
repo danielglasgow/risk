@@ -14,16 +14,15 @@ import javax.swing.JOptionPane;
  * The human player selects a territory to attack from (by clicking) which
  * advances the turn phase to ATTACK_TO.
  */
-public class AttackTerritorySelector extends HumanPhaseHandler {
+public class AttackTerritorySelector extends SubPhaseHandler {
 
     private final BoardState boardState;
     private final Player player;
     private final InstructionPanel instructionPanel;
-    private final HumanAttackPhase attackPhase;
+    private final AttackHandler attackPhase;
 
     public AttackTerritorySelector(BoardState boardState, Player player,
-            InstructionPanel instructionPanel, HumanAttackPhase attackPhase) {
-        super(HumanTurnPhases.SELECT_ATTACKING_TERRITORY);
+            InstructionPanel instructionPanel, AttackHandler attackPhase) {
         this.boardState = boardState;
         this.player = player;
         this.instructionPanel = instructionPanel;
@@ -36,7 +35,7 @@ public class AttackTerritorySelector extends HumanPhaseHandler {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(HumanTurnPhases.FORTIFY_SELECTION);
+                finishPhase(SubPhase.END_SUB_PHASE);
             }
         });
         button.setText("End Attack Phase");
@@ -54,7 +53,7 @@ public class AttackTerritorySelector extends HumanPhaseHandler {
         }
         if (failMessage == null) {
             attackPhase.setAttackFrom(territory);
-            finishPhase(HumanTurnPhases.SELECT_DEFENDING_TERRITORY);
+            finishPhase(SubPhase.SELECT_DEFENDING_TERRITORY);
         } else {
             JOptionPane.showMessageDialog(null, failMessage);
         }

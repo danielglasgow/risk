@@ -11,8 +11,6 @@ public class EditMode implements Strategy {
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
 
-    private Territory editTerritory;
-
     public EditMode(BoardState boardState, InstructionPanel instructionPanel) {
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
@@ -22,17 +20,14 @@ public class EditMode implements Strategy {
     public void takeTurn(Player player) {
         BoardStateSaver.loadBoard(boardState);
         SubPhase phase = SubPhase.EDIT;
-        while (true) {
-            if (phase == SubPhase.EDIT) {
-                BoardEditor boardEditor = new BoardEditor(boardState, getPlayers(),
-                        instructionPanel, editTerritory);
-                phase = boardEditor.run(boardState.getBoard().getMouse());
-                editTerritory = boardEditor.getEditTerritory();
-            } else if (phase == SubPhase.END_SUB_PHASE)
-                ;
-            boardState.getGame().setEditMode(false);
-            break;
+        Territory editTerritory = null;
+        while (phase != SubPhase.END_SUB_PHASE) {
+            BoardEditor boardEditor = new BoardEditor(boardState, getPlayers(), instructionPanel,
+                    editTerritory);
+            phase = boardEditor.run(boardState.getBoard().getMouse());
+            editTerritory = boardEditor.getEditTerritory();
         }
+        boardState.getGame().setEditMode(false);
     }
 
     private List<Player> getPlayers() {

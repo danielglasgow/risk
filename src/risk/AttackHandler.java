@@ -24,7 +24,7 @@ public class AttackHandler extends MainPhaseHandler {
     @Override
     public MainPhase runPhase() {
         SubPhase subPhase = SubPhase.SELECT_ATTACKING_TERRITORY;
-        while (subPhase != null) {
+        while (subPhase != SubPhase.END_SUB_PHASE) {
             subPhase = runSubPhase(subPhase);
         }
         return nextMainPhase;
@@ -58,7 +58,7 @@ public class AttackHandler extends MainPhaseHandler {
     }
 
     /**
-     * The phases a human player completes during different Attack Phase.
+     * The phases a human player completes during the Attack Phase.
      */
     public enum SubPhase {
         SELECT_DEFENDING_TERRITORY, SELECT_ATTACKING_TERRITORY, BATTLE, WON_TERRITORY, //

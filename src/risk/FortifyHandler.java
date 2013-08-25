@@ -23,7 +23,7 @@ public class FortifyHandler extends MainPhaseHandler {
     @Override
     public MainPhase runPhase() {
         SubPhase subPhase = SubPhase.FORTIFY_SELECTION;
-        while (subPhase != null) {
+        while (subPhase != SubPhase.END_SUB_PHASE) {
             subPhase = runSubPhase(subPhase);
         }
         return nextMainPhase;

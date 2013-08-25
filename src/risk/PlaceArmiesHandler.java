@@ -25,7 +25,7 @@ public class PlaceArmiesHandler extends MainPhaseHandler {
     }
 
     /**
-     * The phases a human player completes during different Attack Phase.
+     * The phases a human player completes during Place Armies phase.
      */
     public enum SubPhase {
         END_SUB_PHASE

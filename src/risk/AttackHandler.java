@@ -5,7 +5,7 @@ package risk;
  * SubPhaseHandlers, AttackTerritorySelector, DefenseTerritory, BattleHandler
  * and WonTerritoryHandler.
  */
-public class AttackHandler extends MainPhaseHandler {
+public class AttackHandler implements MainPhaseHandler {
 
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
@@ -15,19 +15,17 @@ public class AttackHandler extends MainPhaseHandler {
     private Territory defenseTerritory = null;
 
     public AttackHandler(BoardState boardState, InstructionPanel instructionPanel, Player player) {
-        super(MainPhase.FORTIFICATION);
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
         this.player = player;
     }
 
     @Override
-    public MainPhase runPhase() {
+    public void runPhase() {
         SubPhase subPhase = SubPhase.SELECT_ATTACKING_TERRITORY;
         while (subPhase != SubPhase.END_SUB_PHASE) {
             subPhase = runSubPhase(subPhase);
         }
-        return nextMainPhase;
     }
 
     /**

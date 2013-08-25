@@ -5,7 +5,7 @@ package risk;
  * responsibility among SubPhaseHandlers, FortifySelector and Fortifier.
  */
 
-public class FortifyHandler extends MainPhaseHandler {
+public class FortifyHandler implements MainPhaseHandler {
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
     private final Player player;
@@ -14,19 +14,17 @@ public class FortifyHandler extends MainPhaseHandler {
     private Territory fortifyFrom;
 
     public FortifyHandler(BoardState boardState, InstructionPanel instructionPanel, Player player) {
-        super(MainPhase.END_TURN);
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
         this.player = player;
     }
 
     @Override
-    public MainPhase runPhase() {
+    public void runPhase() {
         SubPhase subPhase = SubPhase.FORTIFY_SELECTION;
         while (subPhase != SubPhase.END_SUB_PHASE) {
             subPhase = runSubPhase(subPhase);
         }
-        return nextMainPhase;
     }
 
     protected SubPhase runSubPhase(SubPhase subPhase) {

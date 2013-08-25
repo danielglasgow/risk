@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
  * Provides the implementation to start a risk game. The MainGame, handles the
  * play loop, calls upon other classes to build the game data, and is home to
  * the main method.
- * 
  */
 public class MainGame {
     private static final String TERRITORY_FILENAME = "TerritoryInfo/territories.txt";

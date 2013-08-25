@@ -18,18 +18,9 @@ public class HumanStrategy implements Strategy {
 
     @Override
     public void takeTurn(Player player) {
-        MainPhase phase = MainPhase.PLACE_ARMIES;
-        while (true) {
-            if (phase == MainPhase.PLACE_ARMIES) {
-                phase = new PlaceArmiesHandler(boardState, instructionPanel, player).runPhase();
-            } else if (phase == MainPhase.ATTACK) {
-                phase = new AttackHandler(boardState, instructionPanel, player).runPhase();
-            } else if (phase == MainPhase.FORTIFICATION) {
-                phase = new FortifyHandler(boardState, instructionPanel, player).runPhase();
-            } else if (phase == MainPhase.END_TURN) {
-                break;
-            }
-        }
+        new PlaceArmiesHandler(boardState, instructionPanel, player).runPhase();
+        new AttackHandler(boardState, instructionPanel, player).runPhase();
+        new FortifyHandler(boardState, instructionPanel, player).runPhase();
     }
 
 }

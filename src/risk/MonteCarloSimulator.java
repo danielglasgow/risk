@@ -223,7 +223,7 @@ public class MonteCarloSimulator {
             System.out.println(territory.name + "armies: " + boardState.getArmies(territory));
         }
         AttackRoute attackRoute = new AttackRoute(boardState, initialRoute);
-        BoardState expectedBoardState = attackRoute.getExpectedBoardState();
+        BoardState expectedBoardState = attackRoute.getExpectedBoardState(0);
         for (Territory territory : expectedBoardState.getTerritories()) {
             System.out.println(territory.name + "armies: "
                     + expectedBoardState.getArmies(territory));

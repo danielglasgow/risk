@@ -40,8 +40,6 @@ public class ComputerStrategy implements Strategy {
     @Override
     public void takeTurn(Player player) {
         System.out.println("Turn: " + player.name);
-        // ComputerFortifier fortifier = new ComputerFortifier(boardState);
-        // System.out.println(fortifier.getFortificationOptions(player));
         BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
         System.out.println("Board State At beggining of Turn: "
                 + boardEvaluator.getBoardValue(boardState, player, continents));
@@ -80,11 +78,7 @@ public class ComputerStrategy implements Strategy {
             // System.out.println("Chosen ROute:" + chosenRoute);
             attack(chosenRoute);
         }
-        // System.out.println("Board State before fortify: "
-        // + boardEvaluator.getBoardValue(boardState, player, continents));
         chooseFortification();
-        // System.out.println("Board State after fortify: "
-        // + boardEvaluator.getBoardValue(boardState, player, continents));
     }
 
     private void chooseFortification() {
@@ -207,7 +201,7 @@ public class ComputerStrategy implements Strategy {
     private Map<BoardState, AttackRoute> buildBoardStates(List<AttackRoute> attackRoutes) {
         Map<BoardState, AttackRoute> boardStates = Maps.newHashMap();
         for (AttackRoute attackRoute : attackRoutes) {
-            BoardState boardState = attackRoute.getExpectedBoardState();
+            BoardState boardState = attackRoute.getExpectedBoardState(armiesToPlace);
             if (boardState != null) {
                 boolean armiesToMove = false;
                 for (Territory territory : attackRoute) {
@@ -233,6 +227,7 @@ public class ComputerStrategy implements Strategy {
         BoardEvaluator2 boardEvaluator = new BoardEvaluator2();
         Map<BoardState, AttackRoute> boardStates = buildBoardStates(buildAttackRoutes());
         for (BoardState boardState : boardStates.keySet()) {
+            System.out.print("AttackROute: " + boardStates.get(boardState) + " ");
             boardStateValues.put(boardState,
                     boardEvaluator.getBoardValue(boardState, player, continents));
         }
@@ -244,7 +239,8 @@ public class ComputerStrategy implements Strategy {
                 bestBoardState = boardState;
             }
         }
-        System.out.println("Chosen Attack Route: " + boardStates.get(bestBoardState));
+        System.out.println("Chosen Attack Route: " + boardStates.get(bestBoardState)
+                + "BoardState Value: " + boardStateValues.get(bestBoardState));
         return boardStates.get(bestBoardState);
     }
 

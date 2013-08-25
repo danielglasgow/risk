@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
  * the assert warns the developer, who then knows the new BoardEvaluator is
  * broken.
  */
-
 public abstract class BoardStateAsserter {
 
     public static void assertBoardValues(List<Territory> territories, MainGame game,
@@ -22,11 +21,15 @@ public abstract class BoardStateAsserter {
         BoardState boardStateBetter = new BoardState(territories, null, game);
         Map<String, String> comparisons = Maps.newHashMap();
         comparisons.put("BadRoute.csv", "LotR.csv");
+        comparisons.put("notControllingAustralia.csv", "controllingAustralia.csv");
+        comparisons.put("badIndo.csv", "indo3.csv");
         for (String worseBoard : comparisons.keySet()) {
             String betterBoard = comparisons.get(worseBoard);
             BoardStateSaver.loadBoard(boardStateWorse, directory + worseBoard);
             BoardStateSaver.loadBoard(boardStateBetter, directory + betterBoard);
+            System.out.print(betterBoard);
             double betterBoardScore = evaluator.getBoardValue(boardStateBetter, player, continents);
+            System.out.print(worseBoard);
             double worseBoardScore = evaluator.getBoardValue(boardStateWorse, player, continents);
             assert betterBoardScore > worseBoardScore;
             System.out.println("Successful Assert");

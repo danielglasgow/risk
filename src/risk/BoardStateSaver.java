@@ -15,7 +15,6 @@ import com.google.common.collect.Maps;
  * This class offers to save a BoardState as a csv file in
  * risk/SavedBoardStates/ or a user specified directory.
  */
-
 public class BoardStateSaver {
 
     public static boolean loadBoard(BoardState boardState) {

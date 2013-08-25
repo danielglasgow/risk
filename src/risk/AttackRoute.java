@@ -29,12 +29,12 @@ public class AttackRoute implements Iterable<Territory> {
      * This method returns the expected boardState if the computer were to
      * attack, following the attack path represented by the AttackRoute.
      */
-    public BoardState getExpectedBoardState() {
+    public BoardState getExpectedBoardState(int armiesToPlace) {
         BoardState expectedBoardState = boardState.copy();
         BattlePredictor battlePredictor = new StandardBattlePredictor();
         Iterator<Territory> territoriesIterator = territories.iterator();
         Territory attackingTerritory = territoriesIterator.next();
-        double attackingArmies = boardState.getArmies(attackingTerritory);
+        double attackingArmies = boardState.getArmies(attackingTerritory) + armiesToPlace;
         Player attackingPlayer = boardState.getPlayer(attackingTerritory);
         while (territoriesIterator.hasNext()) {
             Territory defendingTerritory = territoriesIterator.next();

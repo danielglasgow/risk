@@ -11,19 +11,23 @@ public class PlaceArmiesHandler extends MainPhaseHandler {
 
     public PlaceArmiesHandler(BoardState boardState, InstructionPanel instructionPanel,
             Player player) {
-        super(boardState, SubPhase.PLACE_ARMIES, MainPhase.ATTACK);
+        super(MainPhase.ATTACK);
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
         this.player = player;
     }
 
     @Override
-    protected void runSubPhase(SubPhase subPhase) {
-        if (subPhase == SubPhase.PLACE_ARMIES) {
-            handleSubPhase(new ArmyPlacer(boardState, player, instructionPanel,
-                    player.getArmiesToPlace(false)));
-        }
-
+    public MainPhase runPhase() {
+        new ArmyPlacer(boardState, player, instructionPanel, player.getArmiesToPlace(false))
+                .run(boardState.getBoard().getMouse());
+        return nextMainPhase;
     }
 
+    /**
+     * The phases a human player completes during different Attack Phase.
+     */
+    public enum SubPhase {
+        END_SUB_PHASE
+    }
 }

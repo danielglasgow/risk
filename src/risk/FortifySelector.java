@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  * of fortification by clicking the "skip fortify" button, prompting the
  * advancement of the MainPhase to END_TURN.
  */
-public class FortifySelector extends SubPhaseHandler {
+public class FortifySelector extends SubPhaseHandler<FortifyHandler.SubPhase> {
 
     private final BoardState boardState;
     private final Player player;
@@ -58,7 +58,7 @@ public class FortifySelector extends SubPhaseHandler {
                 fortifyTo = null;
             }
         }
-        finishPhase(SubPhase.FORTIFY_SELECTION);
+        finishPhase(FortifyHandler.SubPhase.FORTIFY_SELECTION);
     }
 
     private boolean hasPath(Territory startTerritory, Territory endTerritory) {
@@ -103,13 +103,13 @@ public class FortifySelector extends SubPhaseHandler {
         buttonRight.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.END_SUB_PHASE);
+                finishPhase(FortifyHandler.SubPhase.END_SUB_PHASE);
             }
         });
         buttonLeft.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.FORTIFY);
+                finishPhase(FortifyHandler.SubPhase.FORTIFY);
 
             }
         });

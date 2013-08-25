@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
  * a turn. It does this by calling on other classes to decide the comptuer's
  * best army placement, attack, and fortification decisions.
  */
-
 public class ComputerStrategy implements Strategy {
     private Player player;
     private Continent goalContinent;

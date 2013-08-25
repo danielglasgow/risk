@@ -13,7 +13,7 @@ import javax.swing.JButton;
  * EditMode strategy.
  * 
  */
-public class BoardEditor extends SubPhaseHandler {
+public class BoardEditor extends SubPhaseHandler<EditMode.SubPhase> {
 
     private final List<Player> players;
     private final InstructionPanel instructionPanel;
@@ -33,7 +33,7 @@ public class BoardEditor extends SubPhaseHandler {
     @Override
     public void mouseClicked(Territory territory) {
         editTerritory = territory;
-        finishPhase(SubPhase.EDIT);
+        finishPhase(EditMode.SubPhase.EDIT);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BoardEditor extends SubPhaseHandler {
         button4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.END_SUB_PHASE);
+                finishPhase(EditMode.SubPhase.END_SUB_PHASE);
             }
         });
         button3.addActionListener(new ActionListener() {

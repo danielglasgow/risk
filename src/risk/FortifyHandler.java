@@ -14,22 +14,41 @@ public class FortifyHandler extends MainPhaseHandler {
     private Territory fortifyFrom;
 
     public FortifyHandler(BoardState boardState, InstructionPanel instructionPanel, Player player) {
-        super(boardState, SubPhase.FORTIFY_SELECTION, MainPhase.END_TURN);
+        super(MainPhase.END_TURN);
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
         this.player = player;
     }
 
     @Override
-    protected void runSubPhase(SubPhase subPhase) {
+    public MainPhase runPhase() {
+        SubPhase subPhase = SubPhase.FORTIFY_SELECTION;
+        while (subPhase != null) {
+            subPhase = runSubPhase(subPhase);
+        }
+        return nextMainPhase;
+    }
+
+    protected SubPhase runSubPhase(SubPhase subPhase) {
+        Mouse mouse = boardState.getBoard().getMouse();
         if (subPhase == SubPhase.FORTIFY_SELECTION) {
             FortifySelector fortifySelector = new FortifySelector(boardState, player,
                     instructionPanel, fortifyTo, fortifyFrom);
-            handleSubPhase(fortifySelector);
+            subPhase = fortifySelector.run(mouse);
             fortifyTo = fortifySelector.getFortifyTo();
             fortifyFrom = fortifySelector.getFortifyFrom();
         } else if (subPhase == SubPhase.FORTIFY) {
-            handleSubPhase(new Fortifier(boardState, instructionPanel, fortifyTo, fortifyFrom));
+            subPhase = new Fortifier(boardState, instructionPanel, fortifyTo, fortifyFrom)
+                    .run(mouse);
         }
+        return subPhase;
+    }
+
+    /**
+     * The sub phases a human player completes during the Fortification Phase.
+     */
+    public enum SubPhase {
+        FORTIFY_SELECTION, FORTIFY, //
+        END_SUB_PHASE,
     }
 }

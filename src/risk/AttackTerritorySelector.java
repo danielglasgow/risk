@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  * "continue without attacking", prompting advancement to the next MainPhase,
  * Fortification.
  */
-public class AttackTerritorySelector extends SubPhaseHandler {
+public class AttackTerritorySelector extends SubPhaseHandler<AttackHandler.SubPhase> {
 
     private final BoardState boardState;
     private final Player player;
@@ -37,7 +37,7 @@ public class AttackTerritorySelector extends SubPhaseHandler {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.END_SUB_PHASE);
+                finishPhase(AttackHandler.SubPhase.END_SUB_PHASE);
             }
         });
         button.setText("End Attack Phase");
@@ -55,7 +55,7 @@ public class AttackTerritorySelector extends SubPhaseHandler {
         }
         if (failMessage == null) {
             attackTerritory = territory;
-            finishPhase(SubPhase.SELECT_DEFENDING_TERRITORY);
+            finishPhase(AttackHandler.SubPhase.SELECT_DEFENDING_TERRITORY);
         } else {
             JOptionPane.showMessageDialog(null, failMessage);
         }

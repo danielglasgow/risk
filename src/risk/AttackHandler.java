@@ -15,30 +15,54 @@ public class AttackHandler extends MainPhaseHandler {
     private Territory defenseTerritory = null;
 
     public AttackHandler(BoardState boardState, InstructionPanel instructionPanel, Player player) {
-        super(boardState, SubPhase.SELECT_ATTACKING_TERRITORY, MainPhase.FORTIFICATION);
+        super(MainPhase.FORTIFICATION);
         this.boardState = boardState;
         this.instructionPanel = instructionPanel;
         this.player = player;
     }
 
     @Override
-    protected void runSubPhase(SubPhase subPhase) {
+    public MainPhase runPhase() {
+        SubPhase subPhase = SubPhase.SELECT_ATTACKING_TERRITORY;
+        while (subPhase != null) {
+            subPhase = runSubPhase(subPhase);
+        }
+        return nextMainPhase;
+    }
+
+    /**
+     * Each MainPhaseHandler must override this method with a method that checks
+     * the given subPhase in order to determine which subPhase it must handle
+     * (by instantiating a SubPhaseHanlder and passing it to handleSubPhase).
+     */
+    protected SubPhase runSubPhase(SubPhase subPhase) {
+        Mouse mouse = boardState.getBoard().getMouse();
         if (subPhase == SubPhase.SELECT_ATTACKING_TERRITORY) {
             AttackTerritorySelector attackSelector = new AttackTerritorySelector(boardState,
                     player, instructionPanel);
-            handleSubPhase(attackSelector);
+            subPhase = attackSelector.run(mouse);
             attackTerritory = attackSelector.getAttackTerritory();
         } else if (subPhase == SubPhase.SELECT_DEFENDING_TERRITORY) {
             DefenseTerritorySelector defenseSelector = new DefenseTerritorySelector(boardState,
                     player, instructionPanel, attackTerritory);
-            handleSubPhase(defenseSelector);
+            subPhase = defenseSelector.run(mouse);
             defenseTerritory = defenseSelector.getDefenseTerritory();
         } else if (subPhase == SubPhase.BATTLE) {
-            handleSubPhase(new BattleHandler(boardState, player, instructionPanel, attackTerritory,
-                    defenseTerritory));
+            subPhase = new BattleHandler(boardState, player, instructionPanel, attackTerritory,
+                    defenseTerritory).run(mouse);
         } else if (subPhase == SubPhase.WON_TERRITORY) {
-            handleSubPhase(new WonTerritoryHandler(boardState, instructionPanel, attackTerritory,
-                    defenseTerritory));
+            subPhase = new WonTerritoryHandler(boardState, instructionPanel, attackTerritory,
+                    defenseTerritory).run(mouse);
         }
+        return subPhase;
     }
+
+    /**
+     * The phases a human player completes during different Attack Phase.
+     */
+    public enum SubPhase {
+        SELECT_DEFENDING_TERRITORY, SELECT_ATTACKING_TERRITORY, BATTLE, WON_TERRITORY, //
+        END_SUB_PHASE,
+    }
+
 }

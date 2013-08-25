@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  * attack phase. Otherwise, the player must click the "Place Armies Again"
  * button.
  */
-public class ArmyPlacer extends SubPhaseHandler {
+public class ArmyPlacer extends SubPhaseHandler<PlaceArmiesHandler.SubPhase> {
     private final Player player;
     private final InstructionPanel instructionPanel;
     private final int armiesToPlace;
@@ -94,7 +94,7 @@ public class ArmyPlacer extends SubPhaseHandler {
         leftButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.END_SUB_PHASE);
+                finishPhase(PlaceArmiesHandler.SubPhase.END_SUB_PHASE);
 
             }
         });

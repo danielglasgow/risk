@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  * the fortifyFrom territory. Once a player is satisfied with his army movement,
  * he clicks "End Turn", which prompts advancement to the MainPhase END_TURN.
  */
-public class Fortifier extends SubPhaseHandler {
+public class Fortifier extends SubPhaseHandler<FortifyHandler.SubPhase> {
 
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
@@ -60,7 +60,7 @@ public class Fortifier extends SubPhaseHandler {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.END_SUB_PHASE);
+                finishPhase(FortifyHandler.SubPhase.END_SUB_PHASE);
             }
         });
         button.setText("End Turn");

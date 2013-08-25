@@ -16,7 +16,6 @@ import com.google.common.collect.Maps;
  * the main method.
  * 
  */
-
 public class MainGame {
     private static final String TERRITORY_FILENAME = "TerritoryInfo/territories.txt";
     private static final String ADJACENCY_FILENAME = "TerritoryInfo/Adjacentterritories.txt";
@@ -101,24 +100,22 @@ public class MainGame {
     }
 
     private void setActivePlayers() {
-        this.activePlayers.clear();
+        activePlayers.clear();
         for (Player player : immutablePlayers) {
             if (player.getStrategy() != null) {
-                this.activePlayers.add(player);
+                activePlayers.add(player);
             }
         }
 
     }
 
-    public void play() {
-
+    public MainGame play() {
         Player editor = new Player("editor", null, boardState, continents);
         editor.setStrategy(strategies.get("EditMode"));
         while (true) {
             setActivePlayers();
             for (Player player : activePlayers) {
                 if (editMode) {
-                    System.out.println("editor taking tunr");
                     editor.takeTurn();
                 } else {
                     if (player.hasTerritories()) {
@@ -136,12 +133,15 @@ public class MainGame {
                 break;
             }
         }
+        return null; // return a new game if the user loads a new board;
     }
 
     public static void main(String[] args) throws InterruptedException {
         MainGame game = new MainGame();
-        game.startGame();
-        game.play();
+        while (game != null) {
+            game.startGame();
+            game = game.play();
+        }
     }
 
     public List<Player> getPlayers() {

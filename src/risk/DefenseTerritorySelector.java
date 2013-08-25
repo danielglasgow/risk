@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  * "choose new territory to attack from", changing the SubPhase to
  * SELECT_ATTACKING_TERRITORY (going 'back' a phase).
  */
-public class DefenseTerritorySelector extends SubPhaseHandler {
+public class DefenseTerritorySelector extends SubPhaseHandler<AttackHandler.SubPhase> {
 
     private final BoardState boardState;
     private final Player player;
@@ -40,7 +40,7 @@ public class DefenseTerritorySelector extends SubPhaseHandler {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
+                finishPhase(AttackHandler.SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         button.setText("Choose a Different Territory to Attack From");
@@ -57,7 +57,7 @@ public class DefenseTerritorySelector extends SubPhaseHandler {
             JOptionPane.showMessageDialog(null, "You cannot attack a territory you control");
         } else {
             defenseTerritory = territory;
-            finishPhase(SubPhase.BATTLE);
+            finishPhase(AttackHandler.SubPhase.BATTLE);
         }
     }
 

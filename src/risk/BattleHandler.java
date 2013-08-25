@@ -19,7 +19,7 @@ import javax.swing.JButton;
  * prompted to click the "continue" button. This changes the SubPhase to
  * WON_TERRITORY or SELECT_ATTACK_TERRITORY respectively.
  */
-public class BattleHandler extends SubPhaseHandler {
+public class BattleHandler extends SubPhaseHandler<AttackHandler.SubPhase> {
 
     private final Player player;
     private final InstructionPanel instructionPanel;
@@ -49,13 +49,13 @@ public class BattleHandler extends SubPhaseHandler {
         buttonRight.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
+                finishPhase(AttackHandler.SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         buttonLeft.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.BATTLE);
+                finishPhase(AttackHandler.SubPhase.BATTLE);
             }
         });
 
@@ -118,7 +118,7 @@ public class BattleHandler extends SubPhaseHandler {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.WON_TERRITORY);
+                finishPhase(AttackHandler.SubPhase.WON_TERRITORY);
             }
         });
         button.setText("Continue");

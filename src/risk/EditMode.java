@@ -12,7 +12,6 @@ public class EditMode implements Strategy {
     private final InstructionPanel instructionPanel;
 
     private Territory editTerritory;
-    private SubPhase phase;
 
     public EditMode(BoardState boardState, InstructionPanel instructionPanel) {
         this.boardState = boardState;
@@ -22,30 +21,30 @@ public class EditMode implements Strategy {
     @Override
     public void takeTurn(Player player) {
         BoardStateSaver.loadBoard(boardState);
-        phase = SubPhase.EDIT;
+        SubPhase phase = SubPhase.EDIT;
         while (true) {
             if (phase == SubPhase.EDIT) {
                 BoardEditor boardEditor = new BoardEditor(boardState, getPlayers(),
                         instructionPanel, editTerritory);
-                handlePhase(boardEditor);
+                phase = boardEditor.run(boardState.getBoard().getMouse());
                 editTerritory = boardEditor.getEditTerritory();
-            } else if (phase == SubPhase.END_SUB_PHASE) {
-                System.out.println("Enterd");
-                boardState.getGame().setEditMode(false);
-                break;
-            }
+            } else if (phase == SubPhase.END_SUB_PHASE)
+                ;
+            boardState.getGame().setEditMode(false);
+            break;
         }
-
-    }
-
-    private void handlePhase(SubPhaseHandler phaseHandler) {
-        boardState.getBoard().getMouse().setPhaseHandler(phaseHandler);
-        phaseHandler.displayInterface();
-        phase = phaseHandler.await();
     }
 
     private List<Player> getPlayers() {
         return boardState.getPlayers();
+    }
+
+    /**
+     * The phases a human player completes during EditMode.
+     */
+    public enum SubPhase {
+        EDIT, //
+        END_SUB_PHASE,
     }
 
 }

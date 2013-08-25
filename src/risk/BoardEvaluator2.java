@@ -48,8 +48,6 @@ public class BoardEvaluator2 implements BoardEvaluator {
     private static final double MOST_ARMIES_MULTIPLIER = 5;
     private static final double MOST_ARMIES_CONSTANT = 1;
 
-    private final BorderFinder borderFinder = new BorderFinder();
-
     public double getBoardValue(BoardState boardState, Player player, List<Continent> continents) {
         State state = new State(boardState, player, continents);
         double continentBonuses = getContinentBonuses(state);
@@ -63,7 +61,7 @@ public class BoardEvaluator2 implements BoardEvaluator {
     private double getDispersionPenalty(State state) {
         double dispersionPenalty = 0;
         for (Territory territory : state.boardState.getTerritories()) {
-            if (state.boardState.getArmies(territory) > 1)
+            if (state.boardState.getArmies(territory) > 1 && !state.trueBorders.contains(territory))
                 dispersionPenalty -= ARMY_DISPERSION_PENALTY;
         }
         return dispersionPenalty;
@@ -91,10 +89,9 @@ public class BoardEvaluator2 implements BoardEvaluator {
 
     private double getClusterBonus(State state) {
         double clusterBonus = 0;
-        Continent goalContinent = getGoalContinent(state);
-        goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(state.player,
-                goalContinent, state.boardState));
-        Set<TerritoryCluster> clusters = goalContinent.getClusters();
+        state.goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(state.player,
+                state.goalContinent, state.boardState));
+        Set<TerritoryCluster> clusters = state.goalContinent.getClusters();
         if (!clusters.isEmpty()) {
             Iterator<TerritoryCluster> clusterIterator = clusters.iterator();
             List<TerritoryCluster> biggestClusters = Lists.newArrayList();
@@ -110,7 +107,7 @@ public class BoardEvaluator2 implements BoardEvaluator {
                 }
             }
             Set<Territory> clusterBorders = Sets.newHashSet();
-            for (Territory territory : goalContinent.getTerritories()) {
+            for (Territory territory : state.goalContinent.getTerritories()) {
                 if (state.boardState.getPlayer(territory) == state.player
                         && bordersCluster(territory, biggestClusters)) {
                     clusterBorders.add(territory);
@@ -150,31 +147,6 @@ public class BoardEvaluator2 implements BoardEvaluator {
         return false;
     }
 
-    private Continent getGoalContinent(State state) {
-        List<Continent> continentRatios = Lists.newArrayList();
-        for (int i = 0; i < 6; i++) {
-            double numTerritories = 0;
-            double numTerritoriesControlled = 0;
-            double armiesControlled = 0;
-            double enemyArmies = 0;
-            for (Territory territory : state.continents.get(i).getTerritories()) {
-                numTerritories++;
-                if (state.boardState.getPlayer(territory) == state.player) {
-                    numTerritoriesControlled++;
-                    armiesControlled += state.boardState.getArmies(territory);
-                } else {
-                    enemyArmies += state.boardState.getArmies(territory);
-                }
-            }
-            double ratio = (numTerritoriesControlled + armiesControlled)
-                    / (numTerritories + enemyArmies + armiesControlled);
-            state.continents.get(i).ratio = ratio;
-            continentRatios.add(state.continents.get(i));
-            Collections.sort(continentRatios);
-        }
-        return continentRatios.get(0);
-    }
-
     private double getContinentBonuses(State state) {
         double continentBonuses = 0;
         for (Continent continent : state.continents) {
@@ -188,6 +160,7 @@ public class BoardEvaluator2 implements BoardEvaluator {
     }
 
     private double getContinentBonus(State state, Continent continent) {
+        BorderFinder borderFinder = new BorderFinder();
         Set<Territory> trueBorders = borderFinder.findTrueBorders(state.boardState, continent,
                 state.player);
         double armiesOnBorderBonus = 0;
@@ -218,12 +191,43 @@ public class BoardEvaluator2 implements BoardEvaluator {
     private class State {
         public final BoardState boardState;
         public final Player player;
+        public final Continent goalContinent;
         public final List<Continent> continents;
+        public final Set<Territory> trueBorders;
 
         public State(BoardState boardState, Player player, List<Continent> continents) {
             this.boardState = boardState;
             this.player = player;
             this.continents = continents;
+            this.goalContinent = getGoalContinent();
+            BorderFinder borderFinder = new BorderFinder();
+            this.trueBorders = borderFinder.findTrueBorders(boardState, goalContinent, player);
+
+        }
+
+        private Continent getGoalContinent() {
+            List<Continent> continentRatios = Lists.newArrayList();
+            for (int i = 0; i < 6; i++) {
+                double numTerritories = 0;
+                double numTerritoriesControlled = 0;
+                double armiesControlled = 0;
+                double enemyArmies = 0;
+                for (Territory territory : continents.get(i).getTerritories()) {
+                    numTerritories++;
+                    if (boardState.getPlayer(territory) == player) {
+                        numTerritoriesControlled++;
+                        armiesControlled += boardState.getArmies(territory);
+                    } else {
+                        enemyArmies += boardState.getArmies(territory);
+                    }
+                }
+                double ratio = (numTerritoriesControlled + armiesControlled)
+                        / (numTerritories + enemyArmies + armiesControlled);
+                continents.get(i).ratio = ratio;
+                continentRatios.add(continents.get(i));
+                Collections.sort(continentRatios);
+            }
+            return continentRatios.get(0);
         }
     }
 

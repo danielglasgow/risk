@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  * player is satisfied with his army movement, he clicks the "continue" button,
  * which sets the SubPhase to SELECT_ATTACKING_TERRITORY.
  */
-public class WonTerritoryHandler extends SubPhaseHandler {
+public class WonTerritoryHandler extends SubPhaseHandler<AttackHandler.SubPhase> {
 
     private final BoardState boardState;
     private final InstructionPanel instructionPanel;
@@ -64,7 +64,7 @@ public class WonTerritoryHandler extends SubPhaseHandler {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 moveAll();
-                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
+                finishPhase(AttackHandler.SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         buttonLeft.setText("Move All");
@@ -72,7 +72,7 @@ public class WonTerritoryHandler extends SubPhaseHandler {
         buttonRight.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                finishPhase(SubPhase.SELECT_ATTACKING_TERRITORY);
+                finishPhase(AttackHandler.SubPhase.SELECT_ATTACKING_TERRITORY);
             }
         });
         buttonRight.setText("Continue");

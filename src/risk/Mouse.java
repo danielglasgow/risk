@@ -19,13 +19,13 @@ public class Mouse implements MouseListener {
     private final BoardState boardState;
 
     // YUCK... FIX THIS LATER!
-    private SubPhaseHandler phaseHandler = null;
+    private SubPhaseHandler<?> phaseHandler = null;
 
     public Mouse(BoardState boardState) {
         this.boardState = boardState;
     }
 
-    public void setPhaseHandler(SubPhaseHandler phaseHandler) {
+    public void setPhaseHandler(SubPhaseHandler<?> phaseHandler) {
         this.phaseHandler = phaseHandler;
     }
 
@@ -49,7 +49,8 @@ public class Mouse implements MouseListener {
 
     private Territory findMatch(int x, int y) {
         for (Territory territory : boardState.getTerritories()) {
-            if ((Math.abs(territory.coordinateX - x) < 30) && (Math.abs(territory.coordinateY - y) < 30)) {
+            if ((Math.abs(territory.coordinateX - x) < 30)
+                    && (Math.abs(territory.coordinateY - y) < 30)) {
                 return territory;
             }
         }

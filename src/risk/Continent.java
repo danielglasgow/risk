@@ -29,7 +29,7 @@ public class Continent implements Comparable<Continent> {
     private final int bonusArmies;
 
     // NEEDS TO BE FIXED
-    public double ratio;
+    public double score;
 
     public Continent(String name, int bonusArmies, List<Territory> territories,
             List<Territory> borders) {
@@ -40,15 +40,15 @@ public class Continent implements Comparable<Continent> {
     }
 
     public String toString() {
-        String continent = name + ": " + ratio;
+        String continent = name + ": " + score;
         return continent;
     }
 
     @Override
     public int compareTo(Continent continent) {
-        if (continent.ratio > ratio) {
+        if (continent.score > score) {
             return 1;
-        } else if (continent.ratio < ratio) {
+        } else if (continent.score < score) {
             return -1;
         }
         return 0;
@@ -78,4 +78,5 @@ public class Continent implements Comparable<Continent> {
     public String getName() {
         return name;
     }
+
 }

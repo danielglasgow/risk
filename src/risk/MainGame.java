@@ -63,7 +63,7 @@ public class MainGame {
 
     private List<Player> buildImmutablePlayers() {
         List<Player> players = Lists.newArrayList();
-        String[] colors = { "red", "blue", "green", "black", "yellow", "orange" };
+        String[] colors = { "red", "blue", "green", "black", "purple", "orange" };
         for (int i = 1; i <= 6; i++) {
             players.add(new Player("Player" + i, colors[i - 1], boardState, continents));
         }

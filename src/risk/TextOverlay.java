@@ -70,8 +70,8 @@ public class TextOverlay extends JPanel {
         colors.put("gray", Color.gray);
         colors.put("green", Color.green);
         colors.put("black", Color.black);
-        colors.put("yellow", Color.yellow);
         colors.put("orange", Color.orange);
+        colors.put("purple", Color.magenta);
     }
 
     public BufferedImage getImage() {

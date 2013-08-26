@@ -72,7 +72,8 @@ public class ComputerStrategy implements Strategy {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (goalContinent.ratio != 1) {
+
+        if (goalContinent.score != 1) {
             AttackRoute chosenRoute = chooseAttackRoute();
             placeArmies(chosenRoute.get(0), armiesToPlace);
             // System.out.println("Chosen ROute:" + chosenRoute);
@@ -187,8 +188,9 @@ public class ComputerStrategy implements Strategy {
         armiesToPlace = player.getArmiesToPlace(false);
     }
 
-    private List<AttackRoute> buildAttackRoutes() {
+    private List<AttackRoute> buildAttackRoutesOld() {
         List<AttackRoute> attackRoutes = Lists.newArrayList();
+        // Might need to set clusters later...
         goalContinent.setClusters(TerritoryCluster.generateTerritoryClusters(player, goalContinent,
                 boardState));
         for (TerritoryCluster territoryCluster : goalContinent.getClusters()) {
@@ -196,6 +198,44 @@ public class ComputerStrategy implements Strategy {
             attackRoutes.addAll(territoryCluster.getAttackRoutes());
         }
         return attackRoutes;
+    }
+
+    private List<AttackRoute> buildAttackRoutes() {
+        List<AttackRoute> finalRoutes = Lists.newArrayList();
+        for (Territory baseTerritory : boardState.getTerritories()) {
+            int baseArmies = boardState.getArmies(baseTerritory);
+            List<AttackRoute> attackRoutes = new ArrayList<AttackRoute>();
+            List<AttackRoute> newRoutes = new ArrayList<AttackRoute>();
+            List<AttackRoute> oldRoutes = new ArrayList<AttackRoute>();
+            AttackRoute baseRoute = new AttackRoute(boardState, null);
+            baseRoute.add(baseTerritory);
+            attackRoutes.add(baseRoute);
+            boolean stillWorking = true;
+            while (stillWorking) {
+                stillWorking = false;
+                for (AttackRoute route : attackRoutes) {
+                    oldRoutes.add(route);
+                    Territory extensionTerritory = route.get(route.size() - 1);
+                    for (Territory territory : extensionTerritory.getAdjacents()) {
+                        if (!route.contains(territory)
+                                && route.size() < (armiesToPlace + baseArmies) / 2
+                                && boardState.getPlayer(territory) != player) {
+                            stillWorking = true;
+                            AttackRoute newRoute = new AttackRoute(boardState, route);
+                            newRoute.add(territory);
+                            newRoutes.add(newRoute);
+                        }
+                    }
+                }
+                finalRoutes.addAll(newRoutes);
+                attackRoutes.clear();
+                attackRoutes.addAll(newRoutes);
+                newRoutes.clear();
+                attackRoutes.removeAll(oldRoutes);
+                oldRoutes.clear();
+            }
+        }
+        return finalRoutes;
     }
 
     private Map<BoardState, AttackRoute> buildBoardStates(List<AttackRoute> attackRoutes) {
@@ -262,7 +302,7 @@ public class ComputerStrategy implements Strategy {
             }
             double ratio = (numTerritoriesControlled + armiesControlled)
                     / (numTerritories + enemyArmies + armiesControlled);
-            continents.get(i).ratio = ratio;
+            continents.get(i).score = ratio * (10 - continents.get(i).getBonusArmies());
             continentRatios.add(continents.get(i));
             Collections.sort(continentRatios);
         }

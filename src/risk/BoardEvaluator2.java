@@ -19,7 +19,7 @@ public class BoardEvaluator2 implements BoardEvaluator {
     /**
      * 1 Point for each territory player controls.
      */
-    private static final double TERRITORY_BONUS = 1.5;
+    private static final double TERRITORY_BONUS = 2;
     /**
      * 1 Point for each army player controls
      */
@@ -64,6 +64,7 @@ public class BoardEvaluator2 implements BoardEvaluator {
                 + " / Armies: " + armyBonus + " / Dispersion: " + dispersionPenalty
                 + " / Cluster: " + round(clusterBonus) + " / Ratio: "
                 + round(armyTerritoryRatioBonus) + " Total : " + round(total));
+        assert total > 0;
         return total;
     }
 
@@ -246,22 +247,22 @@ public class BoardEvaluator2 implements BoardEvaluator {
         private Continent getGoalContinent() {
             List<Continent> continentRatios = Lists.newArrayList();
             for (int i = 0; i < 6; i++) {
-                double numTerritories = 0;
-                double numTerritoriesControlled = 0;
+                // double numTerritories = 0;
+                // double numTerritoriesControlled = 0;
                 double armiesControlled = 0;
                 double enemyArmies = 0;
                 for (Territory territory : continents.get(i).getTerritories()) {
-                    numTerritories++;
+                    // /numTerritories++;
                     if (boardState.getPlayer(territory) == player) {
-                        numTerritoriesControlled++;
+                        // numTerritoriesControlled++;
                         armiesControlled += boardState.getArmies(territory);
                     } else {
                         enemyArmies += boardState.getArmies(territory);
                     }
                 }
-                double ratio = (numTerritoriesControlled + armiesControlled)
-                        / (numTerritories + enemyArmies + armiesControlled);
-                continents.get(i).ratio = ratio;
+                double ratio = (armiesControlled) / enemyArmies + armiesControlled;
+                // maybe add special case for Asia
+                continents.get(i).score = ratio * (10 - continents.get(i).getBonusArmies());
                 continentRatios.add(continents.get(i));
                 Collections.sort(continentRatios);
             }

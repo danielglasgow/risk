@@ -23,7 +23,7 @@ public class Board { // make board a JPanel not frame...
     public Board() {
         mainFrame = new JFrame("risk");
         try {
-            background = ImageIO.read(new File("/Users/danielglasgow/Desktop/riskboard.jpg"));
+            background = ImageIO.read(new File("BackgroundInfo/riskboard.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }

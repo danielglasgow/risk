@@ -250,7 +250,9 @@ public class ComputerStrategy implements Strategy {
                     }
                 }
                 ComputerFortifier fortifier = new ComputerFortifier(boardState);
-                List<BoardState> fortifyOptions = fortifier.getFortificationOptions(player);
+                List<BoardState> fortifyOptions = fortifier.getFortificationOptions(player); // should
+                                                                                             // take
+                                                                                             // boardstate
                 if (armiesToMove != (fortifyOptions.size() > 1)) {
                     System.out.println("fail");
                 }

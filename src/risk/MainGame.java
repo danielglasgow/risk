@@ -54,9 +54,9 @@ public class MainGame {
     private void addPlayers(int numPlayers) {
         for (int i = 0; i < numPlayers; i++) {
             if (i == -1) {
-                immutablePlayers.get(i).setStrategy(strategies.get("HumanStrategy"));
-            } else {
                 immutablePlayers.get(i).setStrategy(strategies.get("ComputerStrategy"));
+            } else {
+                immutablePlayers.get(i).setStrategy(strategies.get("HumanStrategy"));
             }
         }
     }
